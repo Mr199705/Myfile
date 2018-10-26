@@ -1,0 +1,203 @@
+{include file="common/top" /}
+<title>商品分类</title>
+<script src="__JS__/jquery.min.js"></script>
+<script type="text/javascript" src="__JS__/swiper-3.4.0.jquery.min.js"></script>
+<link rel="stylesheet" href="__CSS__/swiper-3.2.7.min.css" />
+<style>
+.container {
+	width: 100%;
+	/*border: 1px solid #ccc;*/
+	padding: 0px;
+	margin: 0px;
+}
+
+.swiper1 {
+	width: 100%;
+}
+
+.swiper1 .selected {
+	color: #ec5566;
+	border-bottom: 2px solid #ec5566;
+}
+
+.swiper1 .swiper-slide {
+	text-align: center;
+	font-size: 12px;
+	height: 50px;
+	/* Center slide text vertically */
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-box-pack: center;
+	-ms-flex-pack: center;
+	-webkit-justify-content: center;
+	justify-content: center;
+	-webkit-box-align: center;
+	-ms-flex-align: center;
+	-webkit-align-items: center;
+	align-items: center;
+	cursor: pointer;
+}
+
+.swiper2 {
+	width: 100%;
+}
+
+.swiper2 .swiper-slide {
+	height: calc(100vh - 105px);
+	/*	background-color: #ccc;
+	color: #fff;*/
+	text-align: center;
+	box-sizing: border-box !important;
+	overflow-x: hidden !important;
+	overflow-y:scroll;
+
+}
+.footer{ margin-top:0px;}
+</style>
+</head>
+    <body>
+        <div class="container">
+            <div class="swiper-container swiper1" style="background: #FFCB15;">
+                <div class="swiper-wrapper">
+                {volist name="category" id="vo" empty="暂时没有数据" }
+                    {if condition="$i eq 1"}
+                        <div class="swiper-slide selected">{$vo.title }</div>
+                    {else /}
+                        <div class="swiper-slide">{$vo.title }</div>
+                    {/if}
+                {/volist}
+                </div>
+            </div>
+                <!-- swiper2 -->
+            <div class="swiper-container swiper2">
+                <div class="swiper-wrapper" style="height:550px;">
+                    {volist name="category" id="vo" empty="暂时没有数据" }
+                    <div class="swiper-slide swiper-no-swiping">
+                        <div style="width: 100%; height: 100%; background-color: #F4F4F4;">
+                            <div class="row" id="row_5" style="margin-left:0px;margin-right: 0px;margin:0px auto;">
+                                <div class="nx-view nx-module-title" style="">
+                                    <div class="nx-view nx-module-title-line" style=""></div>
+                                    <span class="nx-text" style="">{$vo.title }</span>
+                                    <div class="nx-view nx-module-title-line" style=""></div>
+                                </div>
+                                <div class="sort-arat category_items_box" style="margin:0px auto;display:inline-block;width:auto;">
+                                    <ul style="display: flex;flex-direction: row;flex-wrap: wrap;"></ul>
+                                </div>
+                            </div>
+                            <div class="loading_text" data-page="1" data-pid="{$vo.id }" style="height:30px;display:none;" onclick="loadCategory();">上拉/点击继续加载</div>
+                        </div>
+                    </div>
+                    {/volist}
+                </div>
+            </div>
+        </div>
+        <!-- 模版 -->
+        <script id="templateItem" type="text/template">
+        {{ for(var item in ljk) { }}
+        <li style="display:inline-block;width:60px;height:60px;line-height:60px;background:#fff;margin:1px 2px;">
+            <a href="/shop/category/categorylist.html?clas={{=ljk[item].id }}" style="display:inline-block;height:60px;width:60px;line-height:60px;{{?ljk[item].img}}background:url({{=ljk[item].img }}) no-repeat;background-size:60px 60px;{{?}}">
+                <div style="height:60px;width:60px;white-space: nowrap;text-overflow: ellipsis;overflow:hidden;text-align:center;margin: auto;background:rgba(255,255,255,0.6);color:darkgreen;">{{=ljk[item].title }}</div>
+            </a>
+        </li>
+        {{}}}
+        </script>
+        <script>
+            var itemIndex = 0;
+            $(function() {
+                function setCurrentSlide(ele, index) {
+                    $(".swiper1 .swiper-slide").removeClass("selected");
+                    ele.addClass("selected");
+                    itemIndex = index;
+                    var itemUl = $(".swiper-no-swiping").eq(index).find('ul');
+                    if( itemUl.find('li').length == 0 ){
+                            loadCategory();
+                    }
+                }
+                var swiper1 = new Swiper('.swiper1', {
+                    slidesPerView: 5.5,
+                    paginationClickable: true,//此参数设置为true时，点击分页器的指示点分页器会控制Swiper切换。
+                    spaceBetween: 10,//slide之间的距离（单位px）。
+                    freeMode: true,//默认为false，普通模式：slide滑动时只滑动一格，并自动贴合wrapper，设置为true则变为free模式，slide会根据惯性滑动且不会贴合。
+                    loop: false,//是否可循环
+                    onTab: function(swiper) {
+                        var n = swiper1.clickedIndex;
+                    }
+                });
+                swiper1.slides.each(function(index, val) {
+                    var ele = $(this);
+                    ele.on("click", function() {
+                        setCurrentSlide(ele, index);
+                        swiper2.slideTo(index, 500, false);
+                    });
+                });
+                var swiper2 = new Swiper('.swiper2', {
+                    direction: 'horizontal',//Slides的滑动方向，可设置水平(horizontal)或垂直(vertical)。
+                    autoHeight: true,//自动高度。设置为true时，wrapper和container会随着当前slide的高度而发生变化。
+                    onSlideChangeEnd: function(swiper) {  //回调函数，swiper从一个slide过渡到另一个slide结束时执行。
+                        var n = swiper.activeIndex;
+                        setCurrentSlide($(".swiper1 .swiper-slide").eq(n), n);
+                        swiper1.slideTo(n, 500, false);
+                    }
+                });
+            });
+            window.onload = function(){
+                loadCategory();
+            };
+            $('.swiper2 .swiper-no-swiping').scroll(function(){
+                var scrollTop = $(this).scrollTop();
+                var windowHeight = $(this).height();
+                var contentHeight = $(this).find('#row_5').height();
+                    if(scrollTop + windowHeight >= (contentHeight + 20))  {
+                    loadCategory();
+                }
+            });
+            function loadCategory(){
+                var loadTitle = $('.selected').html();
+                var itemUl = $(".swiper-no-swiping").eq(itemIndex).find('ul');
+                var but = $(".swiper-no-swiping").eq(itemIndex).find('.loading_text');
+                var pid = ( but.attr('data-pid') != null ) ? but.attr('data-pid') : 0;
+                var page = ( but.attr('data-page') != null ) ? but.attr('data-page') : 1;
+                if( typeof itemUl == 'undefined' ){ return false; }
+                if( page == -1 ){ return false; }
+                $.ajax({
+                    url: '/shop/category/categoryFun',
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        pid: pid,
+                        page: page,
+                        action: 'category'
+                    },
+                    beforeSend:function(){
+                        //but.html('<img src="__IMGS__/loading6.gif" style="width:60px;height:20;" />正在加载中...');
+                    },
+                    success: function(res){
+                        if( res.code == 1 ){
+                            if( res.data.length >= 1 ){
+                                var interText = doT.template( $("#templateItem").html() );
+                                itemUl.append( interText( res.data ) );
+                                //but.attr('data-page', ++page );
+                                //but.html('上拉/点击继续加载');
+                            }else{
+                                but.attr('data-page', -1 );
+                                but.html('没有更多记录了。');
+                            }
+                        }else{
+                            //showTip({msg:'加载充值明细失败：' + res.msg});
+                        }
+                    },
+                    error: function(){
+                        showTip({msg:'连接服务器失败!'});
+                    }
+                });
+            }
+            var w = $(window).width();
+            var mn = Math.floor((w - 20) / 64);
+            var iw = mn * 64;
+            $('.category_items_box').css('max-width',iw + 'px');
+        </script>
+        {include file="common/footer_nav" /}
+    </body>
+</html>

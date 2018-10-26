@@ -1,0 +1,427 @@
+        {include file="common/top" /}
+        <title>商品详情</title>
+        <link rel="stylesheet" href="__CSS__/st.css" type="text/css">
+        <link rel="stylesheet" href="__CSS__/productDetail.css?v=01291">
+        <script charset="utf-8" src="__JS__/TouchSlide.js?v=01291"></script>
+        <script charset="utf-8" src="__JS__/prodDetail.js?v=01291"></script>
+        <script type="text/javascript">
+            var cartNum = {if $cartNum}{$cartNum}{else}0{/if};
+            function addCart( fm,type){
+                if(typeof type === 'undefined'){
+                    type = 0;
+                }
+                var data = $(fm).serializeArray();
+                $.ajax({
+                    data:data,
+                    url:$(fm).attr('action'),
+                    type:'post',
+                    dataType:'json',
+                    beforeSend:function (){
+                        showToast({msg:'正在添加'});
+                    },
+                    success:function (res){
+                        closeToast('toast');
+                        if(res.code === 0){
+                            cartNum = parseInt($('#totalNum').html()) + res.cartnuminc;
+                            $('#totalNum').html(cartNum);
+                            if(type === 1){
+                                window.location.href = '/shop/shopcart/index';
+                                return true;
+                            }
+                            showTip({msg:'商品已添加到购物车！'});
+                            setTimeout(function (){
+                                closeModal('tipModal');
+                            },1000);
+                        }else if(res.code === -2){
+                            showTip({msg:res.msg});
+                            setTimeout(function (){
+                                window.location.href = '/shop/login/login';
+                                closeModal('tipModal');
+                            },3000);
+                        }else{
+                            showTip({msg:res.msg});
+                            setTimeout(function (){
+                                closeModal('tipModal');
+                            },3000);
+                        }
+                    }
+                });
+            }
+            function resetPrice(btn){
+                var i = $(btn).data('index');
+                var attrvId = $(btn).data('attrvid');
+                var oattrvId = citem[i];
+                citem.splice(i,1,'' + attrvId);
+                var item = citem.join('_');
+                if(typeof prices[item] === 'undefined'){
+                    fitem = findOne('' + attrvId);
+                    if(fitem === false){
+                        citem.splice(i,1,'' + oattrvId);
+                        return false;
+                    }else{
+                        citem = fitem;
+                        var item = citem.join('_');
+                    }
+                }
+                loadTpl({item:item,ptype:'3'},['priceBox']);
+            }
+            function findOne(attrvId){
+                //可用解
+                var vss = [];
+                for(var x = 0,xl = attrs.length; x < xl; x++){
+                    if(attrs[x].indexOf(attrvId) !== -1){
+                        vss.push(attrs[x].join('_').split('_'));
+                    }
+                }
+                if(vss.length > 1){
+                    //求出最优解，及当前选中状态 差集最小的那个集合既最优解 citem
+                    var zyj = false;
+                    var ll = 0;
+                    var cl = 0;
+                    var b = citem.join('_').split('_');
+                    for(var v = 0, vl = vss.length; v < vl; v++){
+                        var a = vss[v].join('_').split('_');
+                        if(zyj === false){
+                            zyj = vss[v];
+                            var diff = arrdif(a,b); 
+                            ll = cl = diff.length;
+                            if(cl === 1){
+                                break;
+                            }
+                        }else{
+                            var diff = arrdif(a,b);
+                            cl = diff.length;
+                            if(cl === 1){
+                                zyj = vss[v];
+                                break;
+                            }else if(cl < ll){
+                                ll = cl;
+                                zyj = vss[v];
+                            }
+                        }
+                    }
+                    return zyj;
+                }else if(vss.length === 1){
+                    return vss[0];
+                }else{
+                    return false;
+                }
+            }
+            function arrdif(a,b){
+                var diff = [];
+                for(var ai = 0, ail = a.length; ai < ail; ai++){
+                    if(b.indexOf(a[ai]) === -1){
+                        diff.push(a[ai]);
+                    }
+                }
+                return diff;
+            }
+        </script>
+        <style type="text/css">
+            .details_con li .tb-out-of-stock {
+                border: 1px dashed #bbb;
+                color: #bbb;
+                cursor: not-allowed;
+            }
+            .no-selected {
+                background: #ffe8e8 none repeat scroll 0 0;
+                border: 2px solid #be0106;
+                margin: -1px;
+            }
+            .attr{
+                color: #111;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="fanhui_cou">
+            <div class="fanhui_1"></div>
+            <div class="fanhui_ding">顶部</div>
+        </div>
+        <header class="header">
+            <div class="fix_nav">
+                <div style="max-width: 768px; margin: 0 auto; background: #FE5400; position: relative;">
+                    <a class="nav-left back-icon" href="javascript:history.back();">返回</a>
+                    <div class="tit">商品详情</div>
+                </div>
+            </div>
+        </header>
+        {if condition=" isset($bInfo['id']) "}
+        <div class="container">
+            <div class="row white-bg">
+                <div class="slider">
+                    <ul>
+                        {foreach name="bInfo.imgs" item="vo"}
+                        <li><a href="javascript:;" target="_blank"><img src="{$vo.imgurl}" alt=""></a></li>
+                        {/foreach}
+                    </ul>
+                </div>
+                <script type="text/javascript" src="__JS__/yxMobileSlider.js"></script>
+                <script>
+                    $(".slider").yxMobileSlider({width:300,height:200,during:3000})
+                </script>
+            </div>
+            <div class="row gary-bg">
+                <div class="white-bg p10 details_con">
+                    <h1 class="item-name">{$bInfo['goodsName'] }<p style="display: none;"></p></h1>
+                    <div id='priceBox'>
+                        <form id="priceBoxForm" action="/shop/shopcart/cartfun" onsubmit="return false;" method="post">
+                            <input type="hidden" name="bjid" value="{$bInfo['id']}" />
+                            <input type="hidden" name="skuid" value="0" />
+                            <input type="hidden" name="priceid" value="0" />
+                            <input type="hidden" value="0" name="unitid" />
+                            <input type="hidden" value="add" name="action" />
+                            <ul>
+                                <li><label>商城价格：</label><span class="price" style="font-size:18px;">???</span></li>
+                                <li><label>市场价格：</label><span class="price" style="text-decoration: line-through;color:#ccc;font-size:14px;font-style: italic;font-weight: normal;">???</span></li>
+                                <li><label>单位：</label><span class="price">???</span></li>
+                                <li>
+                                    <label>数量：</label>
+                                    <div class="count_div" style="height: 30px; width: 130px;">
+                                        <a href="javascript:void(0);" class="minus"></a>
+                                            <input type="text" class="count" value="1" readonly />
+                                        <a href="javascript:void(0);" class="add"></a>
+                                    </div>
+                                </li>
+                            </ul>
+                            <div class="fixed-foot">
+                                <div style="display:flex;flex-direction: row;flex-wrap: nowrap;justify-content: space-between;background: #fff;">
+                                    <div id="actItems" style="display:flex;flex-direction: row;flex-wrap: nowrap;width: calc(100% - 60px);align-items: center;"></div>
+                                    <a class="cart-wrap" href="shopcart.html"> 
+                                        <i class="i-cart"></i>
+                                        <span>购物车</span>
+                                        <span class="add-num" id="totalNum">{if $cartNum}{$cartNum}{else}0{/if}</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div id="goodsContent" class="goods-content white-bg">
+                    <div class="hd hd_fav">
+                        <ul>
+                            <li class="wer on" data-tes="imgag">图文详情</li>
+                            <li class="wer" data-tes="txt-imgs">规格参数</li>
+                            <li class="wer" data-tes="appraise" onclick="return getComment();">评价</li>
+                        </ul>
+                    </div>
+                    <div class="tempWrap" style="overflow: hidden; position: relative;">
+                        <div style="position: relative; overflow: hidden; padding: 0px; margin: 0px; transition-duration: 200ms; transform: translateX(0px);" class="bd">
+                            <ul class="imgag" style="display: table-cell; vertical-align: top; max-width: 768px; width: 100%;" class="property">
+                                <div class="prop-area" id="pro" style="">
+                                    {$bInfo.detail|htmlspecialchars_decode=###}
+                                </div>
+                            </ul>
+                            <ul class="txt-imgs" style="display: none; vertical-align: top; max-width: 768px; width: 100%;">
+                                <div class="desc-area" style="padding: 0px 10px 0 10px;">
+                                    <li>
+                                        <div id="ajax_loading" style="margin: 10px auto 15px;">
+                                            <ul>
+                                                {if $bInfo.catname}<li class="guige" style="display: flex;flex-direction: row;flex-wrap: nowrap;align-items: flex-start;"><samp class="guige_nema" style="width: 80px;">品类：</samp> <samp class="guige_text" style="width: calc(100% - 80px);">{$bInfo.catname}</samp></li>{/if}
+                                                {if $bInfo.brandname}<li class="guige" style="display: flex;flex-direction: row;flex-wrap: nowrap;align-items: flex-start;"><samp class="guige_nema" style="width: 80px;">品牌：</samp> <samp class="guige_text" style="width: calc(100% - 80px);">{$bInfo.brandname}</samp></li>{/if}
+                                                {if $bInfo.seller_note}<li class="guige" style="display: flex;flex-direction: row;flex-wrap: nowrap;align-items: flex-start;"><samp class="guige_nema" style="width: 80px;">条形码：</samp> <samp class="guige_text" style="width: calc(100% - 80px);">{$bInfo.seller_note}</samp></li>{/if}
+                                                {if $bInfo.sn}<li class="guige" style="display: flex;flex-direction: row;flex-wrap: nowrap;align-items: flex-start;"><samp class="guige_nema" style="width: 80px;">编号：</samp> <samp class="guige_text" style="width: calc(100% - 80px);">{$bInfo.sn}</samp></li>{/if}
+                                                {if $bInfo.batt && count($bInfo.batt)}
+                                                {foreach name="bInfo.batt" item="att"}
+                                                <li class="guige" style="display: flex;flex-direction: row;flex-wrap: nowrap;align-items: flex-start;"><samp class="guige_nema" style="width: 80px;">{$att.attr_name}：</samp><samp class="guige_text" style="width: calc(100% - 80px);">{$att.attrValue|strip_tags=###}</samp></li>
+                                                {/foreach}
+                                                {/if}
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </div>
+                            </ul>
+                            <ul style="display: none; vertical-align: top; max-width: 768px; width: 100%;" class="appraise" rel="1" status="1">
+                                <div style="" id="comment">
+                                    <div id="commentContainer"></div>
+                                    <div id="commentTip"></div>
+                                    <div id="" style="margin: 10px auto 15px;display: none;">
+                                        <ul class="pinlun">
+                                            <li>好评（12）</li>
+                                            <li>中评（2）</li>
+                                            <li>差评（0）</li>
+                                        </ul>
+                                        <br>
+                                        <ul id="commentUl">
+                                            <li>
+                                                <div class="info" style="overflow: hidden; margin-bottom: .8em; color: #999; margin-top: 5px;">
+                                                    <div class="author">
+                                                        <span class="nick">卡***儿</span>
+                                                    </div>
+                                                    <time>2017-10-24 </time>
+                                                </div>
+                                                <div>煲粥非常不错，酒还没喝东西看着很好，暂时评个五星因为相信汾酒，相信酒仙网。准备过春节带回家，快递服务相当到位。快递员服务态度非常好，每次都一如既往。,包装给力,老牌名酒</div>
+                                                <img src="__IMG__/01de5ef6-3763-4cfe-bda8-c412266e14c7.jpg" style="margin: 0px 2px; width: 30%">
+                                                <img src="__IMG__/0d86960d-20b5-4dd3-afee-8453b5ea5e95.jpg" style="margin: 0px 2px; width: 30%;">
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="wap_page" style="" onclick="">
+                                    <span>下一页</span>
+                                </div>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="views_cg" style="display: none">
+            <span></span>
+        </div>
+        {else /}
+        <div>
+            没有找到该宝贝！
+        </div>
+        {/if}
+        <script id="actItemsTpl" type="text/template">
+            {{?ljk.act === true}}
+            <button class="btn btn-success" href="javascript:void(0);" style="background:#f63234;border-color:#f63234;width:50%;height:50px;font-size:16px;border-radius:0px;padding:0px;line-height:50px;" onclick="addCart(this.form,0);">加入购物车</button>
+            <button class="btn btn-info" href="javascript:void(0);" style="background:#FF9500;border-color:#FF9500;width:50%;height:50px;font-size:16px;border-radius:0px;padding:0px;line-height:50px;" onclick="addCart(this.form,1);">立即购买</button>
+            {{??}}
+            <button class="btn btn-warning" style="width:100%;height:50px;font-size:14px;border-radius:0px;padding:0px;line-height:50px;">商品库存不足，无法购买</button>
+            {{?}}
+        </script>
+        <script id="priceBoxTpl" type="text/template">
+            {{?ljk.ptype == '1'}}
+            {include file="/ljk/views/tp1" /}
+            {{??ljk.ptype == '2'}}
+            {include file="/ljk/views/tp2" /}
+            {{??ljk.ptype == '3'}}
+            {include file="/ljk/views/tp3" /}
+            {{?}}
+        </script>
+        <script id="templateComment" type="text/template">
+            {{for(var item in ljk){}}
+            <li>
+            <div class="info" style="overflow: hidden; margin-bottom: .8em; color: #999; margin-top: 5px;">
+                <div class="author">
+                    <span class="nick">{{=ljk[item].uid }}</span>
+                </div>
+                <time>{{=ljk[item].date_time }} </time>
+            </div>
+            <div>{{=ljk[item].content }}</div>
+            {{ for(var imgind in ljk[item].imgsid ) { }}
+            <img src="\{{=ljk[item].imgsid[imgind] }}" style="width: auto; height: 80px;"/>
+            {{}}}
+            </li>
+            {{}}}
+        </script>
+        <script type="text/javascript">
+            // 滑动滚动条
+            $(window).scroll(function(){
+            // 滚动条距离顶部的距离 大于 200px时
+            if($(window).scrollTop() >= 522){
+                //$(".scroll_top").fadeIn(1000); // 开始淡入
+                $(".hd_fav").addClass("tete");
+            } else{
+                //$(".scroll_top").stop(true,true).fadeOut(1000); // 如果小于等于 200 淡出
+                $(".hd_fav").removeClass("tete");
+            }
+            });
+            $(".wer").click(function(){
+                $(this).siblings("li").removeClass("on");
+                $(this).addClass("on");
+                var wty=$(this).attr("data-tes");
+                $("."+wty).css("display","block");
+                $("."+wty).siblings("ul").css("display","none");
+            });
+        </script>
+        <script type="text/javascript">
+            var prices = {};//所有价格信息 简化为  
+            var sattrs = {};//所有已被选中的attrs集合信息
+            var items = [];
+            var citem = [];
+            var attrs = [];
+            $.ajax({
+                url:'/shop/views/viewfun',
+                data:{action:'getprice',bjid:'{$bInfo.id}'},
+                type:'post',
+                dataType:'json',
+                success:function (res){
+                    if(res.code === 0){
+                        var data = res.data;
+                        if(data.ptype !== '3'){
+                            loadTpl(data,['priceBox']);
+                        }else{
+                            prices = data.prices;
+                            sattrs = data.sattrs;
+                            units = data.units;
+                            for(var itemx in prices){
+                                attrs.push(itemx.split('_'));
+                                items.push(itemx);
+                            }
+                            citem = items[0].split('_');
+                            loadTpl({item:citem.join('_'),ptype:data.ptype},['priceBox']);
+                        }
+                    }else if(res.code === -1){
+                        showTip({msg:res.msg});
+                        setTimeout(function (){
+                            closeModal('tipModal');
+                            window.history.back();
+                        },1000);
+                    }
+                }
+            });
+        </script>
+	<script type="text/javascript">
+            function show_msg(msg){
+                $(".views_cg").css('display', 'none');
+                $(".views_cg").show();
+                $(".views_cg").children("span").html(msg);
+                setTimeout(function () {
+                        $(".views_cg").css('display', 'none');
+                }, 2000);
+            }
+            //getCartNumber();
+            //获取属性报价信息
+            //TODO:: 评论
+            $('.wap_page>span').click(function(){
+                getComment();
+            });
+            var page = 1;
+            var comIsLoad = false;
+            function getComment(){
+                if( comIsLoad ){
+                    return 0;
+                }
+                comIsLoad = true;
+                $.ajax({
+                    url: '/shop/views/viewFun',
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        goods_id: {$bInfo['id'] },
+                        action: 'getcomment',
+                        page: page,
+                    },
+                    beforeSend:function(){
+                        $('#commentTip').html('<img src="__IMGS__/loading6.gif" style="width:60px;height:30;" />正在加载中...');
+                    },
+                    success: function(res){
+                        if( res.code == 1 ){
+                            $('#commentTip').html('');
+                            if( page === 1 && res.data.length === 0 ){
+                                $('#commentTip').html('商品暂时没有评论信息!');
+                                return 0;
+                            }else if( page > 1 && res.data.length === 0 ){
+                                $('#commentTip').html('没有更多评论了!');
+                                return 0;
+                            }
+                            var interText = doT.template( $("#templateComment").html() );
+                            $('#commentContainer').append( interText( res.data ) );
+                            page++;
+                            comIsLoad = false;
+                        }else{
+                            $('#commentTip').html('获取评论失败!');
+                        }
+                    },
+                    error: function(){
+                        $('#commentTip').html( '加载评论失败...连接服务器失败！' );
+                    }
+                });
+            }
+        </script>
+        {include file="common/footer_nav" /}
+</body>
+</html>

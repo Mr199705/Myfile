@@ -1,0 +1,22 @@
+<script type="text/template" id="choseGroup">
+    <div onclick="if(event.target === this){$('#modalBackdropBox').hide();$('#modalBackdropBox').html('');}" style="position: fixed;width:100%;height: 100%;display: flex;flex-direction: row;flex-wrap: nowrap;align-items: center;justify-content: center;">
+        <form method="post" onsubmit="return false" action="{$initData.requestUrl}" style="width: 80%;height:400px;background:rgba(255,255,255,0.9);border:1px solid #ccc;overflow: hidden;">
+            <input type="hidden" name="action" value="showlist" />
+            <div style="background: #00f;color: #fff;text-align: center;height: 35px;line-height: 35px;font-weight:bold;font-size:18px;">选择配送小组</div>
+            <div><input style="height: 26px;" class="form-control" type="text" value="" placeholder="请输入配送小组关键词搜索！" id="groupKeywords" /></div>
+            <div class="group_list_box" style="height:calc(100% - 96px);">
+                <div id="groupsListBox" style="display: flex;flex-direction: row;flex-wrap: wrap;align-items: flex-start;">
+                    {foreach name="dpgs" item="dpg"}
+                    <button data-dpgid="{$dpg.id}" data-title="{$dpg.title}" class="btn-dpg">{$dpg.title}</button>
+                    {/foreach}
+                </div>
+            </div>
+            <div style="display: flex;flex-direction: row;flex-wrap: nowrap;align-items: center;justify-content: flex-end;">
+                <button class="btn btn-sm btn-success modal-close" onclick="getList({sign:'dispatchGroup_order'},1);$('.modal-backdrop').hide();">确定</button>
+            </div>
+        </form>
+    </div>
+    {{
+    setTimeout(function (){choseGroup();},50);
+    }}
+</script>

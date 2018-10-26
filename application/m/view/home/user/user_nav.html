@@ -1,0 +1,165 @@
+<script type="text/html" id="tpl_usernavigation">
+    <div class="page">
+        <!--头部-->
+        <div class="ljk_top">
+            <a class="top_left js_item" data-id="genjinkehu">
+                <i class="fa fa-angle-left fa-2x"></i>
+            </a>
+            <a class=" top_right js_item"href="javascript:;"></a> 
+            <p class="weui-flex__item top_center">客户导航</p>
+        </div>
+        <!--头部-->
+        <!---内容-->
+        <div class="ljk_neirong usernavigationContent"></div>
+        <!---内容-->
+    </div>
+    <script type="text/javascript">
+        $(function (){
+            dianji();
+            goSys('{$m_index_home.url_name}');
+            $("#{$m_user_index.url_name}").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+            userNavigation(false,false);
+        });
+    </script>
+</script>
+<script type="text/template" id="usernavigationContent">
+    {{?ljk}}
+    <div class="weui-cells page__category-content">
+        <div class="weui-form-preview__bd">
+            <div class="weui-form-preview__item">
+                <p class="weui-form-preview__label" style="color:#000; margin-right: 0em; font-size: 1.2em; line-height: 1.1em;">{{=ljk.address}}</p>
+                <span class="weui-form-preview__value"></span>
+            </div>
+            <div class="weui-form-preview__item" >
+                {{?ljk.realname}}<label class="weui-form-preview__label">客户:{{=ljk.realname}}{{?ljk.contact}}({{=ljk.contact}}){{?}}</label>{{?}}
+                {{?ljk.mobile}}<span class="weui-form-preview__value "><a href="tel:{{=ljk.mobile}}">{{=ljk.mobile}}</a></span>{{?}}
+            </div> 
+        </div>
+        <div class="weui-form-preview__ft nav_block" style="display:none;">
+            <a class="weui-form-preview__btn nav_btn" href="javascript:" data-type="1">地图导航</a>
+            <a class="weui-form-preview__btn nav_btn" href="javascript:" data-type="2">目的地位置全景</a>
+        </div>
+    </div>
+    <div style="padding:5px;height:600px;width:100%;" id="userallmap"></div>
+    {{?}}
+    <script type="text/javascript">
+        $(function (){
+            $('#userallmap').html('');
+            var realname = '{{=ljk.realname}}';
+            var x = '{{=ljk.x}}';
+            var y = '{{=ljk.y}}';
+            var cx = '';
+            var cy = '';
+            var addr = '{{=ljk.address}}';
+            var map = new BMap.Map("userallmap");
+            var myGeo = new BMap.Geocoder();
+            var sign = false;
+            var t = false;
+            var top_right_navigation = new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL});   
+            map.addControl(top_right_navigation); 
+            map.enableDragging();
+            if(x !== 'undefined' && y !== 'undefined' && x !== '0' && y !== '0' ){
+                sign = true;
+            }else if(addr !== 'undefined'){
+                myGeo.getPoint(addr, function(point){
+                    if (point) {
+                        x = point.lat;
+                        y = point.lng;
+                    }else{
+                        x = 0;
+                        y = 0;
+                    }
+                    sign = true;
+                });
+            }else{
+                sign = true;
+                x = 0; 
+                y = 0;
+            }
+            var mk1 = null;
+            var mk2 = null;
+            var p1 = null;
+            var p2 = null;
+            var driving = new BMap.DrivingRoute(map, {renderOptions:{map: map,enableDragging : true,autoViewport: true}});
+            var geolocation = new BMap.Geolocation();
+            geolocation.getCurrentPosition(function(r){
+                if(this.getStatus() == BMAP_STATUS_SUCCESS){
+                    map.centerAndZoom(r.point, 12);
+                    map.panTo(r.point);
+                    cx = r.point.lat;
+                    cy = r.point.lng;
+                    p1 = r.point;
+                }else{
+                    cx = '29.546366';
+                    cy = '106.551416';
+                    p1 = new BMap.Point(cy,cx);
+                    map.centerAndZoom(p1, 12);
+                    map.panTo(p1);
+                }
+            },{enableHighAccuracy: true});
+            map.enableScrollWheelZoom(true);
+            addmk2();
+            function addmk2(){
+                if(t){
+                   clearTimeout(t); 
+                }
+                if(!sign || !p1){
+                    t = setTimeout(addmk2,50);
+                }else{
+                    if(x && y && x !== '0' && y !== '0'){
+                        p2 = new BMap.Point(y,x);
+                    }else{
+                        y = '106.581886';
+                        x = '29.534551';
+                        p2 = new BMap.Point(y,x);
+                    }
+                    driving.search(p1,p2);
+                    $('.nav_block').show();
+                    $('.nav_btn').on('click',function (){
+                        var type = $(this).data('type');
+                        nav(p1,p2,type);
+                    });
+                    /*
+                    map.addEventListener("click",function(e){
+                        p2 = e.point;
+                        driving.search(p1,p2);
+                    });
+                    */
+                    driving.setSearchCompleteCallback(function(){
+                        var p = driving.getResults();
+                        p1 = p.Ov.point;
+                        p2 = p.$u.point;
+                    });
+                }
+            }
+            function nav(p1,p2,type){
+                if((typeof p1 === 'undefined') || (typeof p2 === 'undefined')){
+                    var tips = {
+                        type:1,
+                        title:'提示信息',
+                        content:'如需使用导航功能，请先设定起始路线！',
+                        btn:1,
+                        btns:1,
+                        btnsc:'确定'
+                    };
+                    setTips(tips);
+                    return false;
+                }else{
+                    if(typeof type === 'undefined'){
+                        type = 1;
+                    }
+                    switch(type){
+                        case 1:
+                        url = 'http://api.map.baidu.com/direction?origin=latlng:' + p1.lat + ',' + p1.lng + '|name:我的位置&destination=latlng:' + p2.lat + ',' + p2.lng + '|name=' + realname +'的位置&mode=driving&region=latlng:' + p1.lat + ',' + p1.lng + '&output=html&src=重庆无心科技有限公司|司机手机业务管理系统';
+                        break;
+                        case 2:
+                        url = 'http://api.map.baidu.com/pano/?x=' + p2.lng + '&y=' + p2.lat + '&lc=0&ak=F1e135ea865b3fab751d242cee1f3a67';
+                        break;
+                    }
+                    window.location.href = url;
+                }
+            }
+        });
+    </script>
+</script>
+

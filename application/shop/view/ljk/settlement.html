@@ -1,0 +1,332 @@
+    {include file="/common/top" /}
+    <link rel="stylesheet" href="__CSS__/userorder.css" type="text/css">
+    <title>确认订单</title>
+    <script type="text/javascript">
+        {if count($addrs)}
+        var addrId = '{$addrs.0.id}';
+        {else}
+        var addrId = '0';
+        {/if}
+        function loadTpl(data,id,suffix,append){
+            if(typeof suffix === 'undefined'){
+                suffix = '';
+            }
+            if(typeof append === 'undefined'){
+                append = false;
+            }else{
+                append = true;
+            }
+            if(typeof data === 'undefined'){
+                data = {};
+            }
+            if(typeof id === 'undefined' && !(id instanceof Array)){
+                return false;
+            }
+            for(var i = 0, l = id.length; i < l; i++){
+                var $outer = $('#' + id[i] + suffix);
+                var $tpl = $('#' + id[i] + 'Tpl');
+                var template = doT.template($tpl.html());
+                var thtml = template(data);
+                if(append === false){
+                    $outer.html(thtml);
+                }else{
+                    $outer.append(thtml);
+                }
+            }
+        }
+    </script>
+    <style type="text/css">
+        .addr-item{
+            width:28px;
+            height:28px;
+            border-radius: 5px;
+        }
+        .checked-item{
+            background-image: url(__IMGS__/checked.png);
+            background-repeat:no-repeat;
+            background-size:28px 28px;
+            border:1px #eee solid;
+        }
+        .unchecked-item{
+            background:white;
+            border:1px #ccc solid;
+        }
+        *::-webkit-scrollbar
+        {
+            width:1px;
+            height:0px;
+            background-color:#F5F5F5;
+        }
+    </style>
+</head>
+<body>
+    <div class="fanhui_cou">
+        <div class="fanhui_1"></div>
+        <div class="fanhui_ding">顶部</div>
+    </div>
+    <header class="header header_1">
+        <div class="fix_nav">
+            <div class="nav_inner">
+                <a class="nav-left back-icon" href="javascript:history.back();">返回</a>
+                <div class="tit">确定订单</div>
+            </div>
+        </div>
+    </header>
+    <div class="container " style="width:100%;height:calc(100% - 94px);background:#eee;position: absolute;overflow-y:scroll;">
+        <div class="row rowcar">
+            {if count($addrs)}
+            <ul class="list-group" style="margin-bottom: 0px;">
+                <li class="list-group-item text-primary " style="text-align: center;margin:1px 0px;">
+                    <a href="/shop/address/index/act/a" class="f14">+新建收货地址</a>
+                </li>
+                <li id="selectAddr" class="list-group-item text-primary" style="margin:1px 0px;display: flex;flex-direction: row;flex-wrap: nowrap;align-items: center">
+                    <a style="width: calc(100% - 0px);display: flex;flex-direction: column;" href="/shop/address/index/act/e/addrid/{$addrs.0.id}">
+                        <div class="black" style="margin:2px 0px;">
+                            <span>收货人：{$addrs.0.consignee}</span> 
+                            <span class="mr10" style="float: right;">{$addrs.0.mobile}</span>
+                        </div>
+                        <div class="gary" style="margin:2px 0px;">地址：{$addrs.0.areaname}{$addrs.0.address}</div>
+                    </a>  
+                    <a href="javascript:void(0);" class="btn btn-sm btn-success" onclick="choseAddr(this);">更换</a>
+                </li>    
+            </ul>
+            <ul id="addrList" class="list-group" style="margin-bottom: 0px;display:none;">
+                {foreach  name="addrs" key="k" item="addr"}
+                <li class="list-group-item text-primary" style="margin:1px 0px;display: flex;flex-direction: row;flex-wrap: nowrap;align-items: center">
+                    {if $k===0}
+                    <div class="addr-item checked-item" data-addrinfo='{:json_encode($addr)}' data-addrid="{$addr.id}"></div>
+                    {else}
+                    <div class="addr-item unchecked-item" data-addrinfo='{:json_encode($addr)}' data-addrid="{$addr.id}"></div>
+                    {/if}
+                    <div style="width: 15px;"></div>
+                    <a style="width: calc(100% - 40px);display: flex;flex-direction: column;" href="/shop/address/index/act/e/addrid/{$addr.id}">
+                        <div class="black" style="margin:2px 0px;">
+                            <span>收货人：{$addr.consignee}</span> 
+                            <span class="mr10" style="float: right;">{$addr.mobile}</span>
+                        </div>
+                        <div class="gary" style="margin:2px 0px;">地址：{$addr.areaname}{$addr.address}</div>
+                    </a>
+                </li>
+                {/foreach}
+            </ul>
+            {else /}
+            <ul class="list-group" style="margin-bottom: 0px;">
+                <li class="list-group-item text-primary">
+                    <a href="/shop/address/index/act/a">+新建收货地址</a>
+                </li> 
+            </ul>
+            {/if}
+            <ul class="list-group" style="margin-bottom:0px;">
+                <li class="list-group">
+                    <div style="width:100%;display: flex;display: -webkit-flex;align-items: center;flex-direction: row;flex-wrap: nowrap;">
+                        <div style="width: calc(100% - 50px);height:50px;overflow-x: scroll;overflow-y: hidden;white-space: nowrap;">
+                            {foreach name="cartList" item="cart"}
+                            <span style="display: inline-block;height:50px;width:50px;border-radius: 5px;margin:0px 1px;">
+                                <img src="{$cart.goodsThumb}" style="height:50px;width:50px;border-radius: 5px;" />
+                            </span>
+                            {/foreach}
+                        </div>
+                        <div style="width:50px;text-align: right;">
+                            <a class="btn btn-sm btn-info" href="javascript:void(0);" onclick="showDetail(this);">详情</a>
+                        </div>
+                    </div>
+                    <div id="goodsList" style="display:none;">
+                        <div style="width:100%;display: flex;display: -webkit-flex;align-items: center;flex-direction: column;flex-wrap: nowrap;">
+                            {foreach name="cartList" key="k" item="cart"}
+                            <div style="width:100%;display:flex;display:-webkit-flex;flex-direction:row;flex-wrap:nowrap;align-items:center;padding:2px;border:1px solid #ccc;{if $k % 2}background:#fffeff;{else}background:#fff;{/if}">
+                                <div style="width:80px;height:70px;text-align: center;">
+                                    <img src="{$cart.goodsThumb}" style="width: 70px;height: 70px;" />
+                                </div>
+                                <div style="display:flex;display:-webkit-flex;flex-direction:column;width: calc(100% - 80px);">
+                                    <div style="font-size:14px;font-weight:bold;color:#000;margin:1px 0px;">{$cart.goods_name}</div>
+                                    {if $cart.avs}<div style="font-size:10px;color:#f00;margin:1px 0px;">{$cart.avs}</div>{/if}
+                                    <div style="display:flex;display:-webkit-flex;flex-direction:row;align-items: flex-start;margin:1px 0px;">
+                                        <div style="width:40px;">单价:</div>
+                                        <div style="width:calc(100% - 40px);">
+                                            ¥{$cart.goods_price}/{$cart.unit}
+                                        </div>
+                                    </div>
+                                    <div style="display:flex;display:-webkit-flex;flex-direction:row;align-items: center;margin:1px 0px;">
+                                        <div style="width:40px;">数量:</div>
+                                        <div style="width:calc(100% - 40px);">
+                                            {$cart.goods_number}
+                                        </div>
+                                    </div>
+                                    <div style="display:flex;display:-webkit-flex;flex-direction:row;align-items: flex-start;margin:2px 0px;">
+                                        <div style="width:40px;">小计:</div>
+                                        <div style="color:red;width:calc(100% - 40px);">
+                                            ¥{$cart.goods_number * $cart.goods_price}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {/foreach}
+                        </div>
+                    </div>
+                    <div class="list-group-item">
+                        <div style="width:100px;text-align: right;display:inline-block;">订单总额：</div>
+                        <div style="width:calc(100% - 130px);height:30px;line-height: 30px;position: absolute;top:4px;right: 10px;">¥{$amount|sprintf="%0.2f",###}</div>
+                    </div> 
+                    {if $Think.session.gid == 133 || $Think.session.gid  == 205}
+                        {if $umu > 0}
+                        <input id="orderPaytype" type="hidden" readonly="readonly" style="width:100%;height:30px;" value="4" /> 
+                        {else}
+                        <input id="orderPaytype" type="hidden" readonly="readonly" style="width:100%;height:30px;" value="1" /> 
+                        {/if}
+                    {else}
+                    <div class="list-group-item" style="background: #fff;position: relative;">
+                        <div style="width:100px;text-align: right;display:inline-block;">支付方式：</div>
+                        <div style="width:calc(100% - 130px);height:30px;position: absolute;top:4px;right: 10px;">
+                            <select id="orderPaytype" style="width:100%;height:30px;">
+                                {if $umu >= $amount}
+                                <option value="4" selected="selected">会员卡</option>
+                                {else}
+                                <option value="1">微信</option>
+                                {/if}
+                            </select>
+                        </div>
+                    </div>
+                    {/if}
+                    <div class="list-group-item" style="position:relative;">
+                        <div style="width:100px;text-align: right;display:inline-block;">预定配送日期：</div>
+                        <div style="width:calc(100% - 130px);height:30px;position: absolute;top:4px;right: 10px;">
+                            <select id="orderPdate" style="width:100%;height:30px;">
+                                <option value="0" checked="checked">不预定</option>
+                                {volist name="preDate" id="provo" }
+                                <option value="{$i}">星期{$provo.week}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="list-group-item" style="position:relative;">
+                        <div style="width:100px;text-align: right;display:inline-block;">配送时间段：</div>
+                        <div style="width:calc(100% - 130px);height:30px;position: absolute;top:4px;right: 10px;">
+                            <select id="orderPtime" style="width:100%;height:30px;">
+                                <option value="0">全天</option>
+                                <option value="8">上午</option>
+                                <option value="13">下午</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="list-group-item" style="position:relative;height:80px;">
+                        <span style="width:100px;text-align: right;display:inline-block;">备注：</span>
+                        <div style="width:calc(100% - 130px);height:60px;position: absolute;top:4px;right: 10px;">
+                            <textarea placeholder="请输入备注" style="width:100%;max-width: 100%;min-width: 100%;height:60px;max-height:60px;min-height: 60px;" id="orderContent"></textarea>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="fixed-foot white-bg">
+        <div class="fixed_inner">
+            <div class="pay-point">
+                <div class="icheck pull-left f12" style="padding-left: 70px;">
+                    共<span class="orange f14" id="cart_num">{:count($cartList)}</span>件商品 总金额：<em class="orange f14">¥<span>{$amount|sprintf="%0.2f",###}</span></em>
+                </div>
+            </div>
+            <div class="buy-btn-fix">
+                <a href="javascript:;" class="btn btn-danger btn-buy" style="width: 100%;" onclick="gotoAddOrder();">提交订单</a>
+            </div>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <script id="templateSettlementItem" type="text/template">
+        {{for(var item in ljk){}}
+        <div class=" o-t-item " style="background: #fff; border-bottom: 1px solid #e7e7e7; padding: 5px 0px 0px 5px;">
+            <div class="item-img">
+                <p><img class="" src="{{=ljk[item].thumb }}" style=" width: 54px; height: 54px;" /> </p>
+            </div>
+            <div class="item-info">
+                <span style="font-size:14px;">{{=ljk[item].goods_name }}</span>
+                <p class="gary f12">{{=ljk[item].goods_attr }}</p>
+            </div>
+            <div class="item-pay">
+                <div class="item-pay-data">
+                    <p class="price_p">¥{{=ljk[item].price_all }}</p>
+                    <p class="gary f12">x{{=ljk[item].goods_number }}</p>
+                </div>
+            </div>
+        </div>
+        {{}}}
+    </script>
+    <script type="text/template" id="selectAddrTpl">
+        <a style="width: calc(100% - 0px);display: flex;flex-direction: column;" href="/shop/address/index/act/e/addrid/{{=ljk.id}}">
+            <div class="black" style="margin:2px 0px;">
+                <span>收货人：{{=ljk.consignee}}</span> 
+                <span class="mr10" style="float: right;">{{=ljk.mobile}}</span>
+            </div>
+            <div class="gary" style="margin:2px 0px;">地址：{{=ljk.areaname}}{{=ljk.address}}</div>
+        </a>  
+        <a href="javascript:void(0);" class="btn btn-sm btn-success" onclick="choseAddr(this);">更换</a>
+    </script>
+    <script type="text/javascript">
+        var $addr = $('#addrList');
+        var $addrItems = $addr.find('.addr-item');
+        var close = 0;
+        var show = 0;
+        $addrItems.on('click',function (){
+            var id = $(this).data('addrid');
+            addrId = id;
+            var addrInfo = $(this).data('addrinfo');
+            loadTpl(addrInfo,['selectAddr']);
+            $addrItems.removeClass('checked-item').addClass('unchecked-item');
+            $(this).removeClass('unchecked-item').addClass('checked-item');
+            close = 0;
+            $addr.hide();
+        });
+        function choseAddr(a){
+            if(close === 0){
+                $addr.fadeIn(100);
+                close = 1;
+                $(a).html('取消');
+            }else if(close === 1){
+                close = 0;
+                $addr.fadeOut(100);
+                $(a).html('更换');
+            }
+        }
+        function showDetail(a){
+            if(show === 0){
+                $('#goodsList').fadeIn(100);
+                show = 1;
+                $(a).html('隐藏');
+            }else if(show === 1){
+                show = 0;
+                $('#goodsList').fadeOut(100);
+                $(a).html('详情');
+            }
+        }
+        function gotoAddOrder(){
+            var data = {};
+            data.addrid = addrId;
+            data.paytype = $('#orderPaytype').val();
+            data.pdate= $('#orderPdate').val();
+            data.ptime = $('#orderPtime').val();
+            data.content = $('#orderContent').val();
+            data.action = 'addorder';
+            $.ajax({
+                url:'/shop/order/add',
+                data:data,
+                dataType:'json',
+                type:'post',
+                beforeSend:function (){
+                    showTip({msg:'正在提交订单信息，请稍后！'});
+                },
+                success:function (res){
+                    if(res.code === 0){
+                        showTip({msg:'订单信息提交成功，即将前往支付页面！'});
+                        window.location.href = '/shop/payment/paycenter/?oid=' + res.oid;
+                        /****即将前往支付页面***/
+                    }else if(res.code === -1){
+                        showTip({msg:res.msg});
+                    }
+                    setTimeout(function (){
+                        closeModal();
+                    },1000);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

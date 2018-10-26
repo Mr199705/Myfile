@@ -1,0 +1,90 @@
+        {include file="common/header"}
+        <script type="text/javascript">
+            var users = [];
+        </script>
+    </head>
+    <body>
+        {include file="common/warning"}
+        {include file="common/tips"}
+        <div class="modal-backdrop" style="display: none;background: rgba(0,0,0,0.5);z-index: 99990 !important;" id="modalBackdropBox"></div>
+        <div id="wrapper">
+            <div  class="gray-bg dashbard-1">
+                <div class="row wrapper border-bottom white-bg page-heading" style="padding-top:0px;padding-bottom:0px;">
+                    <div class="col-sm-10">
+                        <h2>客户资料导入</h2>
+                    </div>
+                </div>
+                <div class="wrapper wrapper-content animated fadeInRight">
+                    <div class="row">
+                        <div class="col-sm-12" style="padding: 0px;">
+                            <div class="ibox float-e-margins">
+                                <div class="ibox-content" style="padding-right: 0px;padding-left: 5px;">
+                                    <form style="width:100%;" enctype="multipart/form-data" class="form-horizontal" method="post" action="/admin/user/import" onsubmit="return false;">
+                                        <input type="hidden" name="action" value="analyze" />
+                                            <p>说明：导入客户资料将经过以下必要步骤</p>
+                                            <p>上传excel -> 解析excel生成列表 <!-- -> 设置等级 -> 设置跟进人-->->提交数据</p>
+                                        <div style="display: flex;flex-direction:row;flex-wrap: nowrap;">
+                                            <div style="width:calc(100% - 80px);">
+                                                <input type="file" name="excelFile" class="form-control" value="" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+                                            </div>
+                                            <div style="width:80px;">
+                                                <button class="btn btn-sm btn-success" onclick="return userExcel(this.form);">上传excel</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <form style="width:100%;" class="form-horizontal" method="post" action="/admin/user/import" onsubmit="return false;">
+                                        <input type="hidden" name="action" value="insertData" />
+                                        <div style="display: flex;flex-direction:column;">
+                                            <div style="min-height:30px;border: 1px solid #ccc;overflow-x: hidden;overflow-y: scroll;font-size:14px;font-weight:bold;display:flex;flex-direction:row;flex-wrap:nowrap;background: #eee;align-items:center;">
+                                                <div style="width:10%;text-align: center;">客户类型</div>
+                                                <div style="width:10%;text-align: center;">客户等级</div>
+                                                <div style="width:15%;text-align: center;">客户名称</div>
+                                                <div style="width:10%;text-align: center;">联系人</div>
+                                                <div style="width:10%;text-align: center;">联系电话</div>
+                                                <div style="width:10%;text-align: center;">固定电话</div>
+                                                <div style="width:15%;text-align: center;">客户地址</div>
+                                                <div style="width:10%;text-align: center;">跟进人</div>
+                                                <div style="width:10%;text-align: center;">导入状态</div>
+                                            </div>
+                                        </div>
+                                        <div style="display: flex;flex-direction:column;position: relative;height:450px;" id="excel">
+                                            <p style="text-align: center;color:red;">请先上传excel文件！</p>
+                                        </div>
+                                    </form>
+                                    <script type="text/template" id="excelTpl">
+                                        {{?ljk && ljk.length}}
+                                        <div style="display: flex;flex-direction:column;position: relative;height:420px;overflow-x: hidden;overflow-y: scroll;">
+                                        {{for(var i=0, il = ljk.length; i < il; i++){}}
+                                        {{ 
+                                            var item = ljk[i];
+                                            users.push(item);
+                                        }}
+                                        <div style="min-height:30px;border: 1px solid #fff;padding:5px 0px;border-bottom:1px solid #000;{{?i%2}}background:#ffe;{{?}}font-size:12px;display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;">
+                                            <div style="width:10%;text-align: center;">{{?item[0]}}{{=item[0]}}{{?}}</div>
+                                            <div style="width:10%;text-align: center;">{{?item[1]}}{{=item[1]}}{{?}}</div>
+                                            <div style="width:15%;text-align: center;">{{?item[2]}}{{=item[2]}}{{?}}</div>
+                                            <div style="width:10%;text-align: center;">{{?item[3]}}{{=item[3]}}{{?}}</div>
+                                            <div style="width:10%;text-align: center;">{{?item[4]}}{{=item[4]}}{{?}}</div>
+                                            <div style="width:10%;text-align: center;">{{?item[5]}}{{=item[5]}}{{?}}</div>
+                                            <div style="width:15%;text-align: center;">{{?item[6]}}{{=item[6]}}{{?}}</div>
+                                            <div style="width:10%;text-align: center;">{{?item[7]}}{{=item[7]}}{{?}}</div>
+                                            <div style="width:10%;text-align: center;" id="itemStatus_{{=i}}"><span style="color:#ccc;">未导入</span></div>
+                                        </div>
+                                        {{}}}
+                                        </div>
+                                        <button class="btn btn-sm btn-success" onclick="return importUser(this);">导入客户</button>
+                                        {{??}}
+                                        <p style="text-align: center;color:red;">该Excel文件没有任何数据，请重新上传！</p>
+                                        {{?}}
+                                    </script>
+                                    <script type="text/template" id="importProgress"></script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {include file="common/footerjs"} 
+    </body>
+</html>

@@ -1,0 +1,287 @@
+    {include file="common/header"}
+    <script type="text/javascript" src="__COMMON__/js/dropload.js"></script>
+    <script type="text/javascript" src="__COMMON__/js/areas.js"></script>
+    <script type="text/javascript">
+        var cn = '{$cartNum}';
+        var uid = '{$userInfo.uid}';
+    </script>
+    <style type="text/css">
+        .cart-item{
+            width:28px;
+            height:28px;
+            border-radius: 5px;
+            cursor: pointer;
+            display:inline-block;
+        }
+        .addr-item{
+            width:28px;
+            height:28px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin:0px auto;
+        }
+        .checked-item{
+            background-image: url(__IMG__/checked.png);
+            background-repeat:no-repeat;
+            background-size:28px 28px;
+            border:1px #eee solid;
+            cursor: pointer;
+        }
+        .unchecked-item{
+            background:white;
+            border:1px #ccc solid;
+            cursor: pointer;
+        }
+        .order-add-act{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: center;
+        }
+        *::-webkit-scrollbar{
+            width:0px;
+            height:0px;
+        }
+    </style>
+</head>
+<body>
+    {include file="common/warning" /}
+    {include file="common/tips" /}
+    <div class="modal-backdrop" style="display: none;background: rgba(0,0,0,0.5);z-index: 99990 !important;" id="modalBackdropBox"></div>
+    <div id="wrapper">
+        <div  class="gray-bg dashbard-1">
+            <div class="wrapper wrapper-content animated fadeInRight" style="padding: 0px;position: relative;">
+                <a href="javascript:void(0)" class="btn btn-sm btn-primary" onclick="openCart();" style="position: absolute;top: 0px;right: 0px;z-index: 1;top:18px;right: 20px;">
+                    购物车<span class="label label-warning" id="orderCartNum" style="line-height: 12px; padding: 2px 5px; position: absolute;top: -10px;right: -10px;"></span>
+                </a>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-content" style="height:465px;">
+                                {include file="/orderrn/search/usercart"}
+                                <div id="goodsCategoryBox" style="float:left; width:10%; margin:10px 0px; height:400px;overflow-y:scroll;background: #eee;">
+                                    <div id="parentCategory" style="display: flex;display: -webkit-flex;flex-direction: row;flex-wrap: wrap;">
+                                        <span style="width:90%; margin:5px auto;" class="btn btn-sm btn-success" data-id="0">全部</span>
+                                        {volist name="$category" id="cp"}
+                                        <span style="width:90%;margin:5px auto; overflow:hidden;" class="btn btn btn-white" data-id="{$cp.id}">{$cp.title}</span>
+                                        {/volist}
+                                    </div>
+                                    <div id="disp" style="overflow-y:scroll; display:none;position: absolute;top: 61px; left:11%; width: 430px; z-index:1;height: 400px;border: 1px solid #CCC; background-color: #f7f7f7;box-shadow: 10px 10px 5px #888888;">
+                                        {volist name="$category" id="cp"}
+                                        <div id="childrenCategory_{$cp.id}" class="children_category children_category_hide">
+                                            <span style="width:80px;margin:5px 2px;overflow:hidden;" class="btn btn-sm btn-white" data-id="{$cp.id}">全部</span>
+                                            {if condition="isset($cp.c)"}
+                                            {volist name="$cp.c" id="cpc"}
+                                            <span style="width:80px;margin:5px 2px;overflow:hidden;" class="btn btn-sm btn-white" data-id="{$cpc.id}">{$cpc.title}</span>
+                                            {/volist}
+                                            {/if}
+                                        </div>
+                                        {/volist}
+                                        <script type="text/javascript">
+                                            $('#parentCategory').children('span').each(function () {
+                                                var id = $(this).data('id');
+                                                if ($('#childrenCategory_' + id).length === 1) {
+                                                    $('#childrenCategory_' + id).children('span').off().on('click', function () {
+                                                        var cid = $(this).data('id');
+                                                        $('#cidValue').val(cid);
+                                                        $(this).addClass('btn-success').removeClass('btn-white').siblings('span').addClass('btn-white').removeClass('btn-success');
+                                                        getBjSkuGoods();
+                                                        $("#disp").css("display", "none");
+                                                    });
+                                                }
+                                                $(this).on('click', function () {
+                                                    $('#cidValue').val(id);
+                                                    $(this).addClass('btn-success').removeClass('btn-white').siblings('span').removeClass('btn-success').addClass('btn-white');
+                                                    if ($('#childrenCategory_' + id).length === 1) {
+                                                        $("#disp").css("display", "block");
+                                                        $('#childrenCategory_' + id).removeClass('children_category_hide').addClass('children_category_show').siblings('.children_category').addClass('children_category_hide').removeClass('children_category_show');
+                                                        $($('#childrenCategory_' + id).children('span')[0]).addClass('btn-success').removeClass('btn-white').siblings('span').addClass('btn-white').removeClass('btn-success');
+                                                    } else {
+                                                        $("#disp").css("display", "none");
+                                                        $('.children_category').addClass('children_category_hide').removeClass('children_category_show');
+                                                    }
+                                                    getBjSkuGoods();
+                                                });
+                                            });
+                                            $('#disp').hover(function () {
+                                                $(this).css("display", "block");
+                                            }, function () {
+                                                $(this).css("display", "none");
+                                            });
+                                            //  鼠标悬浮一级时，显示二级分类
+                                            $('#parentCategory>spans').hover(function(){
+                                                var cpid = $(this).data('id');
+                                                $(this).addClass('btn-success').removeClass('btn-white').siblings('span').removeClass('btn-success').addClass('btn-white');
+                                                if( cpid != 0 ){
+                                                    if( $('#childrenCategory_' + cpid).length > 0 ){
+                                                        //  不是当前显示中
+                                                        if( $('#childrenCategory_' + cpid).css("display") != 'block' ){
+                                                            $($('#childrenCategory_' + cpid).children('span')[0]).addClass('btn-success').removeClass('btn-white').siblings('span').addClass('btn-white').removeClass('btn-success');
+                                                        }
+                                                        $("#disp").css("display", "block");
+                                                        $('#childrenCategory_' + cpid).siblings().css("display", "none");
+                                                        $('#childrenCategory_' + cpid).css("display", "block");
+                                                    }else{
+                                                        $("#disp").css("display", "none");
+                                                    }
+                                                }else{
+                                                    $("#disp").css("display", "none");
+                                                }
+                                            });
+                                    </script>
+                                    </div>
+                                </div>
+                                <div style="float:left; position: relative;display: flex;flex-direction: column;flex-wrap: nowrap;align-items: center;width:90%;margin:10px 0px; height:400px;overflow-y: hidden;">
+                                    <div style="width:100%;display: flex;flex-direction: row;flex-wrap: nowrap; background: #aaa;color: #fff;overflow-y: scroll;height: 40px;align-items: center;">
+                                        <div style="width:20%;text-align: center;">商品</div>
+                                        <div style="width:80%;display: flex;flex-direction: column;">
+                                            <div style="width:100%;display: flex;flex-direction: row;flex-wrap: nowrap;align-items: center;">
+                                                <div style="width:25%;text-align: center;">属性</div>
+                                                <div style="width:10%;text-align: center;">单价(¥)</div>
+                                                <div style="width:10%;text-align: center;">数量</div>
+                                                <div style="width:15%;text-align: center;">单位</div>
+                                                <div style="width:10%;text-align: center;">类型</div>
+                                                <div style="width:30%;text-align: center;">操作</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="listGoodsBox" style="width:100%;height:calc(100% - 40px);top:40px;overflow: hidden;overflow-y: scroll;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {include file="/orderrn/act/cart"}
+    {include file="/orderrn/act/addorder"}
+    <script type="text/template" id="goods">
+        {{?ljk && ljk.length}}
+        {{for(var item in ljk){}}
+        {{
+            goodsList[index] = ljk[item];
+            var i = 0;
+            var bgc = (index % 2) ? '#fff' : '#ffe';
+        }}
+        <div onmouseover="$(this).css('background','#eee');" onmouseout="$(this).css('background','{{=bgc}}');" style="width:100%;background:{{=bgc}};display: flex;flex-direction: row;flex-wrap: nowrap;align-items: center;border-bottom:1px solid #ccc;">
+            <div style="width:20%;display: flex;flex-direction: row;flex-wrap: nowrap;align-items:center;">
+                <div style="width:60px;text-align:center;"><img src="{{=ljk[item].goodsImg}}" style="width:50px;height:50px;" /></div>
+                <div style="width:calc(100% - 60px);">{{=ljk[item].goodsName}}</div>
+            </div>
+            <div style="width:80%;display: flex;flex-direction: column;border-left:1px solid #ccc;">
+                {{?ljk[item].ptype === 1}}
+                <form method="post" action="/admin/order/add" onsubmit="return false;" onmouseover="$(this).css('background','#eee');" onmouseout="$(this).css('background','{{=bgc}}');" method="post" style="width:100%;line-height:30px;display: flex;flex-direction: row;flex-wrap: nowrap;align-items: center;background:{{=bgc}};">
+                    <input type="hidden" name="bjid" value="{{=ljk[item].id}}" />
+                    <input type="hidden" name="uid" value="{$userInfo.uid}" />
+                    <input type="hidden" name="ptype" value="{{=ljk[item].ptype}}" />
+                    <input type="hidden" name="unitid" value="{{=ljk[item].unitid}}" />
+                    <input type="hidden" name="action" value="addcartitem" />
+                    <input type="hidden" name="skuid" value="0" />
+                    <input type="hidden" name="priceid" value="0" />
+                    <div style="width:25%;text-align: center;"><span style="color:#ccc;">该商品无属性！</span></div>
+                    <div style="width:10%;text-align: center;"><input type="text" class="form-control" style="padding:0px;text-align:center;height:28px;margin:0px auto;width:90%;" name="goods_price" value="{{=Number(ljk[item].tuanprice).toFixed(2)}}" /></div>
+                    <div style="width:10%;text-align: center;"><input type="text" class="form-control" style="padding:0px;text-align:center;height:28px;margin:0px auto;width:90%;" name="num" value="1" /></div>
+                    <div style="width:15%;text-align: center;">
+                        {{for(var unitid in ljk[item].units){}}
+                        {{ 
+                            var x = JSON.stringify({ 
+                                index:index,
+                                unitid:unitid,
+                                ptype:1
+                            });
+                        }}
+                        {{?unitid == ljk[item].unitid}}
+                        <button class="btn btn-xs btn-primary" data-x='{{=x}}' onclick="return getPrice(this);">{{=ljk[item].units[unitid].uname}}</button>
+                        {{??}}
+                        <button class="btn btn-xs btn-default" data-x='{{=x}}' onclick="return getPrice(this);">{{=ljk[item].units[unitid].uname}}</button>
+                        {{?}}
+                        {{}}}
+                    </div>
+                    <div style="width:10%;text-align: center;">
+                        <select name="type" class="form-control" style="padding:0px;text-align:center;height:28px;">
+                            <option value="1" selected="selected">销售</option>
+                            <option value="2">赠品</option>
+                        </select>
+                    </div>
+                    <div style="width:30%;text-align: center;">
+                        <button class="btn btn-xs btn-success" onclick="addCart(this.form);">加入购物车</button>
+                        <button class="btn btn-xs btn-success" onclick="addCart(this.form,1);">直接购买</button>
+                    </div>
+                </form>
+                {{??}}
+                {{for(var skuid in ljk[item]['skus']){}}
+                {{
+                    i++;
+                    var stn = Math.floor(ljk[item]['skus'][skuid].sku.storage_num / ljk[item]['skus'][skuid].units[ljk[item]['skus'][skuid].sunitid].coefficient);
+                }}
+                <form method="post" action="/admin/order/add" onsubmit="return false;" onmouseover="$(this).css('background','#eee');" onmouseout="$(this).css('background','{{=bgc}}');" method="post" style="{{?i < ljk[item].skusl}}border-bottom:1px solid #ccc;{{?}}width:100%;line-height:30px;display: flex;flex-direction: row;flex-wrap: nowrap;align-items: center;background:{{=bgc}};">
+                    <input type="hidden" name="bjid" value="{{=ljk[item].id}}" />
+                    <input type="hidden" name="uid" value="{$userInfo.uid}" />
+                    <input type="hidden" name="skuid" value="{{=skuid}}" />
+                    <input type="hidden" name="action" value="addcartitem" />
+                    <input type="hidden" name="ptype" value="{{=ljk[item].ptype}}" />
+                    <input type="hidden" name="unitid" value="{{=ljk[item]['skus'][skuid].sunitid}}" />
+                    <input type="hidden" name="stn" value="{{=stn}}" />
+                    <input type="hidden" name="priceid" value="{{=ljk[item]['skus'][skuid].prices[ljk[item]['skus'][skuid].sunitid].id}}" />
+                    <div style="width:25%;text-align: center;line-height:16px;" >
+                        <div>{{?ljk[item]['skus'][skuid].sku.attrs_value}}{{=ljk[item]['skus'][skuid].sku.attrs_value}}{{??}}<span style="color:#ccc;">该商品无属性！</span>{{?}}</div>
+                        <div id="stn_{{=skuid}}">
+                            {{?stn > 0}}
+                            <span style="color:green;">库存:{{=stn}}{{=ljk[item]['skus'][skuid].units[ljk[item]['skus'][skuid].sunitid].uname}}</span>
+                            {{??}}
+                            <span style="color:red;">库存:{{=stn}}{{=ljk[item]['skus'][skuid].units[ljk[item]['skus'][skuid].sunitid].uname}}</span>
+                            {{?}}
+                        </div>
+                    </div>
+                    <div style="width:10%;text-align: center;"><input type="text" class="form-control" style="padding:0px;text-align:center;height:28px;margin:0px auto;width:90%;" name="goods_price" value="{{=Number(ljk[item]['skus'][skuid].prices[ljk[item]['skus'][skuid].sunitid].tuanprice).toFixed(2)}}" /></div>
+                    <div style="width:10%;text-align: center;"><input type="text" class="form-control" style="padding:0px;text-align:center;height:28px;margin:0px auto;width:90%;" name="num" value="1" /></div>
+                    <div style="width:15%;text-align: center;">
+                        {{for(var unitid in ljk[item]['skus'][skuid].units){}}
+                        {{ 
+                            var x = JSON.stringify({ 
+                                index:index,
+                                unitid:unitid,
+                                ptype:ljk[item].ptype,
+                                skuid:skuid
+                            });
+                        }}
+                        {{?unitid == ljk[item]['skus'][skuid].sunitid}}
+                        <button class="btn btn-xs btn-primary" data-x='{{=x}}' onclick="return getPrice(this);">{{=ljk[item]['skus'][skuid].units[unitid].uname}}</button>
+                        {{??}}
+                        <button class="btn btn-xs btn-default" data-x='{{=x}}' onclick="return getPrice(this);">{{=ljk[item]['skus'][skuid].units[unitid].uname}}</button>
+                        {{?}}
+                        {{}}}
+                    </div>
+                    <div style="width:10%;text-align: center;">
+                        <select name="type" class="form-control" style="padding:0px;text-align:center;height:28px;">
+                            <option value="1" selected="selected">销售</option>
+                            <option value="2">赠品</option>
+                        </select>
+                    </div>
+                    <div style="width:30%;text-align:center;" id="actBtns_{{=skuid}}">
+                        {{?stn > 0}}
+                        <button class="btn btn-xs btn-success" onclick="addCart(this.form);">加入购物车</button>
+                        <button class="btn btn-xs btn-success" onclick="addCart(this.form,1);">直接购买</button>
+                        {{??}}
+                        <button class="btn btn-xs btn-warning">库存不足,无法下单</button>
+                        {{?}}
+                    </div>
+                </form>
+                {{}}}
+                {{?}}
+            </div>
+        </div>
+        {{index++;}}
+        {{}}}
+        {{??}}
+        <p style="height:50px;line-height:50px;text-align:center;color:red;">没有查询到该条件下的商品信息！</p>
+        {{?}}
+    </script>
+    {include file="common/footerjs"}
+    <script type="text/javascript">
+        getBjSkuGoods();
+        $ocn.html(cn);
+    </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<div class="row wrapper white-bg page-heading" style="margin-top:15px">
+    <div class="col-sm-11">
+        <div class="row">
+            <div class="col-sm-3" style="margin: 0px 5px 0px 0px;;padding:0px;width: 165px;">
+                <div class="input-group">
+                    <input type="text"class="laydate-input input-sm form-control" name="sdate" placeholder="开始时间"/>
+                </div>
+            </div>
+            <div class="col-sm-1" style="margin: 0px 5px 0px 0px;;padding:0px;width: 33px;">
+                <div class="input-group">
+                    <span class="input-sm form-control" style="text-align: center;">-</span>
+                </div>
+            </div>
+            <div class="col-sm-3" style="margin: 0px 5px 0px 0px;padding:0px;width: 165px;">
+                <div class="input-group">
+                    <input type="text" class="laydate-input input-sm form-control" name="edate" placeholder="结束时间"/>
+                </div>
+            </div>
+            <div class="col-sm-1" style="width:100px;">
+                <div class="input-group">
+                    <select name="search_type" class="input-sm form-control" style="width:auto;margin: 0 0;padding: 0 0;" >
+                        <option value="1">小组标题</option>
+                        <option value="2">成员姓名</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-3" style="margin: 0px 5px 0px 0px;;padding:0px;width: 178px;">
+                <div class="input-group" style="position: relative;">
+                    <input type="text" style="width: calc(100% - 9px);" name="keywords" placeholder="输入关键词搜索" value="" class="input-sm form-control searchOrderKeyword" data-sign="fxOrder" onkeydown="if(event.keyCode == 13){ this.form.button.click(); }">
+                    <a style="position: absolute;height: 30px;z-index: 100;line-height: 30px;top:0px;right:0px;" href="javascript:;" onclick="$('input[name=keywords]').val('');getList({sign:'{$initData.sign}'},1);">X</a>
+                </div>
+            </div>
+            <div class="col-sm-3"  >
+                <div class="input-group">
+                    <span class="input-group-btn">
+                        <button type="button" name="button" class="btn btn-sm btn-primary" onclick="getList({sign:'{$initData.sign}'});"> 搜索</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,173 @@
+<script type="text/html" id="tpl_shangbaokucun">
+    <div class="page">
+        <div class="ljk_top">
+            <a class="top_left js_item backtodetail" data-id="genjinkehu">
+                <i class="fa fa-angle-left fa-2x"></i>
+            </a>
+            <p class="weui-flex__item top_center">上报库存</p>
+        </div>
+        <!---顶部--> 
+        <!--内容-->
+        <div class="ljk_neirong2" id="addStockContent">
+            <form action="/m/user/addstock" method="post" enctype="multipart/form-data" onsubmit="return false;" style="background:#fff;">
+                <!--顶部--->
+                <input type="hidden" name="action" value="add" />
+                <div class="page__bd" id="stockProjectList" data-request="0">
+                    <div class="js_dialog" style="display: block;">
+                        <div class="weui-mask" style="top:50px;"></div>
+                        <div class="weui-dialog" style="max-width:95%;width:95%;height: calc(100% - 53px - 49px);">
+                            <div class="weui-dialog__hd" style="padding: 0px;height: 30px;width:100%;font-size: 20px;line-height: 30px;background:#4fb234;color:#fff;position: fixed;top:0px;left:0px;">
+                                <span>库存项目列表</span>
+                            </div>
+                            <div class="weui-dialog__bd" style="padding:0px 10px;position: fixed;top:30px;width:95%;">
+                                <div class="weui-cells">
+                                    <div class="weui-cell" style="padding: 0;">
+                                        <div class="weui-cell__bd">
+                                            <div class="weui-search-bar__box">
+                                                <i class="weui-icon-search" style=" margin-top:5px;"></i>
+                                                <input type="text" class="weui-search-bar__input stockProjectSearchInput" placeholder="请输入库存项目关键词" required  style="height:30px;" />
+                                                <a href="javascript:" class="weui-icon-clear stockProjectClear" style=" margin-top:5px;"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="weui-dialog__bd" style="padding:0px 10px;position: fixed;top:88px;width: 100%;height: calc(100% - 96px);">
+                                <div id="stockProjectListContent"></div>
+                            </div>
+                            <div class="weui-dialog__bd" id="stockOperatorBtn" style="padding:0px;margin:0px;position: fixed;bottom: 0px;width: 100%;background:#fff;display: none;">
+                                <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_warn" onclick="closeStockProjectList();">关闭</a>
+                                <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary" onclick="closeStockProjectList();">确定</a>
+                            </div>
+                        </div> 
+                    </div> 
+                </div>
+                <div class="page__bd" id="chosedStockProjects"></div>
+                <div style="display: none;" id="stockAddedContents">
+                    <div id="stockUploadImgsBox"></div>
+                    <div class="weui-form-preview__ft" style="background:#FFF;">
+                        <button type="button" class="weui-form-preview__btn weui-form-preview__btn_primary" onclick="$('#stockProjectList').css('display','block');">添加更多</button>
+                        <button type="button" class="weui-form-preview__btn weui-form-preview__btn_primary" data-wx="{if is_weixin()}1{else}0{/if}" onclick="return stockPost(this);">提交保存</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        dianji();
+        goSys('{$m_index_home.url_name}');
+        initStockForm('/m/user/addstock');
+        $("#{$m_user_index.url_name}").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+        $(function (){
+            setTimeout(function (){
+            var t = false;
+            var lock =false;
+            $('.stockProjectClear').off().on('click',function (){
+                getStockList({keywords:''});
+                $('.stockProjectSearchInput').val('');
+                $('#stockProjectListContent').children('.stock_project_item').show();
+            });
+            $('.stockProjectSearchInput').off().on('compositionstart',function (){
+                lock = true;
+            }).on('compositionend',function (){
+                lock = false;
+            }).on('input',function (){
+                var that = this;
+                if(t){
+                    clearTimeout(t);
+                }
+                t = setTimeout(function (){
+                    clearTimeout(t);
+                    if(!lock){
+                        var keywords = $(that).val().trim();
+                        //这里去获取库存项目列表
+                        getStockList({keywords:keywords});
+                    }
+                },300);
+            });
+        },50);
+        });
+    </script>
+</script>
+<script type="text/template" id="chosedStockProjectsTemplate">
+    {{?ljk}}
+    <div class="weui-cells chosed_stock_project" id="chosedStockProject_{{=ljk.id}}" style="border:1px dashed #000;">
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <i class="weui-icon-cancel" onclick="removeChosedStockProject({{=ljk.id}});"></i>
+            </div>
+            <div class="weui-cell__bd" style=" text-align:right;">
+                <input type="hidden" value="{{=ljk.id}}" name="id[]" />
+                <input type="hidden" value="{{=ljk.goods_id}}" name="goods_id[{{=ljk.id}}]" />
+                <p><span style="color:darkgreen;"><strong>{{=ljk.goods_name}}</strong></span></p>
+            </div>  
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label" style="width: 60px;">数量</label>
+            </div>
+            <div class="weui-cell__bd" style=" text-align:right;">
+                <span class="input-number-decrement" onclick="decre(this);">–</span>
+                <input style="width: 30px;" class="input-number" type="text" value="1" maxlength="4" name="num[{{=ljk.id}}]">
+                <span class="input-number-increment" onclick="incre(this);">+</span>
+            </div>                
+        </div>
+        <div class="weui-cell weui-cell_select weui-cell_select-after">
+            <div class="weui-cell__hd">
+                <label for="" class="weui-label">单位</label>
+            </div> 
+            <div class="weui-cell__bd">
+                <select class="weui-select" name="unitid[{{=ljk.id}}]">
+                    {{?ljk.unitg}}
+                    {{for(var item in ljk.unitg){}}
+                    <option value="{{=ljk.unitg[item]['id']}}" {{?ljk.unitid==ljk.unitg[item]['id']}}selected="selected"{{?}}>{{=ljk.unitg[item]['uname']}}</option>
+                    {{}}}
+                    {{?}}
+                </select> 
+            </div>
+        </div>
+        <div class="weui-cell"> 
+            <div class="weui-cell__hd">
+                <label for="" class="weui-label">生产日期</label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="date" name="mdate[{{=ljk.id}}]" value="" /> 
+            </div>
+        </div>
+        <div class="weui-cell"> 
+            <div class="weui-cell__bd">
+                <textarea class="weui-textarea" name="code[{{=ljk.id}}]" maxlength="200" placeholder="输入备注信息..." rows="1" oninput="l(this);"></textarea> 
+                <div class="weui-textarea-counter">
+                    <span style="color:red;">0</span>/200
+                </div>
+            </div> 
+        </div>
+    </div>
+    {{?}}
+</script>
+<script type="text/template" id="stockProjectListTemplate">
+    <div class="m_stock_list_page">
+    {{?ljk}}
+    {{for(var item in ljk){}}
+    <lable class="weui-cell weui-check__label stock_project_item" id="stockProjectItem_{{=ljk[item].id}}" data-goodsname="{{=ljk[item].goods_name}}" data-goodsid="{{=ljk[item].goods_id}}" data-unitg='{{=ljk[item].unitg}}' data-bjid="{{=ljk[item].id}}" onclick="choseStockProject(this);" data-chosed="0">
+        <div class="weui-cell__hd">
+            <i class="weui-icon-circle" id="chose_stock_icon_{{=ljk[item].id}}"></i>
+        </div>
+        <div class="weui-cell__bd" style="text-align:left;">
+            <p><span style="color:darkgreen;">{{=ljk[item].goods_name}}</p>
+        </div>
+    </lable>
+    {{}}}
+    {{??}}
+    <div class="page__bd" id="chosedStockProjectContent">
+        <div style="text-align:center; color:#CBCBCB; padding-top:2em;">
+            <i class="fa fa-file-text-o fa-5x"></i><br>
+            <span>未设置库存项目！</span>
+        </div>
+    </div>
+    {{?}}
+    </div>
+    <script type="text/javascript">
+        mInitStockChose();
+    </script>
+</script>

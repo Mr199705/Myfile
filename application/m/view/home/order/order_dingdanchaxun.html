@@ -1,0 +1,130 @@
+<!--订单查询--> 
+<script type="text/html" id="tpl_dindanchaxun">
+<form action="" method="post" onsubmit="return false;" id="orderSearchInputForm">
+    <input type="hidden" name="during" value="0" id="duringConditionValue" />
+    <input type="hidden" name="pay" value="" id="payStatusValue" />
+    <div class="ljk_neirong">
+    <div class="page__bd">
+        <div class="weui-cells weui-cells_form">
+            <div class="weui-cell">
+                <div class="weui-cell__hd"><label class="weui-label">订单号</label></div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" id="orderNumberInput2" type="number" name="number" pattern="[0-9]*" placeholder="请输入订单号">
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd"><label class="weui-label">收货人电话</label></div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="number" name="mphone" id="mphone" pattern="[0-9]*" placeholder="请输入收货人电话">
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd"><label class="weui-label">订货人电话</label></div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="number" name="uphone" id="uphone" pattern="[0-9]*" placeholder="请输入订货人电话">
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd"><label class="weui-label">收货地址</label></div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="text" name="maddress" id="maddress" placeholder="请输入收货地址">
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd"><label class="weui-label">订货客户</label></div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="text" name="urealname" id="urealname"  placeholder="请输入订货客户">
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd"><label class="weui-label">付款状态</label></div>
+                <div class="weui-cell__bd">
+                    <div class="weui-cell__bd">
+                        <span class="set_pay_status" data-val="" style="height: 23px;line-height: 23px;display: inline-block;"><i class="weui-icon-success"></i>所有</span>
+                        <span class="set_pay_status" data-val="0" style="height: 23px;line-height: 23px;display: inline-block;"><i class="weui-icon-circle"></i>未付款</span>
+                        <span class="set_pay_status" data-val="1" style="height: 23px;line-height: 23px;display: inline-block;"><i class="weui-icon-circle"></i>已付款</span>
+                    </div>
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd"><label class="weui-label">时间范围</label></div>
+                <div class="weui-cell__bd">
+                    <span class="set_during_type" data-id="duringCondition" style="height: 23px;line-height: 23px;display: inline-block;"><i class="weui-icon-success"></i>按区间</span>
+                    <span class="set_during_type" data-id="timeConfigCondition" style="height: 23px;line-height: 23px;display: inline-block;"><i class="weui-icon-circle"></i>自定义</span>
+                </div>
+            </div>
+            <div class="weui-cell" id="duringCondition">
+                <div class="weui-cell__hd"><label class="weui-label"> </label></div>
+                <div class="weui-cell__bd">
+                    <span class="during_set" data-val="" style="height: 23px;line-height: 23px;display: inline-block;"><i class="weui-icon-circle"></i>所有</span>
+                    <span class="during_set" data-val="1" style="height: 23px;line-height: 23px;display: inline-block;"><i class="weui-icon-circle"></i>本月</span>
+                    <span class="during_set" data-val="2" style="height: 23px;line-height: 23px;display: inline-block;"><i class="weui-icon-circle"></i>本周</span>
+                    <span class="during_set" data-val="3" style="height: 23px;line-height: 23px;display: inline-block;"><i class="weui-icon-circle"></i>今日</span>
+                </div>
+            </div>
+            <div id="timeConfigCondition" style="display: none;">
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">开始</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" type="datetime-local" value="" name="ss" id="timeConfigSS"  placeholder="点击设置开始时间" />
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">结束</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" type="datetime-local" value="" name="ee" id="timeConfigEE"  placeholder="点击设置结束时间" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page__bd page__bd_spacing">
+            <button type="submit" class="weui-btn weui-btn_primary" onclick="return postorderdata(this.form);">查询</button>
+        </div>
+    </div>
+        </div>
+    </form>
+    <script type="text/javascript">
+        $('.set_during_type').off().on('click',function (){
+            var id = $(this).data('id');
+            $('#' + id).show();
+            $('#duringConditionValue').val('0');
+            $('#duringCondition').find('i').attr('class','weui-icon-circle');
+            $('#timeConfigCondition').find('input').val('');
+            $(this).children('i').removeClass('weui-icon-circle').addClass('weui-icon-success');
+            $(this).siblings('.set_during_type').each(function (){
+                var id = $(this).data('id');
+                $('#' + id).hide();
+                $(this).children('i').removeClass('weui-icon-success').addClass('weui-icon-circle');
+            });
+        });
+        $('.set_pay_status').off().on('click',function (){
+            $(this).children('i').removeClass('weui-icon-circle').addClass('weui-icon-success');
+            $('#payStatusValue').val($(this).data('val'));
+            $(this).siblings('.set_pay_status').each(function (){
+                $(this).children('i').removeClass('weui-icon-success').addClass('weui-icon-circle');
+            });
+        });
+        $('#duringCondition').find('.during_set').off().on('click',function (){
+            $('#duringConditionValue').val($(this).data('val'));
+            $(this).children('i').removeClass('weui-icon-circle').addClass('weui-icon-success');
+            $(this).siblings('.during_set').each(function (){
+                $(this).children('i').removeClass('weui-icon-success').addClass('weui-icon-circle');
+            });
+        });
+        function postorderdata(formObj){
+            var fmd = $(formObj).serializeArray();
+            var data = {};
+            for(var i = 0,l = fmd.length; i < l; i++){
+                if(fmd[i].name === 'number'){
+                    $('#orderSearchInput').val(fmd[i].value);
+                }
+                data[fmd[i].name] = fmd[i].value;
+            }
+            console.log(data);
+            $('#search_order_form').fadeOut(100);
+            $('#order_list_contents').fadeIn(100);
+            orderList(data,false);
+        }
+    </script> 
+</script> 
+<!--订单查询--> 

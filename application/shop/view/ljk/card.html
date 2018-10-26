@@ -1,0 +1,217 @@
+        {include file="common/top" /}
+        <link rel="stylesheet" href="__CSS__/money.css?v=32">
+        <title>会员卡账户</title>
+        <style type="text/css">
+            dl{list-style-type:none;counter-reset:sectioncounter;}  
+            dl dd:before {  
+                content:counter(sectioncounter) "、";
+                counter-increment:sectioncounter;  
+            }
+            dl dd{
+                margin: 5px 0px;
+            }
+            .re{
+                width:33.3%;
+                height:30px;
+                line-height: 30px;
+                font-size: 14px;
+                background:#fff;
+                border-bottom: 2px solid #fff;
+                text-align: center;
+            }
+            .re_checked{
+                border-bottom:1px solid #fe5400;
+            }
+            .weui-loadmore_line{
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="fanhui_cou">
+            <div class="fanhui_1"></div>
+            <div class="fanhui_ding">顶部</div>
+        </div>
+        {include file="common/tip" /}
+        <div class="container" style="padding: 0px;background:#fff;position: absolute;height: 100%;width:100%;">
+            <div style="position: absolute;width:100%;">
+                <div style="color:#fff; width: 100%;background:#fe5400;">
+                    <header class="header">
+                        <div>
+                            <div style="max-width:768px;margin:0 auto;background:#fe5400;position: relative;">
+                                <a class="nav-left back-icon" href="/shop/user/index">返回</a>
+                                <div class="tit" style="height: 44px;line-height: 44px;">会员卡账户{if $cardum}{if $cardum.status == 0}<span class="btn btn-sm btn-warning">禁用中</span>{/if}{/if}</div>
+                            </div>
+                        </div>
+                    </header>
+                </div>
+                <div style="color:#fff; width: 100%;background:#fe5400;display:flex;flex-direction: column;">
+                    {if $cardum}
+                    <div class="balance" style="text-align:center;">总额</div>
+                    <div class="balance_num"style="text-align:center;font-size:24px;">
+                        {$cardum.useable + $cardum.disable|sprintf='%.2f',### }
+                    </div>
+                    <div style="display: inline;">
+                        <div class="money_item">
+                            可用<div class="money_num">{$cardum.useable|sprintf='%.2f',###}</div>
+                        </div>
+                        <div class="money_item">
+                            冻结<div class="money_num">{$cardum.disable|sprintf='%.2f',###}</div>
+                        </div>
+                    </div>
+                    {else}
+                    <div class="balance" style="text-align:center;">总额</div>
+                    <div class="balance_num"style="text-align:center;font-size:24px;">
+                        0.00
+                    </div>
+                    <div style="display: inline;">
+                        <div class="money_item">
+                            可用<div class="money_num">0.00</div>
+                        </div>
+                        <div class="money_item">
+                            冻结<div class="money_num">0.00</div>
+                        </div>
+                    </div>
+                    {/if}
+                </div>
+                <div style="width:100%; height: 48px;background:#fe5400;display: flex;display: -webkit-flex;flex-direction:row;align-items: center;justify-content: center;">
+                    <div data-toggle="modal" data-target="#withdrawalsDialog"  class="btn btn-default btn-sm">充值</div>
+                </div>
+                <div style="width: 100%;display: flex;display: -webkit-flex;flex-direction:row;flex-wrap: nowrap;justify-content: center;">
+                    <a href="javascript:void(0);" class="re re_checked" onclick="getRecord(this,0);">所有记录</a>
+                    <a href="javascript:void(0);" class="re" onclick="getRecord(this,2);">充值记录</a>
+                    <a href="javascript:void(0);" class="re" onclick="getRecord(this,6);">消费记录</a>
+                </div>
+                <div style="background: #eee;display:flex;flex-direction: row;flex-wrap: nowrap;align-items: center;justify-content: center;width: 100%;">
+                    <div style="width:20%;text-align: center;">类型</div>
+                    <div style="width:25%;text-align: center;">
+                        <div>可用</div>
+                        <div style="display: flex;flex-direction: row;flex-wrap: wrap;align-items: center;justify-content: center;width:100%;">
+                            <div style="width:100%;text-align: center;">变化量</div>
+                            <div style="width:100%;text-align: center;">变化后</div>
+                        </div>
+                    </div>
+                    <div style="width:25%;text-align: center;">
+                        <div>冻结</div>
+                        <div style="display: flex;flex-direction: row;flex-wrap: wrap;align-items: center;justify-content: center;width:100%;">
+                            <div style="width:100%;text-align: center;">变化量</div>
+                            <div style="width:100%;text-align: center;">变化后</div>
+                        </div>
+                    </div>
+                    <div style="width:30%;text-align: center;">时间</div>
+                </div>
+            </div>
+            <div id="cardRecord" ></div>
+            <div class="listcardRecordTpl"style="width:100%;background: #eee;height:calc(100% - 285px);position: absolute;top:285px;overflow-x: hidden;overflow-y: scroll;"></div>
+        </div>
+        <div style="display: none;margin: 160px 10px 0px;" class="modal fade" id="withdrawalsDialog" types="1" tabindex="-1" role="dialog" aria-labelledby="addressAdd" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="post" onsubmit="return false;">
+                        <div style="height: 30px;line-height: 30px;background:#fe5400;color:#fff;">
+                            <button class="close" data-dismiss="modal" aria-hidden="true" style="color:#fff;opacity: 1;">×</button>
+                            <h4 class="modal-title" id="myModalLabel">充值</h4>
+                        </div>
+                        <div class="dizhi_x">
+                            <span  style="width:25%; text-align:center">卡号</span>
+                            <div class="dizhi">
+                                <input type="text" placeholder="请输入充值卡卡号！" name="sn" value="" />
+                            </div>
+                        </div>
+                        <div class="dizhi_x">
+                            <span  style="width:25%; text-align:center">密码</span>
+                            <div class="dizhi">
+                                <input type="text" placeholder="请输入充值卡密码！" name="pwd" value="" />
+                            </div>
+                        </div>
+                        <div style="text-align:center;">
+                            <button href="javascript:;" onClick="return cardCharge(this.form);" class="btn btn-sm btn-success btn-block">提&nbsp;交</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script type="text/template" id="cardRecordTpl">
+            {{?ljk && ljk.length}}
+            {{for(var i = 0,l = ljk.length; i < l; i++){}}
+            <div style="margin:3px 0px;{{?i % 2}}background:#fff;{{??}}background:#eff;{{?}}display:flex;flex-direction: row;flex-wrap: nowrap;align-items: center;justify-content: center;width: 100%;">
+                <div style="width:20%;text-align: center;">{{=mpt(ljk[i].type)}}</div>
+                <div style="width:25%;text-align: center;">
+                    <div style="display: flex;flex-direction: row;flex-wrap: wrap;align-items: center;justify-content: center;width:100%;">
+                        <div style="width:100%;text-align: center;">{{=ljk[i].uinc}}</div>
+                        <div style="width:100%;text-align: center;">{{=ljk[i].useable}}</div>
+                    </div>
+                </div>
+                <div style="width:25%;text-align: center;">
+                    <div style="display: flex;flex-direction: row;flex-wrap: wrap;align-items: center;justify-content: center;width:100%;">
+                        <div style="width:100%;text-align: center;">{{=ljk[i].dinc}}</div>
+                        <div style="width:100%;text-align: center;">{{=ljk[i].disable}}</div>
+                    </div>
+                </div>
+                <div style="width:30%;text-align: center;">{{=std(ljk[i].ctime)}}</div>
+            </div>
+            {{}}}
+            {{??}}
+            <p style="width:100%;color:red;text-align: center;height:200px;line-height:200px;">没有操作记录！</p>
+            {{?}}
+        </script>
+        <script type="text/javascript">
+            var dataR = {
+                action:'cardrecord',
+                p:1,
+                limit:15
+            };
+            {if $cardum}
+            getRecord(false,0);
+            {else}
+            loadTpl(false,['cardRecord']);
+            {/if}
+            function getRecord(a,type){
+                dataR.type = type;
+                dataR.p = 1;
+                if(a !== false){
+                    $(a).addClass('re_checked').siblings('.re').removeClass('re_checked');
+                }
+                $('.listcardRecordTpl').html('<div class="cardRecordTpl"></div>');
+                showLLL('/shop/user/card','cardRecordTpl',dataR);
+            }
+            function cardCharge(fm){
+                var data = {};
+                data.action = 'cardcharge';
+                if(!fm.sn.value.trim()){
+                    showTip({msg:'卡号不得为空！'});
+                    setTimeout(function (){closeModal();},1500);
+                    return false;
+                }
+                if(!fm.pwd.value.trim()){
+                    showTip({msg:'密码不得为空！'});
+                    setTimeout(function (){closeModal();},1500);
+                    return false;
+                }
+                data['mcard[0][sn]'] = fm.sn.value.trim();
+                data['mcard[0][pwd]'] = fm.pwd.value.trim();
+                $.ajax({
+                    data:data,
+                    url:'/shop/user/card',
+                    type:'post',
+                    dataType:'json',
+                    beforeSend:function (){
+                        showToast({msg:'充值中，请稍后！'});
+                    },
+                    success:function (res){
+                        closeToast();
+                        if(res.code === 0){
+                            showLLL('/shop/user/card','cardRecordTpl',dataR);
+                            showTip({msg:res.msg});
+                        }else{
+                            showTip({msg:res.msg});
+                        }
+                        setTimeout(function (){
+                            closeModal();
+                        },1500);
+                    }
+                });
+            }
+        </script>
+    </body>
+</html>

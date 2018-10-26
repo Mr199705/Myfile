@@ -1,0 +1,8 @@
+<script type="text/template" id="addressSelect">
+    <select style="width: 33%;font-size:12px;" class="address address_{{=ljk.level}} form-control" data-level="{{=ljk.level}}" name="areas[{{=ljk.level}}]" onchange="createAddressForm('{{=ljk.id}}',{{=ljk.level + 1}});">
+        <option value="">请选择</option>
+        {{for(var i = 0; i < ljk.data.length; i++){}}
+        <option value="{{=ljk.data[i].code}}:{{=ljk.data[i].code_name}}" {{?ljk.selectedCode && (ljk.selectedCode==ljk.data[i].code)}}selected="selected"{{?}}>{{=ljk.data[i].code_name}}</option>
+        {{?}}
+    </select>
+</script> 

@@ -1,0 +1,66 @@
+<input type='hidden' id='submitType' value='搜索' name='searchsubmit'/>
+<div class="row">
+<div class="col-sm-1" style=" padding-right:0px; width:110px;">
+    <div class="input-group">
+        <select name="guid" class="input-sm form-control" style="width:103px;" value="" onchange="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);">
+            <option value="0">员工</option>
+            {foreach name="$members" item="member}
+            <option value="{$member.uid}" {if $conditions.guid == $member.uid}selected{/if}>{$member.realname}	</option>
+            {/foreach}
+        </select>
+    </div>
+</div>
+<div class="col-sm-2" style=" padding-right:0px; width:120px;">
+     <div class="input-group">
+        <select name="type" class="input-sm form-control" style="width:120px;" onchange="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);">
+            <option value="u.realname" {if $conditions.type == 'u.realname'}selected{/if}>客户名称</option>
+            <option value="u.mobile" {if $conditions.type == 'u.mobile'}selected{/if}>客户手机</option>
+        </select>
+     </div>
+</div>
+<div class="col-sm-3"  >
+<div class="input-group">
+<input type="text" value="" name="keyword" placeholder="请输入关键词" value="{if $conditions.keyword}{$conditions.keyword}{else/}{/if}" class="input-sm form-control" oninput="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);"> <span class="input-group-btn">
+<button type="button" class="btn btn-sm btn-primary" onclick="setSubmitType('0');{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);"> 搜索</button> </span>
+</div>
+</div>
+<br />
+<br />
+<br />
+<span class="col-sm-1" style="text-align: right;width: 110px; line-height:30px;">
+    上报时间：从
+</span>
+<div class="col-sm-2"  style="padding:0px;" >
+    <div class="input-group" style="width:185px;">
+        <input type="text" value="{$conditions.csdate}" name="csdate" onclick="laydate({max:laydate.now(),istime: true, format: 'YYYY-MM-DD hh:mm:ss'});" class="input-sm form-control" oninput="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);">
+    </div>
+</div>
+<span class="col-sm-1" style="text-align: center;width: 20px; padding:0px; line-height:30px;">
+    到
+</span>
+<div class="col-sm-2" style="padding:0px;">
+    <div class="input-group">
+        <input type="text" value="{$conditions.cedate}" name="cedate" onclick="laydate({max:laydate.now(),istime: true, format: 'YYYY-MM-DD hh:mm:ss'});" class="input-sm form-control" oninput="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);">
+    </div>
+</div>
+<br />
+<br />
+<br />
+<span class="col-sm-1" style="text-align: right;width: 110px; line-height:30px;">
+生产日期：从
+</span>
+<div class="col-sm-2" style="padding:0px; width:185px;" >
+    <div class="input-group" style="width:185px;">
+        <input type="text" value="" name="mcsdate" onclick="laydate({max:laydate.now(),istime: true, format: 'YYYY-MM-DD hh:mm:ss'});" class="input-sm form-control" oninput="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);">
+    </div>
+</div>
+<span class="col-sm-1" style="text-align: center;width: 20px; padding:0px; line-height:30px;">
+    到
+</span>
+<div class="col-sm-2" style="padding:0px;">
+    <div class="input-group">
+        <input type="text" value="" name="mcedate" onclick="laydate({max:laydate.now(),istime: true, format: 'YYYY-MM-DD hh:mm:ss'});" class="input-sm form-control" oninput="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);">
+    </div>
+</div>
+<br><br>
+</div>

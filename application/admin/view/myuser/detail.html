@@ -1,0 +1,908 @@
+        {include file="common/header" /}
+        <style type="text/css">
+            *::-webkit-scrollbar{
+                width: 0px;
+                height: 0px;
+            }
+        </style>
+        <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=F1e135ea865b3fab751d242cee1f3a67"></script>
+        <script type="text/javascript" src="__COMMON__/js/areas.js"></script>
+    </head>
+<body>
+{include file="common/warning" /}
+{include file="common/tips" /}
+<div class="modal-backdrop" style="display: none;background: rgba(0,0,0,0.5);z-index: 99990 !important;" id="modalBackdropBox"></div>
+<div id="wrapper">
+    <div class="gray-bg dashbard-1">
+        <div class="row wrapper border-bottom white-bg page-heading">
+            <div class="col-sm-6">
+                <h2>客户详细信息</h2>
+            </div>
+            <div class="col-sm-6"><br>
+                <a href="javascript:void(0)" class="btn btn-sm btn-primary" style="margin-left:10px;" data-toggle="modal" data-target="#kfgj">客户跟进</a>
+            </div>
+        </div>
+        <div class="row ">
+            <div class="col-sm-12">
+                <div class="panel blank-panel">
+                    <div class="panel-heading">
+                        <div class="panel-options">
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a href="#ta-4" data-toggle="tab" onclick="hiddenFm('0')" aria-expanded="false">基本资料</a> </li>
+                                <li class=""><a href="#ta-5" data-toggle="tab" onclick="hiddenFm('1');" aria-expanded="false">修改信息</a> </li>
+                                <li class=""><a href="#myuserFollowsearchList" onclick="hiddenFm('myuserFollowsearchSearchForm');getList({sign:'myuserFollowsearch'},'1');" data-toggle="tab" style="position:relative;" aria-expanded="false">拜访记录<span class="label label-warning" style="line-height: 12px; padding: 2px 5px; position: absolute;right: 5px; top: 0px;;"><!--<span style="color:#fff;" class="label-warning label">0</span>--></span></a> </li>
+                                <li class=""><a href="#myuserStocksearchList" onclick="hiddenFm('myuserStocksearchSearchForm');getList({sign:'myuserStocksearch'},'1');" data-toggle="tab" style="position:relative;" aria-expanded="false">库存信息<span class="label label-warning" style="line-height: 12px; padding: 2px 5px; position: absolute;right: 5px; top: 0px;;"><!--<span style="color:#fff;" class="label-warning label">0</span>--></span></a> </li>
+                                <li class=""><a href="#myuserHssearchList" onclick="hiddenFm('myuserHssearchSearchForm');getList({sign:'myuserHssearch'},'1');" data-toggle="tab" style="position:relative;">回收信息<span class="label label-warning" style="line-height: 12px; padding: 2px 5px; position: absolute;right: 5px; top: 0px;;"><!--<span style="color:#fff;" class="label-warning label">0</span>--></span></a> </li>
+                                <li class=""><a href="#myuserOrdersearchList" onclick="hiddenFm('myuserOrdersearchSearchForm');getList({sign:'myuserOrdersearch'},'1');" data-toggle="tab" style="position:relative;">订单列表<span class="label label-warning" style="line-height: 12px; padding: 2px 5px; position: absolute;right: 5px; top: 0px;;"><!--<span style="color:#fff;" class="label-warning label">0</span>--></span></a> </li>
+                                <li class=""><a href="#myuserChsearchList" onclick="hiddenFm('myuserChsearchSearchForm');getList({sign:'myuserChsearch'},'1');" data-toggle="tab" style="position:relative;">出货信息<span class="label label-warning" style="line-height: 12px; padding: 2px 5px; position: absolute;right: 5px; top: 0px;;"><!--<span style="color:#fff;" class="label-warning label">0</span>--></span></a> </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="tab-content">
+                            <form method="post" action="/admin/myuser/detail" id="myuserFollowsearchSearchForm" onsubmit="return false;" style="display: none;">
+                                <input type="hidden" name="uid" value="{$user.uid}">
+                                <input type="hidden" name="action" value="follow">
+                                <div class="col-sm-2">
+                                    <input type="text" style="width: 175px" name="keyword" oninput="removeType(this.form);getList({sign:'myuserFollowsearch'},'1');" placeholder="请输入拜访内容关键词" value="" class="input-sm form-control"> <!--oninput="getList({sign:'userIndex'},1);"-->
+                                </div>
+                                    <input type="text" name="csdate" value="{:date('Y-m-d 00:00:00',time()-24*3600*7)}" readonly="readonly" style="cursor:pointer;background:#ccc;" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss',max:'{:date(\'Y-m-d 00:00:00\')}'});">
+                                    -
+                                        <input type="text" name="cedate" value="{:date('Y-m-d 23:59:59')}" readonly="readonly" style="cursor:pointer;background:#ccc;" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss',max:'{:date(\'Y-m-d 23:59:59\')}'});">
+                                    <input type="submit" name="submit" value="筛选" onclick="$(this.form.interval).attr('checked',false);addType2(this.form);getList({sign:'myuserFollowsearch'},'1');">
+                                <label>
+                                    <input type="radio" name="interval" value="" onclick="removeType(this.form);getList({sign:'myuserFollowsearch'},'1');">
+                                    近1月</label>
+                                <label>
+                                    <input type="radio" name="interval" value="" onclick="removeType(this.form);getList({sign:'myuserFollowsearch'},'1');">
+                                    近6月</label>
+                                <label>
+                                    <input type="radio" name="interval" value="" onclick="removeType(this.form);getList({sign:'myuserFollowsearch'},'1');">
+                                    近1年</label>
+                                <input type="hidden" id="userFollowsearchInput" name="page" value="1">
+                            </form>
+                            <form method="post" action="/admin/myuser/detail" id="myuserStocksearchSearchForm" onsubmit="return false;" style="display: none;">
+                                <input type="hidden" name="uid" value="{$user.uid}">
+                                <input type="hidden" name="action" value="stock">
+                                <input type="text" name="csdate" value="{:date('Y-m-d 00:00:00',time()-24*3600*7)}" readonly="readonly" style="cursor:pointer;background:#ccc;" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss',max:'{:date(\'Y-m-d 00:00:00\')}'});">
+                                -
+                                <input type="text" name="cedate" value="{:date('Y-m-d 23:59:59')}" readonly="readonly" style="cursor:pointer;background:#ccc;" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss',max:'{:date(\'Y-m-d 23:59:59\')}'});">
+                                <input type="submit" name="submit" value="筛选" onclick="$(this.form.interval).attr('checked',false);addType2(this.form);getList({sign:'myuserStocksearch'},'1');">
+                                <label>
+                                    <input type="radio" name="interval" value="" onclick="removeType(this.form);getList({sign:'myuserStocksearch'},'1');">
+                                    近1月</label>
+                                <label>
+                                    <input type="radio" name="interval" value="" onclick="removeType(this.form);getList({sign:'myuserStocksearch'},'1');">
+                                    近6月</label>
+                                <label>
+                                    <input type="radio" name="interval" value="" onclick="removeType(this.form);getList({sign:'myuserStocksearch'},'1');">
+                                    近1年</label>
+                                <input type="hidden" id="myuserStocksearchInput" name="page" value="1">
+                            </form>
+                            <form method="post" action="/admin/myuser/detail" id="myuserHssearchSearchForm" onsubmit="return false;" style="display: none;">
+                                <input type="hidden" name="uid" value="{$user.uid}">
+                                <input type="hidden" name="action" value="hs">
+                                <input type="text" name="csdate" value="{:date('Y-m-d 00:00:00',time()-24*3600*7)}" readonly="readonly" style="cursor:pointer;background:#ccc;" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss',max:'{:date(\'Y-m-d 00:00:00\')}'});">
+                                -
+                                <input type="text" name="cedate" value="{:date('Y-m-d 23:59:59')}" readonly="readonly" style="cursor:pointer;background:#ccc;" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss',max:'{:date(\'Y-m-d 23:59:59\')}'});">
+                                <input type="submit" name="submit" value="筛选" onclick="$(this.form.interval).attr('checked',false);addType2(this.form);getList({sign:'myuserHssearch'},'1');">
+                                <label>
+                                    <input type="radio" name="interval" value="" onclick="removeType(this.form);getList({sign:'myuserHssearch'},'1');">
+                                    近1月</label>
+                                <label>
+                                    <input type="radio" name="interval" value="" onclick="removeType(this.form);getList({sign:'myuserHssearch'},'1');">
+                                    近6月</label>
+                                <label>
+                                    <input type="radio" name="interval" value="" onclick="removeType(this.form);getList({sign:'myuserHssearch'},'1');">
+                                    近1年
+                                </label>
+                            </form>
+                            <form method="post" action="/admin/myuser/detail" id="myuserOrdersearchSearchForm" onsubmit="return false;" style="display: none;">
+                                <input type="hidden" name="uid" value="{$user.uid}">
+                                <input type="hidden" name="action" value="ord">
+                                <input type="text" name="csdate" value="{:date('Y-m-d 00:00:00',time()-24*3600*7)}" readonly="readonly" style="cursor:pointer;background:#ccc;" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss',max:'{:date(\'Y-m-d 00:00:00\')}'});">
+                                -
+                                <input type="text" name="cedate" value="{:date('Y-m-d 23:59:59')}" readonly="readonly" style="cursor:pointer;background:#ccc;" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss',max:'{:date(\'Y-m-d 23:59:59\')}'});">
+                                <input type="submit" name="submit" value="筛选" onclick="$(this.form.interval).attr('checked',false);addType2(this.form);getList({sign:'myuserOrdersearch'},'1');">
+                                <label>
+                                    <input type="radio" name="interval" value="" onclick="removeType(this.form);getList({sign:'myuserOrdersearch'},'1');">
+                                    近1月</label>
+                                <label>
+                                    <input type="radio" name="interval" value="" onclick="removeType(this.form);getList({sign:'myuserOrdersearch'},'1');">
+                                    近6月</label>
+                                <label>
+                                    <input type="radio" name="interval" value="" onclick="removeType(this.form);getList({sign:'myuserOrdersearch'},'1');">
+                                    近1年
+                                </label>
+                            </form>
+                            <form method="post" action="/admin/myuser/detail" id="myuserChsearchSearchForm" onsubmit="return false;" style="display: none;">
+                                <input type="hidden" name="uid" value="{$user.uid}">
+                                <input type="hidden" name="action" value="ch">
+                                <input type="text" name="csdate" value="{:date('Y-m-d 00:00:00',time()-24*3600*7)}" readonly="readonly" style="cursor:pointer;background:#ccc;" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss',max:'{:date(\'Y-m-d 00:00:00\')}'});">
+                                -
+                                <input type="text" name="cedate" value="{:date('Y-m-d 23:59:59')}" readonly="readonly" style="cursor:pointer;background:#ccc;" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss',max:'{:date(\'Y-m-d 23:59:59\')}'});">
+                                <input type="submit" name="submit" value="筛选" onclick="$(this.form.interval).attr('checked',false);addType2(this.form);getList({sign:'myuserChsearch'},'1');">
+                                <label>
+                                    <input type="radio" name="interval" value="" onclick="removeType(this.form);getList({sign:'myuserChsearch'},'1');">
+                                    近1月</label>
+                                <label>
+                                    <input type="radio" name="interval" value="" onclick="removeType(this.form);getList({sign:'myuserChsearch'},'1');">
+                                    近6月</label>
+                                <label>
+                                    <input type="radio" name="interval" value="" onclick="removeType(this.form);getList({sign:'myuserChsearch'},'1');">
+                                    近1年</label>
+                            </form>
+                            <!--跟进记录-->
+                            <div class="tab-pane" id="myuserFollowsearchList">
+                                <p style="color:red;border-top: 1px solid #e7eaec;text-align: center;background: #f9f9f9;;height: 35px;line-height:35px;">该时间段无跟进记录信息，您可以重新设置时间段再查询！</p>
+                            </div>
+                            <!--收货地址-->
+                            <div class="tab-pane " id="myuseraddressList"> </div>
+                            <div class="tab-pane" id="myuserStocksearchList"></div>
+                            <div class="tab-pane " id="myuserHssearchList"></div>
+                            <div class="tab-pane " id="myuserOrdersearchList"></div>
+                            <div class="tab-pane " id="myuserChsearchList"></div>
+                            <div class="tab-pane active" id="ta-4">
+                                <!--个人信息-->
+                                <div class="col-sm-6">
+                                    <dl class="dl-horizontal">
+                                        {notempty name="$user.realname"}<dt>客户名称：</dt>
+                                        <dd>{$user.realname}</dd>{/notempty}
+                                        {notempty name="$user.gender"}<dt>性别：</dt>
+                                        <dd>{if condition="$user.gender eq 1"}男{else}女{/if}</dd>{/notempty}
+                                        {if isset($user.typet)}
+                                        <dt>客户类型：</dt>
+                                        <dd>{$user.typet}</dd>
+                                        {/if}
+                                        {if isset($user.rankt)}
+                                        <dt>客户等级：</dt>
+                                        <dd>{$user.rankt}</dd>
+                                        {/if}
+                                        {if isset($user.visitt)}
+                                        <dt>拜访路线：</dt>
+                                        <dd>{$user.visitt}</dd>
+                                        {/if}
+                                        {notempty name="$user.trust"}
+                                        <dt>认证状态：</dt>
+                                        <dd>{if condition="$user.trust eq 1"}已认证{else}未认证{/if}</dd>
+                                        {/notempty}
+                                        {notempty name="$user.status"}
+                                        <dt>客户状态：</dt>
+                                        <dd>{if condition="$user.status eq 1"}有效{else}无效{/if}</dd>
+                                        {/notempty}
+                                        {notempty name="$user.clicknum"}
+                                        <dt>浏览次数：</dt>
+                                        <dd>{$user.clicknum}</dd>
+                                        {/notempty}
+                                        {if $user.birthday !== '0000-00-00'}
+                                        <dt>生日：</dt>
+                                        <dd>{if condition="$user.birthdaytype eq 1"}{$user.birthday}（公历）{elseif condition="$user.birthdaytype eq 2"}{$user.birthday}（阳历）{/if}</dd>
+                                        {/if}
+                                        {notempty name="$user.address"}
+                                        <dt>客户地址：</dt>
+                                        <dd>{$user.address}</dd>
+                                        {/notempty}
+                                    </dl>
+                                </div>
+                                <div class="col-sm-6" id="cluster_info">
+                                    <dl class="dl-horizontal">
+                                        {notempty name="$user.contact"}<dt>联系人    ：</dt>
+                                        <dd>{$user.contact}</dd>{/notempty}
+                                        {notempty name="$user.phone"}<dt>联系人手机：</dt>
+                                        <dd>{$user.phone}</dd>{/notempty}
+                                        {notempty name="$user.fax"}<dt>传真：</dt>
+                                        <dd>{$user.fax}</dd>{/notempty}
+                                        {notempty name="$user.url"}<dt>客户网址：</dt>
+                                        <dd>{$user.url}</dd>{/notempty}
+                                        {notempty name="$user.lastvisit"}<dt>更新时间：</dt>
+                                        <dd>{$user.lastvisit|date="Y-m-d H:i",###}（上一次更新）
+                                        </dd>{/notempty}
+                                    </dl>
+                                </div>
+                                {if $user.x && $user.y}
+                                <div class="col-sm-12">
+                                    <dl class="dl-horizontal">
+                                        <dt>位置：</dt>
+                                        <dd><div id="allmap2" style="width:70%;height:300px"></div></dd>
+                                    </dl>
+                                </div>
+                                {/if}
+                                <!--个人信息-->
+                            </div>
+                            <div class="tab-pane" id="ta-5">
+                                {include file="/myuser/act/edituser"}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="common/footerjs"}
+<script type="text/javascript">
+    localStorage.removeItem('rgIndexChoseDguid');
+    localStorage.removeItem('rgIndexChoseUid');
+    getList({sign:'{$initData.sign}'});
+</script>
+<script type="text/template" id="showGMStructure">
+    {{?ljk}}
+    <dl>
+        {{for(var i=0;i<ljk.length;i++){}}
+        {{?ljk[i].c===1}}
+        <dd style="margin:5px 0px 0px 0px;cursor:pointer;" data-id="{{=ljk[i].id}}" class="gmdept">
+            <i class="fa fa-folder-o" style="margin-left:{{=ljk[i].l}}px;">&nbsp;&nbsp;{{=ljk[i].name}}</i>{{?ljk[i].gmmember.length}}<i class="fa fa-male" style="margin-left:5px;"></i>{{?}}
+            {{?ljk[i].gmmember.length > 0}}
+            <ul style="list-style-type:none;margin:0px;margin-left:{{=ljk[i].x}}px;padding:0px;display:none;" class="gmmember gmmembers_{{=ljk[i].id}}">
+                {{for(var j=0;j<ljk[i].gmmember.length;j++){}}
+                <li onclick="setHeadMan(this);" style="cursor:pointer;margin:0px;padding:0px;"><input type="checkbox" readonly="readonly" value="{{=ljk[i].gmmember[j].uid}}" data-t="{{=ljk[i].gmmember[j].realname}}" />{{=ljk[i].gmmember[j].realname}}</li>
+                {{}}}
+            </ul>
+            {{?}}
+        </dd>
+        {{??}}
+        <dd style="margin:5px 0px 0px 0px;cursor:pointer;" data-id="{{=ljk[i].id}}" class="gmdept">
+            <i class="fa fa-file-o" style="margin-left:{{=ljk[i].l}}px;">&nbsp;&nbsp;{{=ljk[i].name}}</i>{{?ljk[i].gmmember.length}}<i class="fa fa-male" style="margin-left:5px;"></i>{{?}}
+            {{?ljk[i].gmmember.length > 0}}
+            <ul style="list-style-type:none;margin:0px;margin-left:{{=ljk[i].x}}px;padding:0px;display:none;" class="gmmember gmmembers_{{=ljk[i].id}}">
+                {{for(var j=0;j<ljk[i].gmmember.length;j++){}}
+                <li onclick="setHeadMan(this);" style="cursor:pointer;margin:0px;padding:0px;"><input type="checkbox" readonly="readonly" value="{{=ljk[i].gmmember[j].uid}}" data-t="{{=ljk[i].gmmember[j].realname}}" />{{=ljk[i].gmmember[j].realname}}</li>
+                {{}}}
+            </ul>
+            {{?}}
+        </dd>
+        {{?}}
+        {{}}}
+    </dl>
+    {{?}}
+    <script type="text/javascript">
+        $('.gmdept').on('click',function (event){
+            var id = '.gmmembers_' + $(this).data('id');
+            $(id).on('click',function (event){
+                event.stopPropagation();
+            });
+            if($(id).css('display') === 'none'){
+                $(id).show();
+            }else{
+                $(id).hide();
+            }
+        });
+        function setHeadMan(l){
+            $(l).children('input[type=checkbox]').each(function (){
+                var t = $(this).data('t');
+                var uid = $(this).val();
+                if(this.checked){
+                    this.checked=false;
+                    $('.head_man_realnames').find('.checked_uid_' + uid).remove();
+                }
+                else{
+                    this.checked=true;
+                    if($('.head_man_realnames').find('.checked_uid_' + uid).length === 0){
+                        $('.head_man_realnames').append('<span style="border:1px solid #ccc;margin-right:5px; padding: 3px;border-radius: 3px;" class="checked_uid_'+ uid +'">' + t + '<input type="hidden" name="guids[]" value="' + uid + '" /><input type="hidden" name="guidname[]" value="'+ t +'" /></span>');
+                    }
+                }
+            });
+        }
+</script>
+<script type="text/template" id="mccModal">
+    <div class="modal inmodal in" style="display: block;overflow-y: scroll;">
+        <div class="modal-dialog" style="width:60%;">
+            <div class="modal-content animated fadeIn">
+                <div class="modal-header">
+                    <button type="button" class="close" onclick="$('#modalBackdropBox').html('');$('#modalBackdropBox').hide();"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">会员卡充值</h4>
+                </div>
+                <form method="post" id="umSearchForm" action="/admin/user/mcc" class="form-horizontal" enctype="multipart/form-data" onsubmit="return false;">
+                    <input type="hidden" name="action" value="mcc" />
+                    <input type="hidden" name="uid" value="{{=ljk.uid}}" />
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">会员信息：</label>
+                                <div class="col-sm-8">
+                                    <span class="form-control" style="background:#ccc;cursor:not-allowed;">{{=ljk.realname}}{{?ljk.mobile}}({{=ljk.mobile}}){{?}}</span>
+                                </div>
+                            </div>
+                            <div id="mcardList" style="width:100%;">
+                                <div style="width:100%;position:relative;border:1px dashed #000;margin:5px 0px;">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        <label class="col-sm-2 control-label">卡号：</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" placeholder="请在此输入会员卡号" class="form-control" name="mcard[0][sn]" value=""  />
+                                        </div>
+                                        <div class="col-sm-1" style="text-align:left;padding-left:0px;"><span style="color:red;height:34px;line-height:34px;">*</span></div>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        <label class="col-sm-2 control-label">密码：</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" placeholder="请在此输入会员卡密码！" class="form-control" name="mcard[0][pwd]" value=""/>
+                                        </div>
+                                        <div class="col-sm-1" style="text-align:left;padding-left:0px;"><span style="color:red;height:34px;line-height:34px;">*</span></div>
+                                    </div>
+                                    <a href="javascript:void(0);" class="btn btn-sm btn-white" style="position:absolute;right:20px;top:25%;color:red;" onclick="$(this.parentNode).remove();">移除</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-warning btn-sm" onclick="$('#modalBackdropBox').html('');$('#modalBackdropBox').hide();">关闭</button>
+                        <a href="javascript:void(0);" class="btn btn-success btn-sm add_one_mcard">添加一张</a>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="formAct2(this.form,'','正在进行会员卡充值操作，请稍后！');">充值</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(function (){
+            var i = 1;
+            var template = doT.template($('#mcardTpl').html());
+            var $mcardList = $('#mcardList');
+            $('.add_one_mcard').off().click(function (){
+                var thtml = template({index:i});
+                $mcardList.append(thtml);
+                i++;
+            });
+        });
+</script>
+<script type="text/template" id="mcardTpl">
+    <div style="width:100%;position:relative;border:1px dashed #000;margin:5px 0px;">
+        <div class="form-group" style="margin-bottom:0px;">
+            <label class="col-sm-2 control-label">卡号：</label>
+            <div class="col-sm-8">
+                <input type="text" placeholder="请在此输入会员卡号" class="form-control" name="mcard[{{=ljk.index}}][sn]" value=""  />
+            </div>
+            <div class="col-sm-1" style="text-align:left;padding-left:0px;"><span style="color:red;height:34px;line-height:34px;">*</span></div>
+        </div>
+        <div class="form-group" style="margin-bottom:0px;">
+            <label class="col-sm-2 control-label">密码：</label>
+            <div class="col-sm-8">
+                <input type="text" placeholder="请在此输入会员卡密码！" class="form-control" name="mcard[{{=ljk.index}}][pwd]" value=""/>
+            </div>
+            <div class="col-sm-1" style="text-align:left;padding-left:0px;"><span style="color:red;height:34px;line-height:34px;">*</span></div>
+        </div>
+        <a href="javascript:void(0);" class="btn btn-sm btn-white" style="position:absolute;right:20px;top:25%;color:red;" onclick="$(this.parentNode).remove();">移除</a>
+    </div>
+</script>
+<!--编辑拜访记录-->
+<div class="modal inmodal" id="myModal2" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">×</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">编辑拜访记录</h4>
+            </div>
+            <form action="/test/myuser/followsearch" class="form-horizontal" method="post" enctype="multipart/form-data" onsubmit="return edit_Fllow_indexForm(this);">
+                <input type="hidden" name="id" id="memberTypeId" value="">
+                <input type="hidden" name="action" value="editfllow_index">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">内容: </label>
+                        <div class="col-sm-9">
+                            <textarea name="title" id="memberTypeTitle" class="form-control" cols="60" rows="8"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+                    <input type="submit" name="authsubmit" value="提交" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function(){
+        // setNation('1', '', '');
+    })
+    function changeHomeNation()
+    {
+        setHomeProvince($("#nation").val());
+    }
+    function changeHomeProvince()
+    {
+        setHomeCity($("#nation").val(), $("#province").val());
+    }
+    function setNation(nationVal, provinceVal, cityVal)
+    {
+        var nation = $("#nation");
+        nation.get(0).options.length = 0;
+        $.getJSON(iwbRoot+"admin/user/getnation/", function(json){
+            if(json!=null){
+                $.each(json, function(i, n){
+                    var option = new Option(n, i);
+                    if (i == nationVal) {
+                        option.selected = true;
+                    }
+                    nation.get(0).options.add(option);
+                });
+                setHomeProvince(nation.val(), provinceVal, cityVal);
+            }
+        });
+    }
+    function setHomeProvince(nationVal, provinceVal, cityVal)
+    {
+        var province = $("#province");
+        var city = $("#city");
+        province.get(0).options.length = 0;
+        city.get(0).options.length = 0;
+        $.getJSON(iwbRoot+"admin/user/getprovince/nation/"+nationVal, function(json){
+            if(json!=null){
+                $.each(json, function(i, n){
+                    var option = new Option(n, i);
+                    if (i == provinceVal) {
+                        option.selected = true;
+                    }
+                    province.get(0).options.add(option);
+                });
+                if(province.val())
+                    province.show();
+                else
+                    province.hide();
+                setHomeCity(nationVal, province.val(), cityVal);
+            }else{
+                province.hide();
+                city.hide();
+            }
+        });
+    }
+    function setHomeCity(nationVal, provinceVal, cityVal)
+    {
+        var city = $("#city");
+        city.get(0).options.length = 0;
+        provinceVal = provinceVal == null ? '' : provinceVal;
+        $.getJSON(iwbRoot+"admin/user/getcity/nation/"+nationVal+"/province/"+provinceVal, function(json){
+            if(json!=null){
+                $.each(json, function(i, n){
+                    var option = new Option(n, i);
+                    if (i == cityVal) {
+                        option.selected = true;
+                    }
+                    city.get(0).options.add(option);
+                });
+                if(city.val())
+                    city.show();
+                else
+                    city.hide();
+            }else{
+                city.hide();
+            }
+        });
+    }
+</script>
+{include file="/myuser/act/addpost"}
+{include file="/user/act/editpost"}
+<div class="modal inmodal in" id="gmup">
+    <div class="modal-dialog">
+        <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+                <button type="button" class="modal-close close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">选择跟进人</h4>
+            </div>
+            <div class="modal-body" style="margin: 0px;padding: 0px;">
+                <div class="showGMStructure" style="padding: 0px 10px;width: 100%;overflow-y:scroll;height: 280px;background:rgba(255,255,255,0.9);"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-close btn btn-warning">关闭</button>
+                <button type="button" class="modal-close btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        var data = [[1,134614774.57],[2,134644712.72],[3,134786039.39],[4,134886883.39],[5,134898625.39],[6,134936785.39],[7,134978416.39],[8,135011613.01],[9,135011821.01],[10,135043261.01],[11,135046319.01],[12,135046505.01],[13,135052020.01],];
+        var unit = [10000,'万'];
+        $("#flot-dashboard-chart").bind("plotclick", function (event, pos, item) {
+            if (item) {
+                var contents = (item.datapoint[1] / unit[0]).toFixed(2) + unit[1] + '元';
+                showTooltip(item.pageX,item.pageY,contents);
+            }
+        });
+        function showTooltip(x, y, contents) {
+            $('<div onclick="this.style.display=\'none\';">' + contents + '</div>').css({
+                position: 'absolute',
+                display: 'none',
+                top: y - 30,
+                left: x - 20,
+                border: '1px solid #fdd',
+                padding: '2px',
+                cursor:'pointer',
+                'background-color': '#dfeffc',
+                opacity: 0.80
+            }).appendTo("body").fadeIn(200);
+        }
+        // var data = [29.9, 71.5,106.4]
+        $("#flot-dashboard-chart").length && $.plot($("#flot-dashboard-chart"), [
+            data
+        ], {
+            series: {
+                lines: {
+                    show: false,
+                    fill: true
+                },
+                splines: {
+                    show: true,
+                    tension: 0.4,
+                    lineWidth: 1,
+                    fill: 0.4
+                },
+                points: {
+                    radius: 1,
+                    show: true
+                },
+                shadowSize: 1
+            },
+            grid: {
+                hoverable: true,
+                clickable: true,
+                tickColor: "#d5d5d5",
+                borderWidth: 1,
+                color: '#d5d5d5'
+            },
+            colors: ["#1ab394", "#464f88"],
+            xaxis: {
+                ticks: [
+                    [1,'2017/06'],[2,'2017/07'],[3,'2017/08'],[4,'2017/09'],[5,'2017/10'],[6,'2017/11'],[7,'2017/12'],[8,'2018/01'],[9,'2018/02'],[10,'2018/03'],[11,'2018/04'],[12,'2018/05'],[13,'2018/06'],                                //[1, "一月"], [2, "二月"], [3, "三月"], [4, "四月"], [5, "五月"], [6, "六月"], [7, "七月"], [8, "八月"], [9, "九月"], [10, "十月"], [11, "十一月"], [12, "十二月"]
+                ]
+            },
+            yaxis: {
+                ticks: [
+                    [16881503,'1689万'],[33763006,'3378万'],[50644509,'5067万'],[67526012,'6756万'],[84407515,'8445万'],[101289018,'10134万'],[118170521,'11823万'],[135052024,'13512万'],                    ]
+            },
+            tooltip: false
+        });
+    });
+
+    ws = new WebSocket("wss://api.ljk.cc:8282");
+    ws.onopen = function() {
+        console.log("连接成功");
+        ws.send('{"id":507,"type":"init","sign":"sign_507","username":"管理员"}');
+        //console.log("给服务端发送一个字符串：tom");
+    };
+    ws.onmessage = function(e) {
+        data=JSON.parse(e.data);
+        if(data.msgtype=='newordermsg'){
+            autoPlay();
+        }
+        //alert("收到服务端的消息：" + e.data);
+    };
+    function autoPlay(){
+        var myAuto = document.getElementById('neworder');
+        myAuto.play();
+    }
+</script>
+<script type="text/javascript">
+    createAddressForm('addressForm',1,'{$user.areaids}');
+    (function (){
+        var t = '{$user.realname}';
+        var map = new BMap.Map("allmap");
+        if('{$user.x}'!=0 && '{$user.y}'!=0) {
+            map.centerAndZoom(new BMap.Point('{$user.x}', '{$user.y}'), 14);
+        }else{
+            map.centerAndZoom(new BMap.Point(106.553694,29.556178),10);
+        }
+        addMarker('{$user.y}', '{$user.x}',map,t);
+        map.panBy(305,165);
+        map.enableScrollWheelZoom();//启用滚轮放大缩小
+        map.addEventListener("click", function(e){
+            map.clearOverlays();
+            var t = '{$user.realname}';
+            addMarker(e.point.lat,e.point.lng,map,t)
+            document.getElementById("xy").value=e.point.lng + ','+ e.point.lat;
+            // document.getElementById("x").value=e.point.lat;
+            // document.getElementById("y").value=e.point.lng;
+        });
+    })();//启用滚轮放大缩小
+    (function (){
+        var map = new BMap.Map("allmap2");
+        var t = '{$user.realname}';
+        map.centerAndZoom(new BMap.Point('{$user.x}', '{$user.y}'), 14);
+        addMarker('{$user.y}', '{$user.x}',map,t);
+        map.enableScrollWheelZoom();
+    })();
+    function addMarker(x,y,obj,text){
+        //marker.hide();
+        var map = obj;
+        var marker = new BMap.Marker(new BMap.Point(y, x));  // 创建标注
+        map.addOverlay(marker);              // 将标注添加到地图中
+        var label = new BMap.Label('<span style="background:#fff;display:inline-block;border:1px solid #f00;">' + text+ '</span>',{offset:new BMap.Size(20,-10)});
+        label.setStyle({
+            border:"0",
+            cursor:"pointer"
+        });
+        marker.setLabel(label);
+        //创建信息窗口
+        var infoWindow1 = new BMap.InfoWindow(text);
+        marker.addEventListener("click", function(){this.openInfoWindow(infoWindow1);});
+        marker.enableDragging();    //可拖拽
+    }
+</script>
+<!--form表单时间搜索-->
+<script type="text/javascript">
+    $(function(){
+        var div1=document.getElementById('div1');
+        var div2=document.getElementById('div2');
+        var div3=document.getElementById('div3');
+        var div4=document.getElementById('div4');
+        var div5=document.getElementById('div5');
+        var div6=document.getElementById('div6');
+        if($(div1).hasClass('checked')){
+            $(div1).find(":radio").attr("checked",true);
+        }else{
+            $(div1) .find(":radio").attr("checked",false);
+        }
+        if($(div2).hasClass('checked')){
+            $(div2).find(":radio").attr("checked",true);
+        }else{
+            $(div2) .find(":radio").attr("checked",false);
+        }
+        if($(div3).hasClass('checked')){
+            $(div3).find(":radio").attr("checked",true);
+        }else{
+            $(div3) .find(":radio").attr("checked",false);
+        }
+        if($(div4).hasClass('checked')){
+            $(div4).find(":radio").attr("checked",true);
+        }else{
+            $(div4) .find(":radio").attr("checked",false);
+        }
+        if($(div5).hasClass('checked')){
+            $(div5).find(":radio").attr("checked",true);
+        }else{
+            $(div5) .find(":radio").attr("checked",false);
+        }
+        if($(div6).hasClass('checked')){
+            $(div6).find(":radio").attr("checked",true);
+        }else{
+            $(div6) .find(":radio").attr("checked",false);
+        }
+
+        //给初始时间赋值
+        var followForm=document.getElementById('myuserFollowsearchSearchForm');
+        var stockForm=document.getElementById('myuserStocksearchSearchForm');
+        var hsForm=document.getElementById('myuserHssearchSearchForm');
+        var orderForm=document.getElementById('myuserOrdersearchSearchForm');
+        var chForm=document.getElementById('myuserChsearchSearchForm');
+        function timestampToTime(timestamp) {
+            var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+            Y = date.getFullYear() + '-';
+            M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+            D = date.getDate() + ' ';
+            h = date.getHours() + ':';
+            m = date.getMinutes() + ':';
+            s = date.getSeconds();
+            return Y+M+D+h+m+s;
+        }
+        //得到当前时间戳 判断是否闰年
+        var myDate = new Date();
+        //得到当前时间
+        var time=(myDate.getTime()/1000).toString().substring(0,(myDate.getTime()/1000).toString().indexOf('.'));
+        //转换为正常时间格式
+        var timeout=timestampToTime(time);
+        // var timeout='2016-12-13 4:05:12';
+        //截取的年 月
+        var year=timeout.substring(0,4);
+        var month=timeout.substring(5,7);
+        // 1个月
+        $(followForm).find('label:eq(0)').find('input[type=radio]').val("30");
+        $(stockForm).find('label:eq(0)').find('input[type=radio]').val("30");
+        $(hsForm).find('label:eq(0)').find('input[type=radio]').val("30");
+        $(orderForm).find('label:eq(0)').find('input[type=radio]').val("30");
+        $(chForm).find('label:eq(0)').find('input[type=radio]').val("30");
+        if((year%4==0 && year%100!=0)||(year%100==0 && year%400==0)){
+            //是闰年 366天
+            console.log('闰年');
+            //2016年是闰年，闰年上半年都是182天，平年上半年都是181天，下半年不管平年还是闰年都是016年 184年。
+            // 6个月
+            var days1=182;
+            var days2=366;
+            $(followForm).find("label:eq(1)").find('input[type=radio]').val(days1);
+            $(stockForm).find("label:eq(1)").find('input[type=radio]').val(days1);
+            $(hsForm).find("label:eq(1)").find('input[type=radio]').val(days1);
+            $(orderForm).find("label:eq(1)").find('input[type=radio]').val(days1);
+            $(chForm).find("label:eq(1)").find('input[type=radio]').val(days1);
+            // 12个月
+            $(followForm).find('label:eq(2)').find('input[type=radio]').val(days2);
+            $(stockForm).find("label:eq(2)").find('input[type=radio]').val(days2);
+            $(hsForm).find("label:eq(2)").find('input[type=radio]').val(days2);
+            $(orderForm).find("label:eq(2)").find('input[type=radio]').val(days2);
+            $(chForm).find("label:eq(2)").find('input[type=radio]').val(days2);
+        } else {
+            //不是闰年 365 天
+            console.log('不是闰年');
+            // 6个月
+            var days1=181;
+            var days2=365;
+            $(followForm).find("label:eq(1)").find('input[type=radio]').val(days1);
+            $(stockForm).find("label:eq(1)").find('input[type=radio]').val(days1);
+            $(hsForm).find("label:eq(1)").find('input[type=radio]').val(days1);
+            $(orderForm).find("label:eq(1)").find('input[type=radio]').val(days1);
+            $(chForm).find("label:eq(1)").find('input[type=radio]').val(days1);
+            // 12个月
+            $(followForm).find('label:eq(2)').find('input[type=radio]').val(days2);
+            $(stockForm).find("label:eq(2)").find('input[type=radio]').val(days2);
+            $(hsForm).find("label:eq(2)").find('input[type=radio]').val(days2);
+            $(orderForm).find("label:eq(2)").find('input[type=radio]').val(days2);
+            $(chForm).find("label:eq(2)").find('input[type=radio]').val(days2);
+        }
+    });
+</script>
+<!--form表单时间搜索-->
+<!--多图上传-->
+<script type="text/javascript">
+    //px转换为rem
+    (function(doc, win) {
+        var docEl = doc.documentElement, resizeEvt = 'orientationchange' in window ? 'orientationchange'
+            : 'resize', recalc = function() {
+            var clientWidth = docEl.clientWidth;
+            if (!clientWidth)
+                return;
+            if (clientWidth >= 640) {
+                docEl.style.fontSize = '100px';
+            } else {
+                docEl.style.fontSize = 100 * (clientWidth / 640) + 'px';
+            }
+        };
+
+        if (!doc.addEventListener)
+            return;
+        win.addEventListener(resizeEvt, recalc, false);
+        doc.addEventListener('DOMContentLoaded', recalc, false);
+    })(document, window);
+
+    function imgRemove() {
+        var imgList = document.getElementsByClassName("jian");
+        var imgt = document.getElementsByClassName("z_addImg");
+        var zhez = document.getElementById("zhezhao");
+        var mask = document.getElementsByClassName("z_mask")[0];
+        var cancel = document.getElementsByClassName("z_cancel")[0];
+        var sure = document.getElementsByClassName("z_sure")[0];
+
+        for (var j = 0; j < imgt.length; j++) {
+            imgt[j].index = j;
+            imgt[j].onclick = function() {
+                var t = this;
+                var at = t.firstChild.src;
+                //alert(at);
+                document.getElementById("zzaw").style.display = "block";
+                document.getElementById("zhezhao").style.display = "block";
+                document.getElementById("imgg").src = at
+                cancel.onclick = function() {
+                    mask.style.display = "none";
+                    zhez.style.display = "none";
+                    document.getElementById("zzaw").style.display = "none";
+                };
+                sure.onclick = function() {
+                    mask.style.display = "none";
+                    t.style.display = "none";
+                    zhez.style.display = "none";
+                    document.getElementById("zzaw").style.display = "none";
+                };
+                /*  zhez.style.display = "block";
+                  cancel.onclick = function() {
+                      mask.style.display = "none";
+                  };
+                  sure.onclick = function() {
+                      mask.style.display = "none";
+                        //t.parentNode.style.display = "none";
+                  };*/
+
+            }
+        }
+    }
+
+    if (typeof FileReader === 'undefined') {
+        alert("抱歉，你的浏览器不支持 FileReader");
+    }
+    function showBigPreviewImg(ele, sign) {
+        if (typeof sign === 'undefined') {
+            if (event.target === ele) {
+                sign = true;
+            } else {
+                sign = false;
+            }
+        }
+        if (sign) {
+            var w = $(ele).data('w');
+            var h = $(ele).data('h');
+            if (w > 600) {
+                h = (600 / w) * h;
+                w = 600;
+            }
+            if (h > 450) {
+                w = (450 / h) * w;
+                h = 450;
+                if (w > 600) {
+                    h = (600 / w) * h;
+                    w = 600;
+                }
+            }
+            $('#previewBigImg').parent().show();
+            //$('#previewBigImg').width(w);
+            $('#previewBigImg').height(h);
+            $('#previewBigImg').css('background-image',
+                $(ele).css('background-image'));
+            $('#previewBigImg').css('background-size','100% 100%');
+        }
+
+    }
+    function removePreviewImg(ele, config) {
+        if ((typeof config) === 'undefined') {
+            config = {};
+            config.l = 9;
+        }
+        $nele = $(ele).next('li');
+        $pele = $(ele).prev('li');
+        if ($nele.length !== 0) {
+            var elex = $nele[0];
+        } else if ($pele.length !== 0) {
+            var elex = $pele[0];
+        }
+        showBigPreviewImg(elex, true);
+        $(ele).remove();
+        var l = parseInt($('#uploadedNum').html());
+        l--;
+        $('#uploadedNum').html(l)
+        $('#inputFileBox').show();
+        var $f = $('<input name="preview_img[]"  multiple="multiple" class="weui-uploader__input" type="file" onchange="previewUploadImgs(this,{l:'
+            + config.l
+            + ',size:Math.pow(2,18)});" accept="image/png,image/gif,image/jpeg" />');
+        $('#inputFileBox').html($f);
+        if (l === 0) {
+            $('#previewBigImg').parent().hide();
+        }
+    }
+    function previewUploadImgs(imgInput){
+        var that = imgInput;
+        var files = that.files;
+        var url = $(imgInput.form).attr('action');
+        var tmpl = '<li name="preview_img[]" class="weui-uploader__file weui-uploader__file_status" data-filename="#filename#" style="background-image:url(#url#);position:relative;" onchange="previewUploadImgs(this);">' +
+            '<span onclick="removePreviewImg(this.parentNode);" style="position:absolute;top:0px;right:0px;display: inline-block;color:#000;z-index: 999;width: 24px;height: 24px;line-height: 24px;border-radius: 12px;text-align: center;background-color: #fff;">—</span></li>';
+        var l = files.length > 9 ? 9 : files.length;
+        for(var i = 0;i < l;i++){
+            $('.weui-uploader__file').each(function (){
+                if($(this).data('filename') === filename){
+                    sign = false;
+                }
+            });
+            var filename = files[i].name;
+            var sign = true;
+            if(sign){
+                lrz(that.files[i],{
+                    width: 800
+                }).then(function (rst){
+                    return rst;
+                }).then(function (rst) {
+                    var src = rst.base64;
+                    var uploadedNum = parseInt($('#uploadedNum').html());
+                    uploadedNum++;
+                    $('#uploadedNum').html(uploadedNum);
+                    if(uploadedNum === 9){
+                        $("#inputFileBox").hide();
+                    }
+                    if(uploadedNum > 9){
+                        $('#uploadedNum').html('9');
+                        $("#inputFileBox").hide();
+                        return false;
+                }
+                    $('#uploaderFiles').append($(tmpl.replace('#url#', src).replace('data-filename="#filename#"','data-filename="'+ filename +'"')));
+                    var inp = '<input type="hidden" name="preview_img1[]" value="'+src+'">';
+                    $('#uploaderFiles').append(inp);
+                    return null;
+                }).then(function (){
+                    imgInput.outerHTML = imgInput.outerHTML;
+                });
+            }else{
+                imgInput.outerHTML = imgInput.outerHTML;
+            }
+        }
+    }
+</script>
+<!--多图上传-->
+</body>
+</html>

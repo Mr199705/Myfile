@@ -1,0 +1,33 @@
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            {if $orders}
+            <tr>
+                <th colspan="3"></th>
+                <th style="color:red;">总金额：¥{$orderjine}</th>
+            </tr>
+            {/if}
+            <tr>
+                <th>商品名称</th>
+                <th>成交量</th>
+                <th>平均价格</th>
+                <th>成交金额</th>
+             </tr>
+        </thead>
+        <tbody>
+            {if $orders}
+            {foreach name="$orders" item="order}
+            <tr>
+                <td>{$order.name}</td>
+                <td>{$order.goods.jnum|string_format:"%.2f"}{$order.goods.unit}</td>
+                <td>{$order.goods.jave|string_format:"%.2f"}元</td>
+                <td>{$order.goods.jtotal|string_format:"%.2f"}元</td>
+            </tr>
+            {/foreach}
+            {else/}
+            <tr><td colspan="4" style="color:red;text-align: center;">该时间段无出货信息，您可以重新设置时间段再查询！</td></tr>
+            {/if}
+        </tbody>
+    </table>
+</div>
+{include file="common/page"}

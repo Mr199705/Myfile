@@ -1,0 +1,50 @@
+<div class="row wrapper white-bg page-heading" style="">
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-sm-3" style="margin: 0px 5px 0px 0px;;padding:0px;width: 145px;">
+                <div class="input-group">
+                    <input type="text"class="laydate-input input-sm form-control" name="csdate" placeholder="提成产生开始时间"/>
+                </div>
+            </div>
+            <div class="col-sm-1" style="margin: 0px 5px 0px 0px;;padding:0px;width: 33px;">
+                <div class="input-group">
+                    <span class="input-sm form-control" style="text-align: center;">-</span>
+                </div>
+            </div>
+            <div class="col-sm-3" style="margin: 0px 5px 0px 0px;padding:0px;width: 145px;">
+                <div class="input-group">
+                    <input type="text" class="laydate-input input-sm form-control" name="cedate" placeholder="提成产生结束时间"/>
+                </div>
+            </div>
+            <div class="col-sm-1" style="width:90px;padding: 0px;">
+                <div class="input-group">
+                    <select name="matchtype" class="input-sm form-control" style="margin: 0 0;padding: 0 0;" >
+                        <option value="like">模糊匹配</option>
+                        <option value="eq">精准匹配</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-2" style="padding:0px;width:178px;">
+                <div class="input-group" style="position: relative;">
+                    <input type="text" style="width: calc(100% - 9px);" name="keyword" placeholder="输入关键词搜索" value="" class="input-sm form-control" onkeydown="if(event.keyCode == 13){ this.form.button.click(); }">
+                </div>
+            </div>
+            <div class="col-sm-1" style="width:90px;padding: 0px;">
+                <div class="input-group">
+                    <select name="rtype" class="input-sm form-control" style="margin: 0 0;padding: 0 0;" >
+                        <option value="water">流水记录</option>
+                        <option value="statics">提成汇总</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-1"  >
+                <div class="input-group">
+                    <span class="input-group-btn">
+                        <button type="button" name="button" class="btn btn-sm btn-primary" onclick="getList({sign:'{$initData.sign}'},1);">搜索</button>
+                        <button style="margin-left: 20px;"class="btn btn-sm btn-success" onclick="var that = this;$(that.form).attr('action','/admin/baobiao/gainr');$(that.form).attr('onsubmit','return true;');setTimeout(function (){$(that.form).attr('onsubmit','return false;');$(that.form).attr('action','/admin/dispatch/gainr.html');},50);">导出</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

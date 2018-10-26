@@ -1,0 +1,195 @@
+<!--购物车-->
+<script type="text/html" id="tpl_editaddressdata">
+    <div style="display: block;" class="modal fade" id="addressAddDialog" data-id="{{ if(ljk && ljk!=null){}}{{? ljk.id!==0}}{{=ljk.id}}{{??}}0{{?}}{{}else{}}0{{}}}" role="dialog" aria-labelledby="addressAdd" aria-hidden="true">
+        <form method="post" name="addressAddForm" id="addressAddForm"  onsubmit="return false;">
+            <div id="aaa">
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-cells__title">收货人:&emsp;</label></div>
+                    <div class="weui-cell__bd"><input AUTOCOMPLETE="off" name="consignee" style="word-wrap: break-word; word-break: normal;" class="weui-input" type="text" value="{{ if(ljk && ljk!=null){}}{{? ljk.consignee}}{{=ljk.consignee}}{{??}}{{?}}{{}else{}}{{}}}"> </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-cells__title">联系电话:</label></div>
+                    <div class="weui-cell__bd"><input  AUTOCOMPLETE="off" name="mobile" style="word-wrap: break-word; word-break: normal;" class="weui-input" type="text" value="{{ if(ljk && ljk!=null){}}{{? ljk.mobile}}{{=ljk.mobile}}{{??}}{{?}}{{}else{}}{{}}}"> </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label class="weui-cells__title">所在地区:</label>
+                    </div>
+                    <div class="weui-cell__bd" name="areaname" id="addressForm"></div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-cells__title">详细地址:</label></div>
+                    <div class="weui-cell__bd">
+                        <input AUTOCOMPLETE="off" type="text" class="weui-input" name="address"  style="word-wrap: break-word; word-break: normal;" value="{{ if(ljk && ljk!=null){}}{{? ljk.address}}{{=ljk.address}}{{??}}{{?}}{{}else{}}{{}}}"/>
+
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-cells__title">设为默认:</label></div>
+                    <div class="weui-cell__ft">
+                        <label for="switchCP" class="weui-switch-cp">
+                            <input id="switchCP" name="isdefault" class="weui-switch-cp__input"   type="checkbox" {{ if(ljk && ljk!=null){}}{{if(ljk.isdefault==1){}} checked="checked"{{??}} {{?}}{{}else{}}  {{}}}  value="{{ if(ljk && ljk!=null){}}{{? ljk.id!==0}}{{=ljk.id}}{{??}}0{{?}}{{}else{}}0{{}}}"/>
+                            <div class="weui-switch-cp__box"></div>
+                        </label>
+                    </div>
+                </div>
+                <div class="weui-cell"> <button  type="submit" onclick="return corte(this.addressAddForm)"  class="weui-btn weui-btn_primary">保存</button>
+                </div>
+            </div>
+        </form>
+    </div>
+<script type="text/javascript">
+    $(function(){
+        dianji();
+        $("#m_user_index").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+        goSys('m_index_home');
+        $("#address_title").text("{{ if(ljk && ljk!=null){}}编辑收货地址{{}else{}} 添加收货地址{{}}}");
+        var areaids='{{ if(ljk && ljk!=null){}}{{? ljk.areaids}}{{=ljk.areaids}}{{??}} 0{{?}}{{}else{}}0{{}}}';
+        createAddressForm('addressForm', 1, areaids );
+    });
+    function corte(form){
+        var $toast=$('#toast');
+        var addressDialog = $('#addressAddDialog');
+        var update_id = addressDialog.attr('data-id');
+        form = document.addressAddForm;
+        var consignee = form.consignee.value;
+        var mobile 	= form.mobile.value;
+        var province = $(form).find('.address_1').val();
+        var city = $(form).find('.address_2').val();
+        var area = $(form).find('.address_3').val();
+        var address = form.address.value;
+        var isdefault 	= form.isdefault.checked;  
+        if( isdefault == true ) {
+            isdefault = 1;
+        }else{
+            isdefault = 0;
+        }
+        var dh=/^1[3456789]\d{9}$/;
+        var zipco=/^\d{6}$/;
+        var $viewhtml=$('.listeditaddress');
+        var msg='';
+        if(consignee==""){
+            msg='请填写您的正确姓名';
+            iosDialog2Msg(msg,$viewhtml);
+            return false;
+        }
+        if( !dh.test(mobile) ){
+            msg='请正确填写您的手机号码';
+            iosDialog2Msg(msg,$viewhtml);
+            return false;
+        }
+        if( province=="" ){
+            msg='请选择相应的省份';
+            iosDialog2Msg(msg,$viewhtml);
+            return false;
+        }
+        if( address == "" ){
+            msg='请正确填写您的详细地址';
+            iosDialog2Msg(msg,$viewhtml);
+            return false;
+        }
+        if( update_id==0){
+            $.ajax({
+                type : "POST",
+                url : "/m/order/add",
+                dataType: 'json',
+                data:{
+                    consignee: consignee,
+                    mobile: mobile,
+                    province: province,
+                    city: city,
+                    area: area,
+                    address: address,
+                    isdefault: isdefault
+                },
+                success : function(res){
+                    if( res.code == 1 ){
+                        backaddress($viewhtml);
+                        console.log('添加地址信息成功:' + res['code']);
+                    }else{
+                        backaddress($viewhtml);
+                        console.log('添加地址信息成功:' + res['code']);
+                    }
+                }
+            });
+        }else if( update_id!=0 ){
+            $.ajax({
+                type : "POST",
+                url : "/m/order/address_update",
+                dataType: 'json',
+                data: {
+                    id: update_id,
+                    consignee: consignee,
+                    mobile: mobile,
+                    province: province,
+                    city: city,
+                    area: area,
+                    address: address,
+                    isdefault: isdefault
+                },
+                success : function(res){
+                    if(res.code==1){
+                        backaddress($viewhtml);
+                        console.log('更新地址信息成功:' + res['code']);
+                    }else{
+                        backaddress($viewhtml);
+                        console.log('更新信息获取失败，错误信息：' + res.error );
+                    }
+                }
+            });
+        }
+    }
+    function backaddress($viewhtml) {
+        var tip = {
+            type:5,
+            content:'已保存'
+        };
+        var template = doT.template($('#tpldialogs').html());
+        var t_html = template(tip);
+        $('#dialogs').remove();
+        var uid=$('#uid').html();
+        ShowaddressTpllistbyID('address','address',uid);
+        setTimeout('window.pageManager.go(\'address\')',600);
+        $viewhtml.append(t_html);
+    }
+</script>
+</script>
+<script type="text/html" id="tpl_editaddress">
+    <div class="page">
+    <!---顶部-->
+    <div class="ljk_top">
+    <a class="top_left js_item" data-id="address" href="javascript:;">
+    <i class="fa fa-angle-left fa-2x"></i>
+    </a>
+    <p id="address_title" class="weui-flex__item top_center">编辑收货地址</p>
+    </div>
+    <!---顶部-->
+    <!--底部--->
+    <!--内容-->
+    <div class="ljk_neirong" style="position: relative;margin:0px;top:49px;width: 100%;height: calc(100% - 100px);">
+    <div class="listcontent listseditaddress" style="padding-bottom: 0px;">
+    <div class="listeditaddress"> </div>
+    </div>
+    </div>
+    <!--内容-->
+    </div>
+    <script type="text/javascript">
+    $(function(){
+        dianji();
+        $("#m_user_index").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+        goSys('m_index_home');
+        var urlstr = "/m/order/editaddress";
+        var uid = $('#addressdata').data('id');
+        ShowTplDataList(urlstr,'editaddress',{id:uid,limit:5,p:1});
+    });
+</script>
+</script>
+<script type="text/template" id="addressSelect">
+    <select style="width: 30%;" class="address address_{{=ljk.level}}" data-level="{{=ljk.level}}" name="areas[{{=ljk.level}}]" onchange="createAddressForm('{{=ljk.id}}',{{=ljk.level + 1}});">
+    <option value="">请选择</option>
+        {{for(var i = 0; i < ljk.data.length; i++){}}
+        <option value="{{=ljk.data[i].code}}:{{=ljk.data[i].code_name}}" {{?ljk.selectedCode && (ljk.selectedCode==ljk.data[i].code)}}selected="selected"{{?}}>{{=ljk.data[i].code_name}}
+        </option>
+    {{?}}
+</select>
+</script>

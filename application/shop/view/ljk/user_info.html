@@ -1,0 +1,392 @@
+{include file="common/top" /}
+<title>编辑个人信息</title>
+</head>
+<body>
+<div class="fanhui_cou">
+  <div class="fanhui_1"></div>
+  <div class="fanhui_ding">顶部</div>
+</div>
+<header class="header">
+    <div class="fix_nav">
+        <div style="max-width:768px;margin:0 auto;background:#FE5400;position: relative;"> <a class="nav-left back-icon" href="javascript:history.back();">返回</a>
+            <div class="tit">编辑个人信息</div>
+        </div>
+    </div>
+</header>
+{include file="common/tip" /}
+<div class="container" style="padding:0px;">
+<form method="post" name="infoForm">
+    <div style="background:#fff;">
+		<div class="dizhi_x"> <span>头像</span>
+			<div class="dizhi" >
+				<div>
+					<img id="UserIcon" onclick="return selectUserIcon(123);" class="img-circle" style="width: 160px;height: 160px;border: 1px solid orange;border-radius: 9em;" src="{$userinfo.icon}">
+        			<input type="file" onchange="return upUserIcon();" name="file" id="file" accept="image/*" style="display: none;"/>
+					<div id="upUserIconText" style="display: none;" >正在上传头像</div>
+				</div>
+			</div>
+      	</div>
+     <div class="dizhi_x"> <span>真实姓名</span>
+        <div class="dizhi">
+          <input type="text" placeholder="请输入个人真实姓名" name="realname" value="{$userinfo.realname}">
+        </div>
+      </div> 
+	  <div class="dizhi_x"> <span>我的昵称</span>
+        <div class="dizhi">
+          <input type="text" placeholder="请输入个人昵称" name="nickname" value="{$userinfo.nickname}">
+        </div>
+      </div>	
+      <!-- <div class="dizhi_x"> <span>手机号码</span>
+        <div class="dizhi">
+          <input type="text" placeholder="请输入手机号" name="phone" onchange="return changePhone(this);" value="{{=ljk.phone }}" data-old="{{=ljk.phone }}" >
+        </div>
+      </div>
+	  <div class="dizhi_x" id="phoneCode" style="display: none;" > <span>手机验证码</span>
+        <div class="dizhi">
+			<a href="#" onclick="checkPhone();">点击获取验证码</a>
+			<input type="text" placeholder="请输入收到的验证码" name="phoneCode" value="" >
+        </div>
+      </div> -->
+      <div class="dizhi_x"> <span>生日</span>
+        <div class="dizhi">
+        	<input type="date" name="birthday" value="{$userinfo.birthday}"/>
+        </div>
+      </div>
+      <div class="dizhi_x"> <span>性别</span>
+        <div class="">
+          		<label style="padding:0.25rem 1rem 0.1rem;"><input type="radio" name="gender" value="0" {if $userinfo.gender ==0 }checked="checked"{/if}/>男</label>
+				<label style="padding:0.25rem 1rem 0.1rem;"><input type="radio" name="gender" value="1" {if $userinfo.gender ==1 }checked="checked"{/if} />女</label>
+		
+        </div>
+      </div>
+     <!-- <div class="dizhi_x"> <span>所在地区</span>
+		<div class="dizhi" id="addressForm"></div>
+      </div>
+      <div class="dizhi_x"> <span>详细地址</span>
+        <div class="dizhi">
+          <textarea placeholder="请输入详情地址" name="address">{{=ljk.address }}</textarea>
+        </div>
+      </div>-->
+      
+    </div>
+    <div class="fixed-foot">
+      <div class="fixed_inner"> <a href="javascript:;"  onClick="return info_update(this.infoForm);" class="btn btn-danger btn-b" style="width:100%; ">保&nbsp;存</a> </div>
+    </div>
+  </form>
+</div>
+
+<div class="clear"></div>
+{include file="common/footer_nav" /}
+<!-- dot模版 Start -->
+<script type="text/template" id="addressSelect">
+<select class="address address_{{=ljk.level}}" data-level="{{=ljk.level}}" name="areas[{{=ljk.level}}]" onchange="createAddressForm('{{=ljk.id}}',{{=ljk.level + 1}});">
+	<option value="">请选择</option>
+	{{for(var i = 0; i < ljk.data.length; i++){}}
+		<option value="{{=ljk.data[i].code}}:{{=ljk.data[i].code_name}}" {{?ljk.selectedCode && (ljk.selectedCode==ljk.data[i].code)}}selected="selected"{{?}}>{{=ljk.data[i].code_name}}</option>
+	{{?}}
+</select>
+</script>
+<!-- dot模版 End -->
+
+<script type="text/javascript">
+	
+
+	//	提交新的用户信息
+	function info_update(form){
+		//	获取输入内容
+		form = document.infoForm;
+		var nickname = form.nickname.value;
+		var realname = form.realname.value;
+		//var phone 	= form.phone.value;
+		//var phoneCode 	= form.phoneCode.value;
+		//var province = $(form).find('.address_1').val();
+		//var city = $(form).find('.address_2').val();
+		//var area = $(form).find('.address_3').val();
+		//var address = form.address.value;
+		var birthday = form.birthday.value;
+		//var email = form.email.value;
+		var gender = $(form).find('input[type="radio"]');
+		for (var i = 0; i < gender.length; i++) {
+	        if (gender[i].checked) {
+	            gender = gender[i].value;
+	        }
+	    }
+		//	头像地址
+		var icon = $('#upUserIconText').attr('userIconPath');
+		//	JS判断
+		if( nickname === '' ){
+			showTip({msg:'请输入昵称'});
+			return false;
+		}
+		if( realname === '' ){
+			showTip({msg:'请输入真实姓名'});
+			return false;
+		}
+		/*if( province === '' ){
+			alert('请选择所在省市');
+			return false;
+		}
+		if( city === '' ){
+			alert('请选择所在城市');
+			return false;
+		}
+		if( area === '' ){
+			alert('请选择所在区县');
+			return false;
+		}
+		if( address === '' ){
+			alert('请输入所在地详细地址');
+			return false;
+		}*/
+		if( birthday === '' ){
+		//	alert('请选择生日');
+		//	return false;
+		}
+		if( gender === '' ){
+			alert('请选择性别');
+			return false;
+		}
+
+		//	手机号码验证
+		/* var oldPhone = $(form.phone).attr('data-old');
+		if( oldPhone !== phone ){
+			//alert('更改了号码:' + phone);
+			console.log('更改了号码:' + phone);
+			//
+			var dh=/^1[3456789]\d{9}$/;
+			if( !dh.test(phone) ){
+				alert('请输入正确的手机号码');
+				return false;
+			}
+			if( phoneCode === '' ){
+				alert('请输入手机验证码');
+				return false;
+			}
+		}else{
+			phone = 0;
+		} */
+
+		//	提交后台更新
+		$.ajax({
+			type : "POST",
+	        url : "/shop/user/updateInfo",
+	        dataType: 'json',
+	        data: {
+	        	nickname: nickname,
+	        	realname: realname,
+	        	gender: gender,
+	        	birthday: birthday
+	        },
+	        beforeSend:function(){
+	        	console.log('正在更新个人信息...');
+	        },
+	        success : function(res){
+	        	if( res.code == 10 ){
+					showTip({msg:'更新个人信息成功'});
+	        	}else{
+	        		showTip({msg:res.msg});
+	        	}
+	        },
+	        error: function(res){
+				showTip({msg:"更新个人信息失败"});
+	        }
+		});
+
+		return 0;
+	}
+
+	//	手机号码
+	function changePhone(phone){
+		var oldPhone = $(phone).attr('data-old');
+		if( oldPhone !== phone.value ){
+			//alert('更改了号码:' + phone.value);
+			$('#phoneCode').css('display','block');
+		}else{
+			$('#phoneCode').css('display','none');
+		}
+	}
+
+	//	更改头像
+	function selectUserIcon(v){
+		console.log('选择头像');
+		$('#file').click();
+	}
+
+	/**
+	* 从 file 域获取 本地图片 url
+	*/
+	function getFileUrl(sourceId) {
+		var url;
+		if (navigator.userAgent.indexOf("MSIE")>=1) { // IE
+			url = document.getElementById(sourceId).value;
+		} else if(navigator.userAgent.indexOf("Firefox")>0) { // Firefox
+			url = window.URL.createObjectURL(document.getElementById(sourceId).files.item(0));
+		} else if(navigator.userAgent.indexOf("Chrome")>0) { // Chrome
+			url = window.URL.createObjectURL(document.getElementById(sourceId).files.item(0));
+		}
+		return url;
+	}
+
+	/**
+	* 将本地图片 显示到浏览器上
+	*/
+	function preImg(sourceId, targetId) {
+		var url = getFileUrl(sourceId);
+		var imgPre = document.getElementById(targetId);
+		imgPre.src = url;
+	}
+
+	//	上传头像
+	function upUserIcon(){
+		//	预览选择的头像
+		var fileObject = document.getElementById("file").files[0];
+		//		判断文件大小
+		var fileMaxSize = 210152;
+		if( fileObject.size >  fileMaxSize ){
+			alert('文件大小不能超过'+ (fileMaxSize / 1024).toFixed(2) +'Kb');
+			document.getElementById("file").value = '';
+			return 0;
+		}
+		//	预览
+		preImg( 'file', 'UserIcon');
+		var userIconText = $('#upUserIconText');
+		userIconText.css( 'display', 'block');
+		//	开始上传
+		var formData = new FormData();
+		//	填充到formData中
+        formData.append("file", fileObject );
+        $.ajax({
+            url: "upIcon",
+            type: "POST",
+            data: formData,
+            //	必须false才会自动加上正确的Content-Type
+            contentType: false,
+            //	必须false才会避开jQuery对 formdata 的默认处理,XMLHttpRequest会对 formdata 进行正确的处理
+            processData: false,
+            success: function (res) {
+                if( res.code === 10 ){
+                	//alert('上传成功：' +　res.data );
+                	userIconText.html( '头像上传成功');
+                	document.getElementById('UserIcon').src = '__UPLOAD_IMG__/' + res.data;
+                	userIconText.attr('userIconPath', res.data );
+                }else{
+                	//alert('错误信息：' +　res.error );
+                	userIconText.html('头像上传失败：<div style="color:red;">' + res.error +'</dvi>' );
+                }
+            },
+            error: function () {
+                alert("头像上传失败！连接服务器失败");
+            }
+        });
+
+        return 0;
+	}
+
+	//	获取手机验证码
+	function checkPhone(){
+		var phone = $('input[name="phone"]').val();
+		var dh=/^1[3456789]\d{9}$/;
+		if( !dh.test(phone) ){
+			alert('请输入正确的手机号码');
+			return false;
+		}
+		//	异步获取
+		$.ajax({
+	        url:'/shop/user/checkPhone',
+	        data: {
+	        	phone: phone
+	        },
+	        type:'post',
+	        dataType:'json',
+	        success:function (res){
+	            if(res.code === 10){
+	                alert('获取成功,手机号:' + res.phone + ',验证码' + res.phoneCode);
+	            }else{
+	            	alert('获取失败');
+	            }
+	        }
+	    });
+	}
+
+	//	三级联动
+	function createAddressForm(id,level,areaids){
+	    var minLevel = 1;
+	    if(typeof level === 'undefined'){
+	        level = minLevel;//最小level
+	    }
+	    if(typeof id === 'undefined' || !id){
+	        id = 'addressForm';
+	    }
+	    if(typeof areaids === 'undefined' || !areaids){
+	        if(event && event.target){
+	            var $s = $(event.target);
+	            var v = $s.val().trim();
+	            if(v){
+	                //说明有值
+	                var xx = v.split(':');
+	                areaids = xx[0];
+	                var areaidx = areaids.split(',');
+	            }else{
+	                //说明没有值
+	                var clevel = parseInt($s.data('level')) + 1;
+	                while($('#' + id).children('.address_' + clevel).length === 1){
+	                    $('#' + id).children('.address_' + clevel).remove();
+	                    clevel++;
+	                }
+	                return true;
+	            }
+	        }else{
+	            var areaidx = [];
+	        }
+	    }else{
+	        var areaidx = areaids.split(':');
+	    }
+	    var data = {};
+	    //最小的level 1
+	    console.log(areaidx);
+	    if(level === minLevel){
+	        data.parent_code = '';
+	    }else if(areaidx.length >= 1){
+	        data.parent_code = areaidx.shift();
+	    }else{
+	        //说明到头了
+	        return false;
+	    }
+	    if(areaidx.length >= 1){
+	        var selectedCode = areaidx[0];
+	    }
+	    data.level = level;
+	    data.action = 'getareas';
+	    $.ajax({
+	        url:'/shop/address/getAreas',
+	        data:data,
+	        type:'post',
+	        dataType:'json',
+	        success:function (res){
+	            if(res.code === 0){
+	                var ljk = {};
+	                var $as = $('#addressSelect');
+	                var template = doT.template($as.html());
+	                ljk.data = res.data;
+	                ljk.level = level;
+	                ljk.id = id;
+	                ljk.selectedCode = selectedCode;
+	                var _html = template(ljk);
+	                if($('#' + id).children('.address_' + level).length === 1){
+	                    $('#' + id).children('.address_' + level).replaceWith(_html);
+	                }else{
+	                    $('#' + id).append(_html);
+	                }
+	                if(areaidx.length >= 1){
+	                    level++;
+	                    var newareaids = areaidx.join(':');
+	                    createAddressForm(id,level,newareaids);
+	                }
+	            }
+	        }
+	    });
+	}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<div class="table-responsive">
+    <table class="table table-striped dindan">
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>名称</th>
+                <th>编号</th>
+                <th>库管</th>
+                <th>固话</th>
+                <th>手机</th>
+                <th>状态</th>
+                <th>地址</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        {if $storages}
+        <tbody>
+            {foreach name="storages" key="k" item="v"}
+            <tr>
+                <td>{$pageInfo.currentPage * $pageInfo.listRows - $pageInfo.listRows + $k + 1}</td>
+                <td>{$v.name}</td>
+                <td>{$v.location_no}</td>
+                <td>{$v.realname}</td>
+                <td>{$v.phone}</td>
+                <td>{$v.mobile}</td>
+                <td>{if $v.disable==1}<span style="color:red;">锁定</span>{else}<span style="color:green;">启用</span>{/if}</td>
+                <td>{$v.getaddress}</td>
+                <td>
+                    {if $v.disable==0}
+                    <a class="btn btn-sm btn-danger" onClick="return ajaxAct2('/admin/storage/lockstorage/','您真的要锁定该仓库吗？锁定后业务员仓库及客户下单等将无法进行出入库操作！','正在进行锁定操作，请稍候！',{id:'{$v.id}',disable:'1'});">锁定</a>
+                    {/if}
+                    {if $v.disable==1}
+                    <a class="btn btn-sm btn-primary" onClick="return ajaxAct2('/admin/storage/lockstorage/','','正在进行启用操作，请稍候！',{id:'{$v.id}',disable:'0'});">启用</a>
+                    {/if}
+                    <a href="javascript:void(0)" class="btn btn-sm btn-primary btn-open-modal" data-id="#editStorage" onclick="openModal(this);initStorage({id:'{$v.id}',name:'{$v.name}',location_no:'{$v.location_no}',guid:'{$v.guid}',areaids:'{$v.areaids}',areaname:'{$v.areaname}',phone:'{$v.phone}',address:'{$v.address}',sort:'{$v.sort}'});">编辑</a>
+                    <a class="btn btn-sm btn-success" href="/admin/storage/manage/sid/{$v.id}" onClick="return c(this);" data-index="admin_storage_goods"><span style="display: none;">库存</span>管理</a>
+                </td>
+            </tr>
+            {/foreach}
+        </tbody>
+        {else}
+        <tr><td style="color:red;text-align: center;" colspan="9">未查询到该条件下的仓库信息</td></tr>
+        {/if}
+    </table>
+</div>
+{include file="common/page"}

@@ -1,0 +1,48 @@
+<div class="table-responsive">
+    <table class="table table-striped dindan">
+        <thead>
+            <tr>
+                <th>活动名称</th>
+                <th>商品名称</th>
+                <th>属性名称</th>
+                <th>分销等级及金额</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        {if $market}
+        <tbody>
+            {foreach name="market" key="k" item="v"}
+            <tr>
+                <td>{$v.title}</td>
+                <td>{$v.goodsName}</td>
+                <td>{if $v.skus}
+                        {foreach name="v.skus" item="sku"}
+                            {$sku.attrs_value}<br/>
+                        {/foreach}
+                    {else/}
+                        无属性
+                    {/if}</td>
+                <td>
+                    {if $v.level!=0}
+                        {foreach name="v.into_rules" key="kk" item="vv"}
+                        <span>{$vv.level}级报价：{$vv.into}</span><br>
+                        {/foreach}
+                    {else}
+                    <span>无分销报价</span>
+                    {/if}
+                </td>
+                <td>{if $v.status==1}<span style="color:green;">启用</span>{else}<span style="color:red;">锁定</span>{/if}</td>
+                <td>
+                    <a class="btn  btn-success btn-sm" onclick="return c(this);" href="/admin/marketing/market_update/id/{$v.id}"><span style="display: none;">{$v.goodsName}</span>编辑</a>
+                    <a class="btn btn-warning btn-sm" href="javascript:void(0);" onclick="return ajaxAct2('/admin/marketing/edit/','您确定关闭这个商品的活动吗？','操作进行中，请稍后！',{action:'editstatus',type:'1',act_name:'活动关闭',value:'1',x:'5'});">关闭</a>
+                </td>
+            </tr>
+            {/foreach}
+        </tbody>
+        {else}
+        <tr><td style="color:red;text-align: center;" colspan="5">未查询到该条件下的营销信息</td></tr>
+        {/if}
+    </table>
+</div>
+{include file="common/page"}

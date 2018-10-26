@@ -1,0 +1,34 @@
+<script type="text/template" charset="utf-8" id='user_stock_record_list'>
+    {{if(ljk){}}
+    <!--一个客户-->
+    {{for(var i=0;i<ljk.length;i++){}}
+    <div class="weui-cells page__category-content">
+        <a class="weui-cell message_header weui-cell_access js_item" data-id="uploader" href="" >
+            <div class="weui-cell__bd  sy_kh">
+                <p>{{=ljk[i].goods_name}}</p>
+            </div>
+            <div style="color: dodgerblue;" >&nbsp;</div>
+        </a>
+        <div class="weui-form-preview__bd information_content">
+            <div class="weui-form-preview__item">
+                <label class="weui-form-preview__label">数量：</label>
+                <span class="weui-form-preview__value">{{=ljk[i].num}}{{=ljk[i].unit}}</span>
+            </div>
+            <div class="weui-form-preview__item">
+                <label class="weui-form-preview__label">生产日期：</label>
+                <span class="weui-form-preview__value">{{=ljk[i].mdate}}</span>
+            </div>
+            <div class="weui-form-preview__item">
+                <label class="weui-form-preview__label">上报时间：</label>
+                <span class="weui-form-preview__value">{{=ljk[i].adate}}</span>
+            </div>
+            <div class="weui-form-preview__item">
+                <label class="weui-form-preview__label">备注：</label>
+                <span class="weui-form-preview__value">{{=ljk[i].code}}</span>
+            </div>		
+        </div>
+    </div>
+    {{}}}
+    <!--一个客户-->
+    {{}}}
+</script>

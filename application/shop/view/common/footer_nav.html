@@ -1,0 +1,44 @@
+<footer class="footer">
+    {if $groupShop.v == 1}
+    <div class="foot-con">
+        <div class="foot-con_2">
+            <a href="/shop/index/index" {if in_array($controller,['index'])}class="active"{/if}> 
+                <i class="navIcon home"></i> 
+                <span class="text">首页</span>
+            </a>
+            <a href="/shop/category/index" {if in_array($controller,['category'])}class="active"{/if}>
+                <i class="navIcon sort"></i>
+                <span class="text">分类</span> 
+            </a> 
+            <a href="/shop/shopcart/index" {if in_array($controller,['shopcart'])}class="active"{/if}>
+                <i class="navIcon shop"></i> 
+                <span class="text">购物车</span>
+            </a>
+            <a href="/shop/user/index" {if in_array($controller,['user','address','order'])}class="active"{/if}>
+                <i class="navIcon member"></i> <span class="text">会员中心</span> 
+            </a> 
+        </div>
+    </div>
+    {else}
+    <div class="foot-con">
+        <div class="foot-con_2">
+            <a href="/x/api/shop/index/"> 
+                <i class="navIcon home"></i>
+                <span class="text">首页</span>
+            </a>
+            <a href="/x/api/shop/category/"> 
+                <i class="navIcon sort"></i>
+                <span class="text">分类</span> 
+            </a>
+            <a href="/x/api/shop/cart/"> 
+                <i class="navIcon shop"></i> 
+                <span class="text">购物车</span> 
+            </a> 
+            <a href="/shop/user/index"  class="active"> 
+                <i class="navIcon member"></i> 
+                <span class="text">会员中心</span>
+            </a> 
+        </div>
+    </div>
+    {/if}
+</footer>

@@ -1,0 +1,85 @@
+{include file="common/top" /}
+<title>商品分销</title>
+<link rel="stylesheet" href="__CSS__/userorder.css" type="text/css">
+<style type="text/css">
+.dropload-down {
+	text-align: center;
+}
+ *::-webkit-scrollbar {
+ width: 1px;
+}
+.my-modal {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	background: rgba(102,102,102,0.5);
+	z-index: 1000;
+	display: none;
+}
+</style>
+</head>
+<body>
+<div id="contentModal" class="my-modal" onClick="closeModal();"></div>
+<div class="maincontainer" style="max-width: none !important;overflow: hidden;margin: 0 auto;padding-bottom: 0px;position: relative;height: 100% !important;position: absolute;width: 100%;">
+  <header class="header">
+    <div class="fix_nav">
+        <div style="max-width: none !important;margin:0 auto;background:#FE5400;position: relative;"> 
+            <a class="nav-left back-icon" href="/shop/user/index">返回</a>
+            <div class="tit">我的朋友</div>
+            <a class="nav-right refresh-icon" href="javascript:void(0);" onClick="subList();">刷新</a>
+        </div>
+    </div>
+    <!--<div>这里放置搜索条件</div>--> 
+  </header>
+  <div class="container" style="max-width: none !important;margin:0px auto;width:100%;height:calc(100% - 94px);padding: 0px;position: relative;">
+    <div style="display:flex;display: -webkit-flex;flex-direction: row;align-items: center;background:#fff;">
+      <!--<div style="border-radius:40px;overflow:hidden"><img src="{$userOpen.headimgurl}" style="max-width:40px;max-height:40px;"></div>-->
+      <p style="text-align: center;background:#fff;">您拥有朋友共{$subcount}个</p>
+    </div>
+    <!--div style="display:flex;display: -webkit-flex;flex-direction: column;">
+                    <div style="background:#ffe;display:flex;display: -webkit-flex;flex-direction: row;flex-wrap: wrap;justify-content: space-between;">
+                        <div style="width:20%;text-align: right;">已获佣金:</div>
+                        <div style="width:25%;">¥50000.22</div>
+                        <div style="width:20%;text-align: right;">可提现:</div>
+                        <div style="width:25%;">¥50000.22</div>
+                        <div style="width:20%;text-align: right;">已提现:</div>
+                        <div style="width:25%;">¥50000.22</div>
+                        <div style="width:20%;text-align: right;">已锁定:</div>
+                        <div style="width:25%;">¥50000.22</div>
+                    </div>
+                </div-->
+    <div id="subListContents" style="height:calc(100% - 40px);padding: 0px;position: relative;"></div>
+  </div>
+  {include file="common/footer_nav" /} </div>
+<script type="text/template" id="subList">
+            {{?ljk}}
+            {{for(var i = 0,l = ljk.length; i < l; i++){}}
+            <div style="display:flex;display: -webkit-flex;flex-direction: column;margin:5px 0px;background:#fff;padding:5px;">
+                <div style="display:flex;display: -webkit-flex;flex-direction: row;flex-wrap: nowrap;justify-content: space-between;align-items:center;">
+                    <div style="width: 50px;border-radius:50px;overflow:hidden">
+                        <img src="{{=ljk[i].userOpen.headimgurl}}" style="width:50px;height:50px;" />
+                    </div>
+                    <div style="width:calc(100% - 50px);display:flex;display: -webkit-flex;flex-direction: column;">
+                        <div style="display:flex;display: -webkit-flex;flex-direction: row;margin:3px 0px;border-bottom:1px dashed #cef;">
+                            <div style="width:30%;text-align: right;">昵称：</div>
+                            <div style="word-break:break-all;width:65%;">{{=ljk[i].userOpen.nickname}}</div>
+                        </div>
+                        <div style="display:flex;display: -webkit-flex;flex-direction: row;margin:3px 0px;border-bottom:1px dashed #cef;">
+                            <div style="width:30%;text-align: right;">消费金额：</div>
+                            <div style="word-break:break-all;width:65%;">{{=ljk[i].subccount}} 元</div>
+                        </div>
+                        <div style="display:flex;display: -webkit-flex;flex-direction: row;margin:3px 0px;border-bottom:1px dashed #cef;">
+                            <div style="width:30%;text-align: right;">朋友数量：</div>
+                            <div style="word-break:break-all;width:65%;">{{=ljk[i].subcount}} 个</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{}}}
+            {{?}}
+        </script> 
+<script type="text/javascript">
+    subList();
+</script>
+</body>
+</html>

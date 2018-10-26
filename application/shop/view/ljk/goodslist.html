@@ -1,0 +1,116 @@
+{include file="common/top" /}
+<script charset="utf-8" src="__JS__/jquery-form.js?v=01291"></script>
+<script charset="utf-8" src="__JS__/prodSort.js?v=01291"></script>
+<title>商品列表</title>
+</head>
+<body>
+    <div class="fanhui_cou">
+        <div class="fanhui_1"></div>
+        <div class="fanhui_ding">顶部</div>
+    </div>
+    <header class="header">
+        <div class="fix_nav">
+            <div class="nav_inner">
+                <a class="nav-left back-icon" href="javascript:history.back();">返回</a>
+                <div class="tit">产品列表</div>
+            </div>
+        </div>
+    </header>
+    <div style="position: absolute;width: 100%;height: calc(100% - 94px);">
+        <ul id="sortItems" class="mod-filter" style="position: absolute;width: 100%;background:#fff;">
+            <li class="sort-item active" data-type="[0]">
+                <a href="javascript:void(0);">默认</a>
+            </li>
+            <li class="sort-item" data-type='[3,4]'>
+                <a href="javascript:void(0);">销量<i class='icon_sort'></i></a>
+            </li>
+            <li class="sort-item" data-type='[1,2]'>
+                <a href="javascript:void(0);">价格 <i class='icon_sort'></i></a>
+            </li>
+            <li class="sort-item" data-type="[5,6]">
+                <a href="javascript:void(0);">评论<i class='icon_sort'></i></a>
+            </li>
+        </ul>
+        <div id="goodsListBox"></div>
+    </div>
+    <!-- 模版 -->
+    <script id="goods" type="text/template">
+    {{?ljk && ljk.length}}
+    {{ for(var item in ljk) { }}
+    <a style="width:calc(50% - 4px);margin:1px;" href="/shop/views.html?id={{=ljk[item].id}}">
+        <div class="hproduct clearfix" style="background:#fff;border-top:0px;">
+            <div class="p-pic">
+                {if $Think.session.gid == 205 ||  $Think.session.gid == -1}
+                <div style="height:163px;margin:auto;background-image:url({{=ljk[item].goodsImg}});background-size:163px 163px;background-repeat:no-repeat;" class="img-responsive"></div>
+                {else}
+                <div style="height:100px;margin:auto;background-image:url({{=ljk[item].goodsImg}});background-size:163px 100px;background-repeat:no-repeat;" class="img-responsive"></div>
+                {/if}
+            </div>
+            <div class="p-info">
+                <p class="p-title" style="overflow : hidden;  text-overflow: ellipsis;  display: -webkit-box;  -webkit-line-clamp: 2; height:40px;  -webkit-box-orient: vertical;">{{=ljk[item].goodsName}}</p>
+                {if $Think.session.gid == 205 ||  $Think.session.gid == -1}
+                <p class="p-origin">
+                    会员价：<span  style="color:red;font-size:14px;">¥{{=ljk[item].tuanprice}}/{{=ljk[item].unit}}</span>
+                </p>
+                <p class="p-origin" style="font-size:12px;">
+                    非会员价：<span style="color:red;font-size:14px;">¥{{=ljk[item].retailprice}}/{{=ljk[item].unit}}</span>
+                </p>
+                {else}
+                <p class="p-origin">
+                    <em class="price">¥{{=ljk[item].tuanprice}}/{{=ljk[item].unit}}</em>
+                </p>
+                <p class="mb0">
+                    <del class="old-price">¥{{=ljk[item].retailprice}}/{{=ljk[item].unit}}</del>
+                </p>
+                {/if}
+            </div>
+        </div>
+    </a>
+    {{}}}
+    {{??}}
+    <p style="height:150px;line-height:150px;color:red;text-align:center;width:100%;">没有查询到该条件下的商品信息！</p>
+    {{?}}
+    </script>
+</script>
+<div class="clear"></div>
+{include file="common/footer_nav" /}
+<script type="text/javascript">
+    var $sortItems = $('#sortItems').children('.sort-item');
+    var type = 0;
+    var $i = $sortItems.find('i');
+    var data = {};
+    {if isset($clas)}
+    data.clas = '{$clas}';
+    {/if}
+    {if isset($w)}
+    data.w = '{$w}';
+    {/if}
+    $sortItems.on('click',function (){ 
+        $i.prop('class','icon_sort');
+        var ts = $(this).data('type');
+        if(ts.length === 1){
+            var t = ts[0];
+            if(t !== type ){ 
+                type = t;
+                $(this).addClass('active').siblings().removeClass('active');
+            }
+        }
+        if(ts.length === 2){
+            if(ts.indexOf(type) === -1){
+                type = ts[0];
+                $(this).addClass('active').siblings().removeClass('active');
+                $(this).find('i').prop('class','icon_sort_down');
+            }else if(ts.indexOf(type) === 0){
+                type = ts[1];
+                $(this).find('i').prop('class','icon_sort_up');
+            }else if(ts.indexOf(type) === 1){
+                type = ts[0];
+                $(this).find('i').prop('class','icon_sort_down');
+            }
+        }
+        getGoods(data);
+    });
+    getGoods(data);
+</script>
+</body>
+</html>

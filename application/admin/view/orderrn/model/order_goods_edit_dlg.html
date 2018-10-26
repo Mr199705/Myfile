@@ -1,0 +1,101 @@
+<!-- 修改商品 -->
+<div class="modal inmodal in" id="orderGoodsEditDialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"> <span aria-hidden="true">×</span> <span class="sr-only">Close</span> </button>
+                <h4 class="modal-title">修改订单商品</h4>
+            </div>
+            <form class="form-horizontal dotOrderGoodsEdit" method="post" action="/admin/orderrn/orderInfo" id="cpform" enctype="multipart/form-data" onsubmit="return false;">
+            </form>
+            <!-- 编辑dot -->
+            <script type="text/x-dot-template" id="dotOrderGoodsEdit">
+                <div class="modal-body">         
+                    <input type="hidden" name="action" value="ordergoodsedit"> 
+                    <input type="hidden" name="id" value="{{=ljk['id'] }}">
+                    <input type="hidden" name="oid" value="{{=ljk['oid'] }}"> 
+                    <div class="form-group"> 
+                        <label class="col-sm-2 control-label">商品名称:</label> 
+                        <div class="col-sm-8" style="padding-top: 8px;"> 
+                            <p>{{=ljk['name'] }}</p> 
+                        </div>  
+                        <img style="border-radius: 10px;width: 50px;display: block" src="__GOODSIMG__{{=ljk['thumb'] }}" alt="">  
+                    </div>
+                    <div class="form-group"> 
+                        <label class="col-sm-2 control-label">属性:</label> 
+                        <div class="col-sm-8"> 
+                            <input type="text" name="attrs_value" class="form-control" readonly="true" value="{{=ljk['attrs_value'] }}">             
+                        </div> 
+                    </div> 
+                    <div class="form-group"> 
+                        <label class="col-sm-2 control-label">单价:</label> 
+                        <div class="col-sm-8"> 
+                            <input type="text" name="price" class="form-control" id="price" value="{{=ljk['price'] }}">             
+                        </div> 
+                    </div> 
+                    <div class="form-group"> 
+                        <label class="col-sm-2 control-label">数量:</label> 
+                        <div class="col-sm-8"> 
+                            <input type="text" name="num" class="form-control" value="{{=ljk['num'] }}" min="1" max="1000">             
+                        </div> 
+                    </div> 
+<!--                    <div class="form-group"> 
+                        <label class="col-sm-2 control-label">总额:</label> 
+                        <div class="col-sm-8"> 
+                            <input type="text" name="amount" class="form-control" id="price" value="{{=ljk['amount'] }}">             
+                        </div> 
+                    </div>-->
+                    <div class="form-group"> 
+                        <label class="col-sm-2 control-label">单位:</label> 
+                        <div class="col-sm-3"> 
+                            <select class="form-control" name="unitid" onchange="setGoodsEditUnit(this);"> 
+                                {{ for( var ui = 0; ui < ljk['unitList'].length; ui++){ }}
+                                <option value="{{=ljk['unitList'][ui]['id'] }}" {{? ljk['unitList'][ui]['id'] == ljk['unitid'] }}selected="selected"{{?}} data-price="{{=ljk['unitList'][ui]['price'] }}">{{=ljk['unitList'][ui]['uname'] }}</option>
+                                {{ } }}
+                            </select>
+                        </div>         
+                    </div> 
+                    <div class="form-group"> 
+                        <label class="col-sm-2 control-label">类型:</label> 
+                        <div class="col-sm-3"> 
+                            <select class="form-control" name="type" onchange="setGoodsEditType(this);"> 
+                                <option value="1" selected="selected">销售</option>  
+                                <option value="2" {{? ljk['type'] == 2 }}selected="selected"{{?}}>赠品</option>  
+                            </select> 
+                        </div> 
+                    </div> 
+                    <div class="form-group"> 
+                        <label class="col-sm-2 control-label">备注:</label> 
+                        <div class="col-sm-10"> 
+                            <textarea name="desc" class="form-control" style="max-width: 570px;max-height: 100px;" cols="60" rows="8"></textarea> 
+                        </div> 
+                    </div> 
+                    <div class="modal-footer"> 
+                        <input type="submit" value="提交" class="btn btn-sm btn-primary" onclick="return formAct(this.form);"> 
+                        <button type="button" class="btn btn-sm btn-white" data-dismiss="modal">返回</button> 
+                    </div> 
+                </div>
+            </script>
+            <script>
+            function setGoodsEditUnit(sel){
+                var trp = $(sel).parent().parent().parent();
+                var price = $(sel).find("option:selected").data('price');
+                if( $(trp).find('input[name=type]').find("option:selected").val() == 2 ){
+                    $(trp).find('input[name=price]').val(0);
+                }else{
+                    $(trp).find('input[name=price]').val(price);
+                }
+            }
+            function setGoodsEditType(sel){
+                var trp = $(sel).parent().parent().parent();
+                if( $(sel).find("option:selected").val() == 2 ){
+                    $(trp).find('input[name=price]').val(0.00);
+                } else{
+                    //  显示单位价格
+                    $(trp).find('select[name=unitid]').change();
+                }
+            }
+            </script>
+        </div>
+    </div>
+</div>

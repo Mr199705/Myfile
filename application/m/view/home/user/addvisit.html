@@ -1,0 +1,174 @@
+<script type="text/template" charset="utf-8" id='user_addvisit'>
+    <form action="/m/user/addvisit" method="post" enctype="multipart/form-data" onsubmit="return false;">
+        <div class="ljk_neirong">
+            <div class="page__bd">
+                <input type="hidden" name="action" value="add" />
+                <div class="weui-cells weui-cells_form">
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"> 
+                            <label for="" class="weui-label">客户名称</label>
+                        </div>
+                        <div class="weui-cell__bd" style="font-size:16px;color:red;"> 
+                            <span class="weui-input">{{=ljk.realname}}</span>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <textarea class="weui-textarea" placeholder="请输入拜访记录" rows="3" name="content" maxlength="200" oninput="visittjl(this);" id="visitcontent"></textarea>
+                            <div class="weui-textarea-counter"><span style="color:#f00;">0</span>/200</div>
+                        </div>
+                    </div>
+                </div>
+                {include file="common/upload"}
+                <div class="page__bd page__bd_spacing">
+                    <input id="submitvisit" type="button" class="post_form_btn weui-btn weui-btn_primary" onclick="return addVisitPost(this.form);" value="提交保存" />
+                </div>
+            </div>
+        </div>
+    </form>
+    <script type="text/javascript">
+        var i = 1;
+        var shtml = $('#forminput').html();	
+		function addVisitPost(formObj){	
+                    var visitcontent=$(formObj.content).val();			
+                    if(visitcontent.trim().length==0){
+                        alert('请填写拜访记录！');
+                        return false;
+                    }			
+                    var tip = {
+                        type:1,
+                        title:'拜访记录',
+                        content:'正在提交拜访记录，请稍后！'
+                    };
+                    var template = doT.template($('#tpldialogs').html());
+                    var t_html = template(tip);
+                    $('.user_addvisit').append(t_html);		
+                    $('#submitvisit').attr('onclick','javascript:void();');
+                    var url=$(formObj).attr('action');
+                    var pdata=$(formObj).serializeArray();		
+                {if is_weixin()}
+                wx.getLocation({
+                        type: 'wgs84',
+                        success: function (res) {
+							var data={};
+                            for(var i=0;i<pdata.length;i++){
+								if(pdata[i].value.trim() !== ''){
+									if(typeof data[pdata[i].name] !== 'undefined'){
+										console.log(typeof data[pdata[i].name]);
+										if(typeof data[pdata[i].name] !== 'object'){
+											var x = data[pdata[i].name];
+											data[pdata[i].name] = new Array();
+											data[pdata[i].name].push(x);
+										}
+										data[pdata[i].name].push(pdata[i].value);
+									}else{
+										data[pdata[i].name] =  pdata[i].value;
+									}
+								}
+							 }
+							console.log(data);
+							 data['lat']= res.latitude; 
+                             data['lng']= res.longitude; 
+                             data['speed']= res.speed; 
+                             data['accuracy']= res.accuracy; 
+                            postvisitdata(formObj,data,url);
+                        },
+              cancel: function (res) {
+               				console.log('用户拒绝授权获取地理位置');
+                            postvisitdata(formObj,pdata,url);
+              },
+            fail: function (res) {
+             console.log('定位失败');
+                        postvisitdata(formObj,pdata,url);
+           }
+                });
+                {else}
+                postvisitdata(formObj,pdata,url);
+                {/if}
+        }
+        function postvisitdata(formObj,pdata,url){
+            $('#dialogs').remove();
+            $.ajax(
+                {
+                    type:'post',
+                    url:url,
+                    data:pdata,
+                    dataType:'json',
+                    beforeSend:function (){
+                        $('#submitvisit').val('提交保存中...');
+                        $('#submitvisit').attr('onclick','javascript:void();');
+                    },
+                    success:function (data){
+                        if(data['code']==0){
+                            var tip = {
+                                type:1,
+                                title:'拜访记录',
+                                content:data['msg'],
+                                btn:1,
+                                btnm:1,
+                                btnmc:'查看详情',
+                                btnma:'onclick="getuserDetail(this,{{=ljk.uid}});"',
+                            };
+                            var template = doT.template($('#tpldialogs').html());
+                            var t_html = template(tip);
+                            $('#dialogs').remove();
+                            $('.user_addvisit').append(t_html);
+                            clearImg();
+                            formObj.reset();
+                            $.ajax({
+                                data: {action:'ybdownwximg',id:data['id']},
+                                dataType:'json',
+                                url:url,
+                                type:'post',
+                                success: function (res) {}
+                            });
+                            $('#submitvisit').attr('onclick','return addVisitPost(this.form);');
+                        }else{
+                            $('#submitvisit').val('提交保存');
+                            $('#submitvisit').attr('onclick','return addVisitPost(this.form);');
+                            var tip = {
+                                type:2,
+                                title:'拜访记录',
+                                content:data['msg'],
+                                btn:1,
+                                btnc:'关闭',
+                            };
+                            var template = doT.template($('#tpldialogs').html());
+                            var t_html = template(tip);
+                            $('#dialogs').remove();
+                            $('.user_addvisit').append(t_html);
+                        }
+                    }
+                }
+            );
+        }
+        function visittjl(tobj){
+            $(".weui-textarea-counter span").html($(tobj).val().trim().length);
+        }
+        
+                function showTypeBox(i){
+                    if(i){
+                        $('#xmlistTypeBox').css('display','none');
+                    } else{
+                        $('#xmlistTypeBox').css('display','block');
+                    }
+                }
+		function setXmType(l){
+                $(l).find('input[type=checkbox]').each(function (){
+                    var t = $(this).data('t');
+                    var xmid = $(this).val();
+					 $('#xm_tit_tx').css('display','none');
+                    if(this.checked){
+                        this.checked=false;
+                        $('.xmboxtitle').find('.checked_xmid_' + xmid).remove();
+                    }
+                    else{
+                        this.checked=true;
+                        if($('.xmboxtitle').find('.checked_xmid_' + xmid).length === 0){
+                            $('.xmboxtitle').append('<span style="border:1px solid #ccc;margin-right:5px; padding: 3px;border-radius: 3px;" class="checked_xmid_'+ xmid +'">' + t + '<input type="hidden" name="xm_title" value="'+ t +'" /></span>');
+                        }
+                    }
+                });
+            }		
+    </script>
+</script>

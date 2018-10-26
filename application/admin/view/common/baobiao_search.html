@@ -1,0 +1,31 @@
+    <input type='hidden' id='submitType' value='搜索' name='searchsubmit'/>
+    <input type="hidden" value="{$conditions.uid}" name="uid" id="uidInput" />
+    <div class="col-sm-1" style=" padding-right:0px; width:110px;">
+        <div class="input-group">
+            <select name="guid" class="input-sm form-control" style="width:102px;">
+                <option value="0" {if $conditions.guid==0 }selected="selected"{/if}>所有员工</option>
+                {foreach name="$users" item="user"}
+                <option value="{$user.uid}" {if $user.uid == $conditions.guid}selected="selected"{/if}>{$user.realname}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-3" style="margin: 0px 0px 0px 15px;;padding:0px;width: 175px;">
+        <div class="input-group">
+            <input type="text" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss',max:laydate.now()});" class="input-sm form-control" name="csdate" value="{$conditions.csdate}" />
+        </div>
+    </div>
+    <span class="col-sm-1" style="text-align: center;width: 20px; padding:0px; line-height:30px;">-</span>
+    <div class="col-sm-3" style="margin: 0px 5px 0px 15px;padding:0px;width: 175px;">
+        <div class="input-group">
+            <input type="text" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss',max:laydate.now()});" class="input-sm form-control" name="cedate" value="{$conditions.cedate}" />
+        </div>
+    </div>
+    <div class="col-sm-3" id="btn-search">
+        <div class="input-group">
+            <span class="input-group-btn">
+                <button class="btn btn-sm btn-primary" style="margin-right: 15px;border-radius: 3px;" onclick="return {$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);">搜索</button>
+                <a href="/admin/member/lbs/uid/{$guid}" target="_blank" style="margin-right: 15px;border-radius: 3px;" class="btn btn-sm btn-primary">查看地图</a>
+            </span>
+        </div>
+    </div>

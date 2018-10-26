@@ -1,0 +1,9 @@
+    {include file="common/header" /}
+    <body ontouchstart>
+        {include file="index/index" /}
+        {if $m_index_home}
+        {:view('/home/index')->getContent()}
+        {/if}
+        {include file="common/dialog" /}
+    </body>
+</html>

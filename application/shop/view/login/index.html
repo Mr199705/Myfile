@@ -1,0 +1,229 @@
+        {include file="common/top" /}
+        <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+        <title>会员注册-登录</title>
+        <style type="text/css">
+            *{
+                margin:0px;
+                padding: 0px;
+            }
+        </style>
+    </head>
+    <body style="background:#fff;">
+        <div style="text-align: center;height: 44px;line-height: 44px;font-size: 18px;font-weight: bold;width:100%;background:#FE5400;color:white;">会员注册登录</div>
+        <div style="width:calc(100% - 2px);margin:10px auto;background:#fff;border:1px solid #ccc;border-radius: 10px;">
+            <form method="post" action="" style="display:flex;flex-direction:column;padding:20px 5px;" onsubmit="return false;">
+                <div style="display: flex;display: -webkit-flex;flex-direction: row;align-items: center;flex-wrap: nowrap;margin:5px 0px;">
+                    <div style="width:80px;text-align: right;"><span style="color:red;">*</span>手机号码：</div>
+                    <div style="width:calc(100% - 168px);">
+                        <input type="text" class="form-control" name="mobile" id="mInput" value="" placeholder="请输入手机号码！" />
+                    </div>
+                    <div style="width:88px;text-align: center;"><button class="btn btn-sm btn-success" id="yzmBtn"></button></div>
+                </div>
+                <div style="display: flex;display: -webkit-flex;flex-direction: row;align-items: center;flex-wrap: nowrap;margin:5px 0px;">
+                    <div style="width:80px;text-align: right;"><span style="color:red;">*</span>验证码：</div>
+                    <div style="width:calc(100% - 168px);">
+                        <input type="text" class="form-control" name="code" value="" placeholder="请输入验证码！" />
+                    </div>
+                </div>
+                <div style="text-align: center;padding: 2px 0px;">
+                    <button class="btn btn-sm btn-success" id="btnReglogin">确定</button>
+                </div>  
+            </form>
+        </div>
+        <script type="text/javascript">
+            var reg = /^1[3456789]\d{9}$/;
+            var $btnReglogin = $('#btnReglogin');
+            wx.config({
+                debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                appId: '{$wxconfig.appId}', // 必填，公众号的唯一标识
+                timestamp: '{$wxconfig.timestamp}', // 必填，生成签名的时间戳
+                nonceStr: '{$wxconfig.nonceStr}', // 必填，生成签名的随机串
+                signature: '{$wxconfig.signature}',// 必填，签名，见附录1
+                jsApiList: ['chooseImage','previewImage','uploadImage','downloadImage','openLocation','getLocation'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+            });
+            function reglogin(data){
+                if(typeof data === 'undefined'){
+                    if(event && (event.srcElement || event.target)){
+                        var target = event.srcElement || event.target;
+                        var fm = target.form;
+                        data = {
+                            mobile:$(fm.mobile).val(),
+                            code:$(fm.code).val(),
+                            action:'reglogin'
+                        };
+                    }
+                }else{
+                    var fm = $btnReglogin[0].form;
+                }
+                if(!data.mobile.trim().match(reg)){
+                    showTip({msg:'手机号码格式不正确！'});
+                    setTimeout(function (){
+                        closeModal();
+                        $btnReglogin.css('background','#5cb85c');
+                    },1000);
+                    $(fm.mobile).focus();
+                    return false;
+                }
+                if(data.code.trim().length === 0){
+                    showTip({msg:'必须填写验证码！'});
+                    setTimeout(function (){
+                        closeModal();
+                        $btnReglogin.css('background','#5cb85c');
+                    },1000);
+                    $(fm.code).focus();
+                    return false;
+                }
+                $.ajax({
+                    data:data,
+                    type:'post',
+                    dataType:'json',
+                    success:function (res){
+                        if(res.code === 0){
+                            showTip({msg:res.msg});
+                            setTimeout(function (){
+                                window.location.href = '/shop/index/index';
+                                closeModal();
+                            },1500);
+                        }else if(res.code === -3){
+                            showTip({msg:'您已登录成功，即将跳转到商城首页！'});
+                            setTimeout(function (){
+                                window.location.href = '/shop/index/index';
+                                closeModal();
+                            },1500);
+                        }else{
+                            showTip({msg:res.msg});
+                            setTimeout(function (){
+                                $btnReglogin.css('background','#5cb85c');
+                                closeModal();
+                            },1500);
+                        }
+                    }
+                });
+            }
+            $btnReglogin.off();
+            wx.ready(function (){
+                $btnReglogin.off().on('click',function (){
+                    $(this).css('background','#ccc');
+                    showTip({msg:'正在提交登录或注册数据，请稍后！'});
+                    var fm = this.form;
+                    var data = {code:$(fm.code).val(),mobile:$(fm.mobile).val(),action:'reglogin'};
+                    wx.getLocation({
+                        type: 'wgs84',
+                        success: function (res) {
+                            //执行ajax操作，坐标转地址
+                            data.lat = res.latitude;// 纬度，浮点数，范围为90 ~ -90
+                            data.lng = res.longitude ; // 经度，浮点数，范围为180 ~ -180。
+                            reglogin(data);
+                        },
+                        cancel: function () {
+                            reglogin(data);
+                        },
+                        fail: function () {
+                            reglogin(data);
+                        }
+                    });
+                });
+            });
+            $(function (){
+                var $yzmBtn = $('#yzmBtn');
+                var $mInput = $('#mInput');
+                var ls = localStorage.getItem('shopLogin');
+                if(!!ls && ls.trim().length){
+                    var sl = JSON.parse(ls);
+                }else{
+                    var sl = {
+                        s:0,
+                        m:'',
+                        ts:0
+                    };
+                }
+                $mInput.val(sl.m);
+                if(reg.test(sl.m) === false){
+                    mon();
+                    $mInput.focus();
+                    offyzm();
+                }else{
+                    sl.s = sl.ts - Date.parse(new Date()) / 1000;
+                    if(sl.s <= 0){
+                        mon();
+                        onyzm();
+                    }else{
+                        moff();
+                        localStorage.setItem('shopLogin',JSON.stringify(sl));
+                        offyzm();
+                        yzm();
+                    }
+                }
+                function mon(){
+                    $mInput.prop('readonly',false);
+                    $mInput.off().on('blur',function (){
+                        var x = sl.m;
+                        sl.m = $(this).val();
+                        if(reg.test(sl.m) === true){
+                            onyzm();
+                        }else{
+                            $(this).focus();
+                            sl.m = x;
+                            offyzm();
+                        }
+                    });
+                };
+                function moff(){
+                    $mInput.prop('readonly','readonly');
+                    $mInput.off();
+                }
+                function offyzm(){
+                    $yzmBtn.off();
+                    $yzmBtn.html('获取验证码');
+                    $yzmBtn.removeClass('btn-success').addClass('btn-default');
+                }
+                function onyzm(){
+                    $yzmBtn.removeClass('btn-default').addClass('btn-success');
+                    $yzmBtn.html('获取验证码');
+                    $yzmBtn.off().on('click',function (){
+                        //后台发送验证码！
+                        $.ajax({
+                            data:{mobile:sl.m,action:'regloginsms'},
+                            type:'post',
+                            dataType:'json',
+                            success:function (res){
+                                if(res.code === 0){
+                                    syzm();
+                                    showTip({msg:res.msg});
+                                }else{
+                                    showTip({msg:res.msg});
+                                }
+                                setTimeout(function (){
+                                    closeModal();
+                                },1000);
+                            }
+                        });
+                    });
+                }
+                function syzm(){
+                    $yzmBtn.removeClass('btn-success').addClass('btn-default');
+                    moff();
+                    sl.s = 60;
+                    sl.ts = Date.parse(new Date()) / 1000 + 60;
+                    localStorage.setItem('shopLogin', JSON.stringify(sl));
+                    yzm();
+                    offyzm();
+                }
+                function yzm(){
+                    if(sl.s === 0){
+                        onyzm();
+                        mon();
+                        $mInput.prop('readonly',false);
+                    }else{
+                        var s = sl.s-- + '';
+                        if(s.length === 1){
+                            s = '0' + s;
+                        }
+                        $yzmBtn.html('<span>重新发送(' + s + ')</span>');
+                        setTimeout(yzm,1000);
+                    }
+                }
+            });
+        </script>
+    </body>
+</html>

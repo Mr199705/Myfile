@@ -1,0 +1,16 @@
+<input type="hidden" data-sign="{$initData.sign}" value="" id="initDataSign" />
+<div class="row">
+    <div class="col-sm-2" style="width:120px;">
+        <select class="form-control" name="disable" onchange="getList({sign:'{$initData.sign}'},1);">
+            <option value="">状态</option>
+            <option value="0">启用</option>
+            <option value="1">禁用</option>
+        </select>
+    </div>
+    <div class="col-sm-3">
+        <input type="text" value="" class="form-control" name="keywords" placeholder="请输入仓库名称关键词" oninput="getList({sign:'{$initData.sign}'},1);" />
+    </div>
+    <div class="col-sm-1">
+        <input type="submit" value="确定" class="btn btn-success btn-sm" onclick="getList({sign:'{$initData.sign}'},1);" />
+    </div>
+</div>

@@ -1,0 +1,148 @@
+    {include file="common/top" /}
+    <title>我的订单-订单详情</title>
+    <link rel="stylesheet" href="__CSS__/userorder.css" type="text/css">
+    <style type="text/css">
+        .dropload-down{
+            text-align: center;
+        }
+        *::-webkit-scrollbar{
+            width: 1px;
+        }
+    </style>
+</head>
+    <body>
+        <div class="maincontainer" style="margin: 0 auto;padding-bottom: 0px;position: relative;height: 100% !important;position: absolute;width: 100%;">
+            <header class="header">
+                <div class="fix_nav">
+                    <div style="max-width:768px;margin:0 auto;background:#FE5400;position: relative;"> 
+                        <a class="nav-left back-icon" href="/shop/order/index">返回</a>
+                        <div class="tit">订单详情</div>
+                        <a class="nav-right refresh-icon" href="/shop/order/detail/oid/{$res.data.oid}">刷新</a>
+                    </div>
+                </div>
+            </header>
+            <div class="container" style="width:100%;height:calc(100% - 94px);padding: 0px;position: absolute;overflow-y: scroll;" id="orderlistContents">
+                {if $res.code === 0}
+                <ul class="list-group ordersList" style="padding: 0px;width: 100%;margin-bottom: 0px;">
+                    <li>
+                        <div class="module seller"  style="margin-bottom: 10px;">
+                            <div class="o-t-title-shop" >
+                                <div class="tcont" style="border-bottom:1px solid #e7e7e7;padding: 5px 3px;">
+                                       <a href="/shop/order/detail/oid/{$res.data.oid}" style=" line-height: 2.5rem;">
+                                            <span class="title">订单号：{$res.data.number}</span>
+                                        </a>
+                                        <div class="state-cont" style="width:40%;text-align: -webkit-right; padding-right: 1rem;">
+                                            <p class="h">
+                                            {if $res.data.confirm == -1}
+                                                <span style="padding-left:1rem; color:#3BC502; ">{$res.data.pay_desc}</span>
+                                            {else}
+                                                <span style="padding-left:1rem;">{$res.data.pay_desc}</span>
+                                            {/if}
+                                            {if $res.data.dispatch == 0}
+                                                <span style="padding-left:1rem; color:#3BC502; ">{$res.data.dispatch_desc}</span>
+                                            {else}
+                                                <span style="padding-left:1rem;">{$res.data.dispatch_desc}</span>
+                                            {/if}
+                                            </p>
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="o-t-title-shop">
+                                <div class="tcont" style="padding-left: 5px;">
+                                    <div class="contact" style='width: auto;'> 
+                                        <a href="/shop/order/detail/oid/{$res.data.oid}">
+                                            <p style=" margin: 0px;line-height: 2.6rem; color: #000;">下单时间：</p>
+                                            <span style=" line-height: 2.6rem; padding: 0px 5px;color: #999;">{$res.data.adate}</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o-t-title-shop">
+                                <div class="tcont" style="padding-left: 5px;">
+                                    <div class="contact" style='width: auto;'> 
+                                        <a href="/shop/order/detail/oid/{$res.data.oid}">
+                                            <p style=" margin: 0px;line-height: 2.6rem; color: #000;">收货人：</p>
+                                            <span style=" line-height: 2.6rem; padding: 0px 5px;color: #999;">{$res.data.address.consignee}</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o-t-title-shop">
+                                <div class="tcont" style="padding-left: 5px;">
+                                    <div class="contact" style='width: auto;'> 
+                                        <a href="/shop/order/detail/oid/{$res.data.oid}">
+                                            <p style=" margin: 0px;line-height: 2.6rem; color: #000;">电话：</p>
+                                            <span style=" line-height: 2.6rem; padding: 0px 5px;color: #999;">{$res.data.address.mobile}</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o-t-title-shop">
+                                <div class="tcont" style="padding-left: 5px;">
+                                    <div class="contact" style='width: auto;'> 
+                                        <a href="/shop/order/detail/oid/{$res.data.oid}">
+                                            <p style=" margin: 0px;line-height: 2.6rem; color: #000;">地址：</p>
+                                            <span style=" line-height: 2.6rem; padding: 0px 5px;color: #999;">{$res.data.address.areaname}{$res.data.address.address}</span>
+
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {if $res.data.goodsInfo}
+                        {foreach($res.data.goodsInfo as $goodsInfo)}
+                        <div>
+                            <div class=" o-t-item" style="background: #fff; border-bottom: 1px solid #e7e7e7;">
+                                <div class="item-img">
+                                    <p><img class="" src="{$goodsInfo.thumb}" style=" width: 54px; height: 54px;"> </p>
+                                </div>
+                                <div class="item-info">
+                                    <span style="font-size:14px;">{$goodsInfo.goodsName}</span>
+                                    {if $goodsInfo}<p class="sku" style="color:red;">{$goodsInfo.attrs}</p>{/if}
+                                </div>
+                                <div class="item-pay">
+                                    <div class="item-pay-data">
+                                        <p class="price_p">¥{$goodsInfo.amount}</p>
+                                        <p class="nums">x{$goodsInfo.num}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {/foreach}
+                        {/if}
+                        <div class="o-total-price">
+                            <div class="cont">
+                                <span>共<b>{:count($res.data.goodsInfo)}</b>种商品</span> 
+                                <span>合计:<b>¥{$res.data.total}</b></span> 
+                                <span>(含运费<b>¥{$res.data.total}</b>)</span> 
+                            </div>
+                        </div>
+                        <div class="o-tab-btn">
+                            <ul>
+                                {if $res.data.confirm != -1}
+                                {if $res.data.confirm == 1 && $res.data.trade == 1}
+                                <li style="border-radius: 12px;padding: 2px 8px; height:inherit;">去评价</li>
+                                {/if}
+                                {if $res.data.pay != 1 }
+                                <li style="border-radius: 12px;padding: 2px 8px; height:inherit;"><a href="/shop/payment/paycenter/?oid={$res.data.oid}">去付款</a></li>
+                                {/if}
+                                {if $res.data.psy}
+                                <li class="" style="border-radius: 12px;padding: 2px 8px; height:inherit;"><a href="tel:{$res.data.psy.mobile}">配送员：{$res.data.psy.realname}{$res.data.psy.mobile}</a></li>
+                                {/if}
+                                {else}
+                                <li style="border-radius: 12px;padding: 2px 8px; height:inherit;color:red;">该订单无效</li>
+                                {/if}                            
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+                {else}
+                <p style="line-height: 100px;">{$res.msg}</p>
+                {/if}
+            </div>
+            {include file="common/footer_nav" /}
+        </div>
+        <div class="clear"></div>
+        <script type="text/javascript"></script>
+    </body>
+</html>

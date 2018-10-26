@@ -1,0 +1,27 @@
+ <div class="table-responsive">
+        <table class="table table-striped dindan">
+            <thead>
+            <tr>
+                <th>商品名称</th>
+                <th>回收名称</th>
+                <th>数量</th>
+                <th>上报时间</th>
+            </tr>
+            </thead>
+            <tbody id="orderList">
+            {if $hslist}
+            {foreach name="hslist" item="hs"}
+            <tr>
+                <td><span class="i-checks">{$hs.goodsname}</span></td>
+                <td><span class="i-checks">{$hs.sname}</span></td>
+                <td>{$hs.num}</td>
+                <td>{$hs.adate|date="Y-m-d H:i:s",###}</td>
+            </tr>
+            {/foreach}
+            {else}
+            <tr><td colspan="8" style="color:red;text-align: center;">该时间段无回收信息，您可以重新设置时间段再查询！</td></tr>
+            {/if}
+            </tbody>
+        </table>
+    </div>
+{include file="common/page"}

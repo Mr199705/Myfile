@@ -1,0 +1,35 @@
+<div class="table-responsive">
+        <table class="table table-striped dindan">
+            <thead>
+            <tr>
+                <th colspan="4"></th>
+                <th style="color:red;">总金额：{$orderjine}</th>
+            </tr>
+            <tr>
+                <th>商品名称</th>
+                <th>成交量</th>
+                <th>平均价格</th>
+                <th>成交金额</th>
+                <th>入口时间</th>
+            </tr>
+            </thead>
+            <tbody id="orderList">
+            {if $chlist}
+            {foreach name="chlist" item="ch"}
+            <tr>
+                <td>
+                    <span class="i-checks">{$ch.name}</span>
+                </td>
+                <td>{notempty name="$ch.num"}{$ch.num}{$ch.uname}{/notempty}</td>
+                <td>{$ch.average}</td>
+                <td>{$ch.average*$ch.num}</td>
+                <td>{$ch.adate|date="Y-m-d H:i:s",###}</td>
+            </tr>
+            {/foreach}
+            {else}
+            <tr><td colspan="8" style="text-align:center;color:red;">该时间段无出货信息，您可以重新设置时间段再查询！</td></tr>
+            {/if}
+            </tbody>
+        </table>
+    </div>
+{include file="common/page"}

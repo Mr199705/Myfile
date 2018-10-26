@@ -1,0 +1,94 @@
+<style>
+    .table thead tr,
+    .table tbody tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+</style>
+<div id="printdispatchBoxContents" style="display: none;"></div>
+<div class="modal inmodal in" id="DispatchGroupDetail">
+    <div class="modal-dialog" style="width: 65%;">
+        <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+                <button type="button" class="modal-close close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">配送小组送货详情</h4>
+            </div>
+            <form class="form-horizontal" method="post" action="" onsubmit="return false">
+                <div class="modal-body" id="DispatchGroupDetailContent">
+                    <div id="DispatchGroupDetailForm"></div>
+                </div>
+                <script type="text/template" id="DispatchGroupDetailFormTemplate">
+                    {{?ljk}}
+                    <div class="form-group">
+                        {{? ljk.title}}
+                        <span class="col-sm-2" style="text-align: right;">配送小组：</span>
+                        <span class="col-sm-4" style="text-align:left;border-bottom:1px solid #ccc;">{{= ljk.title}}</span>
+                        {{?}}
+                        {{? ljk.carid}}
+                        <span class="col-sm-2" style="text-align: right;">车辆编号：</span>
+                        <span class="col-sm-4" style="text-align:left;border-bottom:1px solid #ccc;">{{= ljk.carid}}</span>
+                        {{?}}
+                    </div>
+                    <div class="form-group">
+                        {{? ljk.dispatch}}
+                        <span class="col-sm-2" style="text-align: right;">配送状态：</span>
+                        <span class="col-sm-4" style="text-align:left;border-bottom:1px solid #ccc;">{{= ljk.dispatch}}</span>
+                        {{?}}
+                        {{? ljk.sdate && ljk.edate}}
+                        <span class="col-sm-2" style="text-align: right;">配送时间：</span>
+                        <span class="col-sm-4" style="text-align:left;border-bottom:1px solid #ccc;">{{= ljk.sdate}} —— {{= ljk.edate}}</span>
+                        {{?}}
+                    </div>
+                    <div class="form-group">
+                        <span class="col-sm-2" style="text-align: right;">备注信息：</span>
+                        <span class="col-sm-10" >配送商品详情</span>
+                    </div>
+                        <table class="table table-striped" id="content_table">
+                            {{? ljk.goods.length >0}}
+                            <thead>
+                            <tr>
+                                <th style="width: 65%;">商品</th>
+                                <th>数量</th>
+                            </tr>
+                            </thead>
+                            <tbody class="tbody" style="display: block;height: 275px;width: 100%;overflow: auto;">
+                            {{for(var i=0;i<ljk.goods.length;i++){}}
+                            <tr>
+                                <td style="width: 65%;">{{= ljk.goods[i].name}}</td>
+                                <td>
+                                    {{for(var j=0;j< ljk.goods[i].unit1.length;j++){}}
+                                    <span>{{=ljk.goods[i].unit1[j].num}}{{=ljk.goods[i].unit1[j].uname}}</span>
+                                    {{}}}
+                                </td>
+                            </tr>
+                            {{}}}
+                            </tbody>
+                            {{??}}
+                            <tr><td colspan="3" style="text-align: center;color:red;">没有找到符合条件的记录！</td></tr>
+                            {{?}}
+                        </table>
+                    <div class="modal-footer">
+                        {{? ljk.id !=0 }}
+                        <a href="javascript:void(0);" class="btn btn-sm btn-primary" onclick="printOrderDetail();" style="display: inline-block;">打印</a>
+                        <button class="btn btn-sm btn-success" onclick="getgroupdispatch();">导出</button>
+                        {{?}}
+                    </div>
+                    {{??}}
+                    {{
+                    closeWarning();
+                    tip = {
+                    tip_msg:{sign:true,content:'<p style="color:red;">非法操作！</p>'}
+                    };
+                    setTip(tip);
+                    setTimeout(function (){
+                    closeTip();
+                    },1000);
+                    return false;
+                    }}
+                    {{?}}
+                </script>
+            </form>
+        </div>
+    </div>
+</div>

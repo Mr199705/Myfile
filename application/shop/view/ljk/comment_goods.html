@@ -1,0 +1,595 @@
+{include file="/common/top" /}
+<title>评价</title>
+<link href="__CSS__/evaluate.css" type="text/css" rel="stylesheet">
+<script type="text/javascript" src="__JS__/evaluate.js"></script>
+<script type="text/javascript" src="__JS__/lrz.all.bundle.js"></script>
+<!-- <script type="text/javascript" src="__JS__/jquery-1.8.2.min.js"></script> -->
+</head>
+<style>
+.weui-uploader__file {
+	float: left;
+	margin-right: 9px;
+	margin-bottom: 9px;
+	width: 79px;
+	height: 79px;
+	background: no-repeat 50%;
+	background-size: cover;
+}
+
+.weui-uploader__bd {
+	margin-bottom: -4px;
+	margin-right: -9px;
+	overflow: hidden;
+}
+
+.weui-uploader__input-box {
+	float: left;
+	position: relative;
+	margin-right: 9px;
+	margin-bottom: 9px;
+	width: 77px;
+	height: 77px;
+	border: 1px solid #d9d9d9;
+	background: url(__IMGS__/zp.png) no-repeat;
+	background-size: 100% 100%;
+}
+
+.weui-uploader__input {
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	display: block;
+}
+</style>
+<body>
+	<div class="fanhui_cou">
+		<div class="fanhui_1"></div>
+		<div class="fanhui_ding">顶部</div>
+	</div>
+	<header class="header">
+		<div class="fix_nav">
+			<div
+				style="max-width: 768px; margin: 0 auto; background: #FE5400; position: relative;">
+				<a class="nav-left back-icon" href="javascript:history.back();">返回</a>
+				<div class="tit">对商品评价</div>
+			</div>
+		</div>
+	</header>
+	<div class="container" style="padding: 0px;">
+		<div
+			style="padding: 10px; width: 100%; height: 75px; margin-bottom: 10px; background: #FFFFFF;">
+			<div style="float: left; width: 55px; margin-right: 10px">
+				<img src="__GOODSIMG__{$ogInfo.goodsImg }" width="55px" height="55px">
+			</div>
+			<div style="float: left; width: 230px;">
+				<span style="font-size: 12px;">{$ogInfo.name }</span>
+				<p class="sku" style="color: #999;">{$ogInfo.num } * {$ogInfo.unit }</p>
+			</div>
+		</div>
+		<form method="post" id="commentForm" action="#" >
+			<!--代码开始-->
+			<div class="contaniner fixed-cont">
+				<section class="main">
+					<div>
+						<input type="hidden" name="ogid" value="{$ogInfo.id }"/>
+						<input type="hidden" name="action" value="commentgoods"/>
+					</div>
+					<div class="main-wrap">
+						<span class="revtit">商品评价:</span>
+						<div id="mydiv1" currentindex="5" class="mydiv">
+							<ul class="star_ul">
+								<li num="1"><img src="__IMGS__/star_full.png"
+									class="xing_hui"></li>
+								<li num="2"><img src="__IMGS__/star_full.png"
+									class="xing_hui"></li>
+								<li num="3"><img src="__IMGS__/star_full.png"
+									class="xing_hui"></li>
+								<li num="4"><img src="__IMGS__/star_full.png"
+									class="xing_hui"></li>
+								<li num="5"><img src="__IMGS__/star_full.png"
+									class="xing_hui"></li>
+							</ul>
+						</div>
+					</div>
+					
+				</section>
+			</div>
+			<!--代码结束-->
+			<div style="background: #fff;">
+				<div class="dizhi_x" style="padding: 5px 0px 0px 12px;">
+					<span style="float: none">评论：</span>
+					<div class="dizhi" style="float: none">
+						<textarea placeholder="请输入评论内容" name="content" rows="5"></textarea>
+					</div>
+				</div>
+			</div>
+			<!-- <div>
+    	<a><img src="__IMGS__/zp.png"></a>
+    </div>-->
+			<div class="container" style="overflow: inherit;">
+				<!--    照片添加    -->
+				<label class="col-sm-3 control-label">评论图片(<span
+					style="color: red;" id="uploadedNum">0</span>/4)：
+				</label>
+				<div class="weui-uploader">
+					<ul class="weui-uploader__files" id="uploaderFiles">
+					</ul>
+					<div class="weui-uploader__bd" style="width: 77px;">
+						<div class="weui-uploader__input-box" id="inputFileBox">
+							<input name="preview_img[]" class="weui-uploader__input"
+								type="file"
+								onchange="previewUploadImgs(this);"
+								accept="image/png,image/gif,image/jpeg">
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">预览图片：</label>
+					<div class="col-sm-8" id="previewBigImg"
+						style=" width: 100%; height: auto;"></div>
+				</div>
+				<!-- <div class="z_photo" style="display: none;">
+					<div class="z_file">
+						<input type="file" name="file" id="file" value="" accept="image/*"
+							multiple onchange="imgChange('z_photo','z_file');">
+					</div>
+					<div class="z_addImg" style="display: none">
+						<span>111</span> <img src="__IMGS__/zp.png">
+					</div>
+				</div>
+				<div id="zzaw"
+					style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #000; opacity: 0.8; z-index: 1000; width: 100%; height: 100%; display: none;">
+				</div>
+				<div
+					style="position: fixed; top: 50%; left: 0; width: 100%; text-align: -webkit-center; display: none; z-index: 1000"
+					id="zhezhao">
+					<img src="__IMGS__/234567.jpg" id="imgg"
+						style="position: relative; height: 300px; top: -160px; width: 250px;">
+					<div
+						style="position: relative; color: #FFFFFF; width: 300px; height: 200px; text-align: center; bottom: 90px; font-size: 18px;">
+						<span class="z_sure">删除</span>&nbsp;&nbsp;|&nbsp;&nbsp; <span
+							class="z_cancel">返回</span>
+					</div>
+				</div> -->
+				<!--遮罩层
+         <span style=" width:300px; width:300px;z-index:10000; position:fixed; top:10%;"></span>
+      	<img src="__IMGS__/234567.jpg" id="imgg" width="300px" height="300px" style="z-index:10000; position:fixed; top:10%; margin:auto; ">
+        -->
+				<div class="z_mask" style="display: none;">
+					弹出框
+					<div class="z_alert">
+						<p>确定要删除这张图片吗？</p>
+						<p>
+							<span class="z_cancel">取消</span> <span class="z_sure">确定</span>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="fixed-foot">
+				<div class="fixed_inner">
+					<a href="javascript:;" onClick="return corte();"
+						class="btn btn-danger btn-b" style="width: 100%;">提&nbsp;交</a>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="clear"></div>
+	<footer class="footer">
+		<div class="foot-con">
+			<div class="foot-con_2">
+				<a href="index.html"> <i class="navIcon home"></i> <span
+					class="text">首页</span>
+				</a> <a href="category.html"> <i class="navIcon sort"></i> <span
+					class="text">分类</span>
+				</a> <a href="shopcart.html"> <i class="navIcon shop"></i> <span
+					class="text">购物车</span>
+				</a> <a href="userhome.html"> <i class="navIcon member"></i> <span
+					class="text">我的</span>
+				</a>
+			</div>
+		</div>
+	</footer>
+	<script type="text/javascript">
+		//px转换为rem
+		(function(doc, win) {
+			var docEl = doc.documentElement, resizeEvt = 'orientationchange' in window ? 'orientationchange'
+					: 'resize', recalc = function() {
+				var clientWidth = docEl.clientWidth;
+				if (!clientWidth)
+					return;
+				if (clientWidth >= 640) {
+					docEl.style.fontSize = '100px';
+				} else {
+					docEl.style.fontSize = 100 * (clientWidth / 640) + 'px';
+				}
+			};
+
+			if (!doc.addEventListener)
+				return;
+			win.addEventListener(resizeEvt, recalc, false);
+			doc.addEventListener('DOMContentLoaded', recalc, false);
+		})(document, window);
+
+		function imgChange(obj1, obj2) {
+			//获取点击的文本框
+			var file = document.getElementById("file");
+			//存放图片的父级元素
+			var imgContainer = document.getElementsByClassName(obj1)[0];
+			//获取的图片文件
+			var fileList = file.files;
+			//文本框的父级元素
+			var input = document.getElementsByClassName(obj2)[0];
+			var imgArr = [];
+			//遍历获取到得图片文件
+			for (var i = 0; i < fileList.length; i++) {
+				var imgUrl = window.URL.createObjectURL(file.files[i]);
+				imgArr.push(imgUrl);
+				var img = document.createElement("img");
+				var span = document.createElement("span");
+				span.innerHTML += "-";
+				span.setAttribute("class", "jian");
+				img.setAttribute("src", imgArr[i]);
+				var imgAdd = document.createElement("div");
+				imgAdd.setAttribute("class", "z_addImg");
+				imgAdd.appendChild(img);
+				/* imgAdd.appendChild(span); */
+				imgContainer.appendChild(imgAdd);
+			}
+			;
+			imgRemove();
+		};
+
+		function imgRemove() {
+			var imgList = document.getElementsByClassName("jian");
+			var imgt = document.getElementsByClassName("z_addImg");
+			var zhez = document.getElementById("zhezhao");
+			var mask = document.getElementsByClassName("z_mask")[0];
+			var cancel = document.getElementsByClassName("z_cancel")[0];
+			var sure = document.getElementsByClassName("z_sure")[0];
+
+			for (var j = 0; j < imgt.length; j++) {
+				imgt[j].index = j;
+				imgt[j].onclick = function() {
+					var t = this;
+					var at = t.firstChild.src;
+					//alert(at);
+					document.getElementById("zzaw").style.display = "block";
+					document.getElementById("zhezhao").style.display = "block";
+					document.getElementById("imgg").src = at
+					cancel.onclick = function() {
+						mask.style.display = "none";
+						zhez.style.display = "none";
+						document.getElementById("zzaw").style.display = "none";
+					};
+					sure.onclick = function() {
+						mask.style.display = "none";
+						t.style.display = "none";
+						zhez.style.display = "none";
+						document.getElementById("zzaw").style.display = "none";
+					};
+					/*  zhez.style.display = "block";
+					  cancel.onclick = function() {
+					      mask.style.display = "none";
+					  };
+					  sure.onclick = function() {
+					      mask.style.display = "none";
+					    	//t.parentNode.style.display = "none";
+					  };*/
+
+				}
+			}
+			;
+		};
+		function canvasToDataURL(canvas, format, quality) {
+			return canvas.toDataURL(format || 'image/jpeg', quality || 1.0);
+		}
+		function dataURLToBlob(dataurl) {
+			var arr = dataurl.split(',');
+			var mime = arr[0].match(/:(.*?);/)[1];
+			var bstr = atob(arr[1]);
+			var n = bstr.length;
+			var u8arr = new Uint8Array(n);
+			while (n--) {
+				u8arr[n] = bstr.charCodeAt(n);
+			}
+			return new Blob([ u8arr ], {
+				type : mime
+			});
+		}
+		function imageToCanvas(src, cb) {
+			var canvas = document.createElement('CANVAS');
+			var ctx = canvas.getContext('2d');
+			var img = new Image();
+			img.src = src;
+			img.onload = function() {
+				canvas.width = img.width;
+				canvas.height = img.height;
+				ctx.drawImage(img, 0, 0);
+				cb(canvas);
+			};
+		}
+		// image转Blob
+		function imageToBlob(src, cb) {
+			imageToCanvas(src, function(canvas) {
+				cb(dataURLToBlob(canvasToDataURL(canvas)));
+			});
+		}
+
+		if (typeof FileReader === 'undefined') {
+			alert("抱歉，你的浏览器不支持 FileReader");
+		}
+
+		function showBigPreviewImg(ele, sign) {
+			if (typeof sign === 'undefined') {
+				if (event.target === ele) {
+					sign = true;
+				} else {
+					sign = false;
+				}
+			}
+			if (sign) {
+				var w = $(ele).data('w');
+				var h = $(ele).data('h');
+				if (w > 600) {
+					h = (600 / w) * h;
+					w = 600;
+				}
+				if (h > 450) {
+					w = (450 / h) * w;
+					h = 450;
+					if (w > 600) {
+						h = (600 / w) * h;
+						w = 600;
+					}
+				}
+				$('#previewBigImg').parent().show();
+				//$('#previewBigImg').width(w);
+				$('#previewBigImg').height(h);
+				$('#previewBigImg').css('background-image',
+						$(ele).css('background-image'));
+				$('#previewBigImg').css('background-size','100% 100%');
+			}
+
+		}
+		function removePreviewImg(ele, config) {
+			if ((typeof config) === 'undefined') {
+				config = {};
+				config.l = 4;
+			}
+			$nele = $(ele).next('li');
+			$pele = $(ele).prev('li');
+			if ($nele.length !== 0) {
+				var elex = $nele[0];
+			} else if ($pele.length !== 0) {
+				var elex = $pele[0];
+			}
+			showBigPreviewImg(elex, true);
+			$(ele).remove();
+			var l = parseInt($('#uploadedNum').html());
+			l--;
+			$('#uploadedNum').html(l)
+			$('#inputFileBox').show();
+			var $f = $('<input name="preview_img[]" class="weui-uploader__input" type="file" onchange="previewUploadImgs(this,{l:'
+					+ config.l
+					+ ',size:Math.pow(2,18)});" accept="image/png,image/gif,image/jpeg" />');
+			$('#inputFileBox').html($f);
+			if (l === 0) {
+				$('#previewBigImg').parent().hide();
+			}
+		}
+
+		function previewUploadImgs(imgInput, config) {
+			var that = imgInput;
+			var files = that.files;
+			var $ul = $('#uploaderFiles');
+			var $f = $('<input name="preview_img[]" class="weui-uploader__input" type="file" onchange="previewUploadImgs(this);" accept="image/png,image/gif,image/jpeg" />');
+			if ((typeof config) === 'undefined') {
+				config = {};
+				config.l = 4;
+				config.maxsize = 4096;	//	选择时的图片
+				config.maxw = 1920;
+				config.minw = 240;
+			}
+			for (var i = 0; i < files.length; i++) {
+				$(that).remove();
+				$('#inputFileBox').append($f);
+				if (config.maxsize < (files[i].size / 1024) ) {
+					console.log( (files[i].size / 1024) + 'k大于'+config.maxsize+'K，无法上传到服务器，请处理后或选择其他图片上传！');
+					//图片宽度不得小于200，暂时不做任何处理
+					showTip({
+						msg : '图片大于'+config.maxsize+'K，无法上传到服务器，请选择其他图片！',
+						btns : [ {
+							t : '明白了',
+							e : 'onclick',
+							a : "closeModal();"
+						} ]
+					});
+					return false;
+				} else {
+					var reader = new FileReader();
+					reader.onload = function(e) {
+						var img = new Image();
+						img.src = e.target.result;
+						img.onload = function() {
+							var w = this.width;
+							var h = this.height;
+							if (w > config.maxw) {
+								//图片宽度不得大于1200,暂时不做任何的处理
+								$(that).remove();
+								$('#inputFileBox').append($f);
+								console.log('该张图片宽度过大(宽度:' + w + 'px，高度:' + h
+										+ 'px)无法达到商品图片要求，超过最大宽度600px，请处理后再上传！');
+								showTip({
+									msg : '该张图片宽度过小(宽度:'
+											+ w
+											+ 'px，高度:'
+											+ h
+											+ 'px)无法达到商品图片要求，低于最小宽度200px，请选择其他图片上传！',
+									btns : [ {
+										t : '明白了',
+										e : 'onclick',
+										a : "closeModal();"
+									} ]
+								});
+								return false;
+							} else if (w < config.minw) {
+								//图片宽度不得小于300，暂时不做任何处理
+								$(that).remove();
+								$('#inputFileBox').append($f);
+								console
+										.log('该张图片宽度过小(宽度:'
+												+ w
+												+ 'px，高度:'
+												+ h
+												+ 'px)无法达到商品图片要求，低于最小宽度200px，请选择其他图片上传！');
+								showTip({
+									msg : '该张图片宽度过小(宽度:'
+											+ w
+											+ 'px，高度:'
+											+ h
+											+ 'px)无法达到商品图片要求，低于最小宽度200px，请选择其他图片上传！',
+									btns : [ {
+										t : '明白了',
+										e : 'onclick',
+										a : "closeModal();"
+									} ]
+								});
+								return false;
+							}
+							var html = [
+									'<li class="weui-uploader__file" style="cursor: pointer;" onclick="showBigPreviewImg(this);">',
+									'<span onclick="removePreviewImg(this.parentNode);" style="float: right;display: inline-block;color:#f00;width: 24px;height: 24px;line-height: 24px;border-radius: 12px;text-align: center;background-color: rgba(0,0,0,0.8);">—</span>',
+									'' ];
+							var $e = $(html.join(''));
+							$e.attr('data-w', w);
+							$e.attr('data-h', h);
+							$e.css('background-image', 'url(' + e.target.result
+									+ ')');
+							$(that).css('display', 'none');
+							$e.append($(that));
+							$ul.append($e);
+							var ele = $e[0];
+							showBigPreviewImg(ele, true);
+							var l = parseInt($('#uploadedNum').html());
+							l++;
+							$('#uploadedNum').html(l)
+							if (l < config.l) {
+								$('#inputFileBox').show();
+								$('#inputFileBox').append($f);
+							} else {
+								$('#inputFileBox').hide();
+							}
+						};
+					};
+					reader.readAsDataURL(files[i]);
+				}
+			}
+		}
+
+		var comFormData = null;
+		function corte() {
+			var com_content = $('textarea[name=content]').val();
+			if (com_content.length < 5) {
+				showTip({
+					msg : '评论字数不能少于5个字！',
+					btns : [ {
+						t : '明白了',
+						e : 'onclick',
+						a : "closeModal();"
+					} ]
+				});
+				return 0;
+			}
+			
+			//实例化formdata对象
+			comFormData = new FormData(document.getElementById("commentForm"));
+			comFormData.delete("preview_img[]");
+			var prevLength = 0;		//
+			var succNum = 0;		//
+			$("input[name='preview_img[]']").each(function(ind,e){
+				if( typeof e.files[0] !== "undefined" ){
+					prevLength++;
+				}
+			});
+			
+			if( prevLength === 0 ){
+				commentSend();
+			}
+			
+			$("input[name='preview_img[]']").each(function(ind,e){
+				if( typeof e.files[0] !== "undefined" ){
+					showTip({msg : '正在处理图片！'});
+					lrz( e.files[0], {
+			            width: 800
+			        }).then( function (rst){
+			        	comFormData.append( "preview_img2[]", rst.file, e.files[0].name );
+			        }).then(function(fod){
+			        	succNum++;
+			        	//	检查处理完所有图片,处理完则开始提交
+						console.log('处理完成:' + ind + '/' + prevLength);
+			        	if( prevLength == succNum ){
+							console.log('处理完成');
+							commentSend();
+			        	}
+			        });
+				}
+			});
+		}
+		
+		function commentSend(){
+			comFormData.set( "star1", $('#mydiv1').attr('currentindex') );	//	获取星级
+			//提交
+			$.ajax({
+				type : "POST",
+				url : "shop/order/moneyDetail",
+				dataType : 'json',
+				data: comFormData,
+			    async: false,
+			    cache: false,
+			    contentType: false,	//	不自动设置提交类型
+			    processData: false,
+				beforeSend : function() {
+					console.log('提交评论');
+					showTip({msg : '正在提交！'});
+				},
+				success : function(res) {
+					if (res.code == 1) {
+						showTip({
+							msg : '评价成功！',
+							btns : [ {
+								t : '返回个人中心',
+								e : 'onclick',
+								a : "window.location.href = '/shop/user';"
+							} ]
+						});
+					} else {
+						showTip({
+							msg : '服务器返回错误信息：' + res.msg,
+							btns : [ {
+								t : '明白了',
+								e : 'onclick',
+								a : "closeModal();"
+							} ]
+						});
+					}
+				},
+				error : function(res) {
+					showTip({
+						msg : '连接服务器失败！',
+						btns : [ {
+							t : '明白了',
+							e : 'onclick',
+							a : "closeModal();"
+						} ]
+					});
+				}
+			});
+		}
+	</script>
+</body>
+</html>

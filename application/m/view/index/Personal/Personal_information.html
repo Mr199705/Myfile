@@ -1,0 +1,116 @@
+<!--个人信息-->
+<script type="text/html" id="tpl_Personal_information">
+<div class="page">
+<!--顶部--->
+   <div class="ljk_top">
+     <a class=" top_left js_item " data-id="Personal_Center" href="javascript:;">
+         <i class="fa fa-angle-left fa-2x"></i>
+     </a>
+	 <a class=" top_right js_item" data-id="Personal_Center" href="javascript:;"></a> 
+     <p class="weui-flex__item top_center">个人信息</p>
+  </div>
+  <!---顶部--> 
+<!--内容-->
+<div class="ljk_neirong">
+        <form method="post" onsubmit="return false;" action="/m/home/updateHeadImg">
+	<div class="page__bd">
+            <div class="weui-cells">
+                <a  class=" js_item" data-id="guanfanxiaoxi" href="javascript:;">
+                    <div  id="preview" class="" style=" padding:20px 0px; margin:0px; width:100%; text-align:center; background:#4fb234;">
+                        <img class="weui-media-box__thumb group_member_head" src="{if $gUser.img !== ''}{$gUser.img}{else}__IMG__/default_head_small.png{/if}"  style="width:100px; height: 100px; border-radius: 80px;" alt="">
+                    </div>
+                </a>
+                <div class="fileUpload btn btn-primary" style=" margin:0px; top:-125px;">
+                    <span class="weui-btn upload-status" style="height: 100px; line-height: 100px; width: 100px; background:rgba(0,0,0,0.1); border-radius: 80px;color:#eee;">头像修改</span>
+                    <input type="file" class="upload"   onchange="uploadHeadImg(this);" accept="image/png,image/gif,image/jpeg" style="height:100px;" />
+		</div>
+            </div>
+            <div class="weui-cells" style="position: relative;top: -103px;">
+            <a class="weui-cell weui-cell_access" href="javascript:;">
+                <div class="weui-cell__bd">
+                    <p>账号</p>
+                </div>
+                <div class="weui-cell__ft">
+                    {$gUser.username}
+                </div>
+            </a>
+            <div class="weui-cell weui-cell_access">
+                <div class="weui-cell__bd">
+                    <p>姓名</p>
+                </div>
+                    {if $gUser.gid==133}
+					<div class="weui-cell__bd">
+					 <input class="weui-input weui-cell__ft" type="text" name="realname"  value="{$gUser.realname}" style="border-bottom: 1px #000 solid;" />
+					 {else /}
+					  <div class="weui-cell__ft">
+					 {$gUser.realname}
+					 {/if}
+                </div>
+            </div>
+            <div class="weui-cell weui-cell_access">
+                <div class="weui-cell__bd">
+                    <p>手机</p>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input weui-cell__ft" type="number" name="mobile" pattern="[0-9]*" value="{$gUser.mobile}" style="border-bottom: 1px #000 solid;" />
+                </div>
+            </div>
+            <div class="weui-cell weui-cell_access">
+                <div class="weui-cell__bd">
+                    <p>邮箱</p>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input weui-cell__ft" type="text" name="email" value="{$gUser.email}" style="border-bottom: 1px #000 solid;" />
+                </div>
+            </div>
+            <div class="weui-cell weui-cell_access">
+                <div class="weui-cell__bd">
+                    <p>QQ</p>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input weui-cell__ft" type="text" name="qq" value="{$gUser.qq}" style="border-bottom: 1px #000 solid;" />
+                </div>
+            </div>
+            <button class="weui-btn weui-btn_primary" onclick="updateGUser(this.form);">保存</button>  
+        </div>
+      </div>
+   </div>
+<!--内容-->
+</form>
+</div>
+<script type="text/javascript">
+    dianji();
+    goSys('m_index_index');
+    function updateGUser(fm){
+        $.ajax({
+            beforeSend:function(){
+                var tips = {
+                    type:1,
+                    title:'提示信息',
+                    content:'正在修改个人信息，请稍候！'
+                };
+                setTips(tips);
+            },
+            url:'/m/home/updateMember',
+            data:$(fm).serializeArray(),
+            type:'post',
+            dataType:'json',
+            success:function (data){
+                if(data.code==1){
+                    var tips = {
+                        type:1,
+                        title:'提示信息',
+                        content:data.msg,
+                    };
+                    setTips(tips);
+                    setTimeout(function (){
+                        $('#dialogs').remove();
+                        resginfo();
+                    },1000);
+                }
+            }
+        });
+    }
+</script>
+</script>
+<!--个人信息-->

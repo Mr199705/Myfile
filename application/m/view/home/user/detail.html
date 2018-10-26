@@ -1,0 +1,253 @@
+<script type="text/template" charset="utf-8" id='userdetail'>
+    <div class="ljk_top">
+        <a class="top_left js_item" data-id="m_user_index" href="javascript:;">
+            <i class="fa fa-angle-left fa-2x"></i>
+        </a>
+        <a class="top_right" href="javascript:;" style="padding-top: 12px;" onclick="location.reload();">
+            <i class="fa fa-refresh" style="font-size:1.3em;"></i>
+        </a>
+        <p class="weui-flex__item top_center">客户资料</p>
+    </div>
+    {{if( ljk ){}}
+    <div class="ljk_neirong" >
+        <!--内容--->
+        <div class="weui-form-preview">
+            <div class="weui-form-preview__bd" style="  padding-bottom: 0px;  font-size: .9em;">
+                <p>
+                    <label class="weui-form-preview__label">联系人</label>
+                    <span class="weui-form-preview__value">{{if(ljk.contact){}}{{=ljk.contact}}{{}}}{{if(ljk.contact==''){}}未设置{{}}}</span>
+                </p>
+                <p>
+                    <label class="weui-form-preview__label">联系电话</label>
+                    <span class="weui-form-preview__value">{{if(ljk.mobile){}}<a href="tel:{{=ljk.mobile}}" style="color:#999999">{{=ljk.mobile}}{{}}}</a>{{if(ljk.mobile==''){}}未设置{{}}}</span>
+                </p>
+                {{if(ljk.address){}}
+                <p>
+                    <label class="weui-form-preview__label">地址</label>
+                    <span class="weui-form-preview__value">{{=ljk.address}}</span>
+                </p>
+                {{}}}
+                {{if(ljk.bftime!==''){}}
+                <p>
+                    <label class="weui-form-preview__label">拜访周期</label>
+                    <span class="weui-form-preview__value">{{=ljk.bftime}}天未拜访</span>
+                </p>
+                {{}}}
+                {{if(ljk.otime!==''){}}
+                <p>
+                    <label class="weui-form-preview__label">下单周期</label>
+                    <span class="weui-form-preview__value">{{=ljk.otime}}天未下单</span>
+                </p>
+                {{}}}
+            </div>
+            <div class="weui-panel__bd">
+                <div class="weui-panel__hd " style="padding: 9px 9px 9px 14px;" id="dhxxuserdetail">
+                    <h4 class="weui-media-box__title" style="width: 50%; float: left; color:#000000;">更多信息</h4>
+                    <div class="Commodity_hiding">
+                        <i class="fa fa-eye" aria-hidden="true" id="eyeuserdetail" style="display:none;"></i>
+                        <i class="fa fa-eye-slash" aria-hidden="true" id="eye-slashuserdetail"></i>
+                    </div>
+                </div>
+                <div class="weui-form-preview__bd dinhuouserdetail" style="display:none;  font-size: .9em;" >
+                    <p>
+                        <label class="weui-form-preview__label">积分</label>
+                        <span class="weui-form-preview__value">{{=ljk.rank_points}}</span>
+                    </p>
+                    <p>
+                        <label class="weui-form-preview__label">客户类型</label>
+                        <span class="weui-form-preview__value">{{=ljk.tt}}</span>
+                    </p>
+                    {{if(ljk.rn){}}
+                    <p>
+                        <label class="weui-form-preview__label">等级</label>
+                        <span class="weui-form-preview__value">{{=ljk.rn}}</span>
+                    </p>
+                    {{}}}
+                    {{if(ljk.phone){}}
+                    <p>
+                        <label class="weui-form-preview__label">客户电话</label>
+                        <span class="weui-form-preview__value">{{=ljk.phone}}</span>
+                    </p>
+                    {{}}}
+                    {{if(ljk.x){}}
+                    <p>
+                        <label class="weui-form-preview__label">导航</label>
+                        <span class="weui-form-preview__value"><a class="weui-btn weui-btn_mini weui-btn_primary" href="javascript:" onclick="userNavigation('{{=ljk.uid}}');">开始导航</a></span>
+                    </p>
+                    {{}}}
+                </div> <br>
+                <div class="weui-grids">
+                    <a href="javascript:;" class="weui-grid" id="user_ch_record" data-id="user_ch_record" onclick="rech(this,{{=ljk.uid}});">
+                        <!-- <span class="weui-badge" style="position: absolute;top: 1em;right:1em;">13</span>-->
+                        <div class="weui-grid__icon" style="text-align:center;">
+                            <i class="fa fa-truck weui-tabbar__icon" style="color:#FF008D;"></i>
+                        </div>
+                        <p class="weui-grid__label">出货信息</p>
+                    </a>
+                </div>
+                <div style="width:100%; height:57px;">
+                </div>
+                {{}}}
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function toUtf8(str) {
+            var out, i, len, c;
+            out = "";
+            len = str.length;
+            for(i = 0; i < len; i++) {
+                c = str.charCodeAt(i);
+                if ((c >= 0x0001) && (c <= 0x007F)) {
+                    out += str.charAt(i);
+                } else if (c > 0x07FF) {
+                    out += String.fromCharCode(0xE0 | ((c >> 12) & 0x0F));
+                    out += String.fromCharCode(0x80 | ((c >>  6) & 0x3F));
+                    out += String.fromCharCode(0x80 | ((c >>  0) & 0x3F));
+                } else {
+                    out += String.fromCharCode(0xC0 | ((c >>  6) & 0x1F));
+                    out += String.fromCharCode(0x80 | ((c >>  0) & 0x3F));
+                }
+            }
+            return out;
+        }
+        $('.get_user_qrcode').on('click', function (){
+            $('#userQrcode').show();
+            var $qrboxs = $('.qrbox');
+            $qrboxs.each(function (){
+                var that = this;
+                var link = $(that).data('url');
+                $(that).html('');
+                var qrcode = new QRCode(that,{
+                    width : 250,
+                    height : 250
+                });
+                qrcode.makeCode(toUtf8(link));
+            });
+        });
+        function rech(a,uid){
+            var id = $(a).data('id');
+            var list = id + '_list';
+            $('#cd-timeline').data('uid',uid);
+            if($('.list' + list + '_contents').length !== 0){
+                initChGoodsTpl(uid);
+            }
+            window.pageManager.go(id);
+        }
+        function re(a,action,uid){
+            var id = $(a).attr('data-id');
+            var list = id + '_list';
+            if($('.list' + list + '_contents').length !== 0){
+                $('.list' + list + '_contents').html('<div class="listcontent list'+ list +'"><div id="cd-timeline" class="cd-container ' + list + '"></div></div>');
+                showLL('/m/user/record',list,{action:action,uid:uid,limit:10,p:1});
+            }
+            window.pageManager.go(id);
+        }
+        function searchUserOrder(a,uid){
+            var oldOuid = $('#ouid').val();
+            var resetSign = false;
+            $('#ouid').val(uid);
+            if(oldOuid != uid){
+                resetSign = true;
+            }
+            orderList({uid:uid},true);
+        }
+        function addhs(a){
+            var id = $(a).attr('data-id');
+            $("#uploadimgs").remove();
+            if($('#addHsContent').length == 1){
+                initHsForm('/m/user/addhs');
+            }
+            window.pageManager.go(id);
+        }
+        function addvisit(a){
+            var id = $(a).attr('data-id');
+            $("#uploadimgs").remove();
+            if($('.user_addvisit').length != 0){
+                showLA('/m/user/addvisit/','user_addvisit',{action:'show'});
+            }
+            window.pageManager.go(id);
+        }
+        function addstock(a){
+            var id = $(a).attr('data-id');
+            $("#uploadimgs").remove();
+            if($('#addStockContent').length == 1){
+                initStockForm('/m/user/addstock');
+            }
+            window.pageManager.go(id);
+        }
+        function editProfile(s){
+            var uid = $('#uid').html();
+            showLA('/m/user/profile/','user_editprofile',{action:'show',uid:uid});
+            var id = $(s).data('id');
+            window.pageManager.go(id);
+        }
+        $(function(){
+            $('.js_item').on('click', function(){
+                var id = $(this).data('id');
+                window.pageManager.go(id);
+            });
+            $("#m_user_index").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+            goSys('m_index_home');
+        });
+        {{if( ljk.x ){}}
+            function createMap(){
+                var x = {{=ljk.x}};
+                if(!!x){
+                    var y = {{=ljk.y}};
+                    var t = '{{=ljk.realname}}';
+                    var map = new BMap.Map("map");
+                    map.centerAndZoom(new BMap.Point(y, x), 14);
+                    addMarker(x, y,map,t);
+                    map.enableScrollWheelZoom();
+                }
+            }
+            {{}}}
+        $(function(){
+            $('.js_item').on('click', function(){
+                var id = $(this).data('id');
+                window.pageManager.go(id);
+                dianji();
+                $("#m_user_index").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+                goSys('m_index_home');
+            });
+            $("#dhxxuserdetail").on('click',function(){
+                if($(".dinhuouserdetail").css("display")=="none"){
+                    $(".dinhuouserdetail").show();
+                    {{if( ljk.x ){}}
+                        var el = '<div style="width:100%;height:200px;" id="map"></div>';
+                        $(".dinhuouserdetail").append(el);
+                        createMap();
+                        {{}}}
+                    $('#eyeuserdetail').show();
+                    $('#eye-slashuserdetail').hide();
+                }else{
+                    $(".dinhuouserdetail").hide();
+                    $('#map').remove();
+                    $('#eyeuserdetail').hide();
+                    $('#eye-slashuserdetail').show();
+                }
+            });
+        });
+</script>
+</script>
+{include file="home/user/user_nav"}
+{include file="home/user/report"}
+{include file="home/user/record"}
+<!--跟进客户-->
+<script type="text/html" id="tpl_genjinkehu">
+    <div class="page">
+    <div class="userdetail"></div>
+    </div>
+    <script type="text/javascript">
+        $(function(){
+            dianji();
+            goSys('m_index_home');
+            $("#{$m_user_index.url_name}").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+            var uid = $('#uid').html();
+            showLA('/m/user/detail/','userdetail',{uid:uid});
+        });
+    </script>
+</script>
+<!--跟进客户-->
+

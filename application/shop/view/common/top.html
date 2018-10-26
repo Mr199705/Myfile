@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="yes" name="apple-mobile-web-app-capable">
+<meta content="yes" name="apple-touch-fullscreen">
+<meta content="telephone=no" name="format-detection">
+<meta content="black" name="apple-mobile-web-app-status-bar-style">
+<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1;user-scalable=no;">
+<script charset="utf-8" src="__JS__/jquery-1.8.3.min.js?v=01292"></script>
+<script charset="utf-8" src="__JS__/global.js?v=01292"></script>
+<script charset="utf-8" src="__JS__/bootstrap.min.js?v=01292"></script>
+<script charset="utf-8" src="__JS__/template.js?v=01292"></script>
+<script charset="utf-8" src="__JS__/common.js?v=01292"></script>
+<script charset="utf-8" src="__JS__/shopcommon.js?v=01292"></script>
+<script charset="utf-8" src="__COMMON__/js/areas.js?v=01292"></script>
+<script charset="utf-8" src="__COMMON__/js/dot.js?v=01391"></script>
+<script charset="utf-8" src="__COMMON__/js/dropload.js?v=0xx91"></script>
+{if $initData && $initData.jsName}
+<script charset="utf-8" src="__JS__/{$initData.jsName}.js"></script>
+{/if}
+{if is_weixin()}
+<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script type="text/javascript">
+    wx.config({
+        debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+        appId: '{$wxconfig.appId}', // 必填，公众号的唯一标识
+        timestamp: '{$wxconfig.timestamp}', // 必填，生成签名的时间戳
+        nonceStr: '{$wxconfig.nonceStr}', // 必填，生成签名的随机串
+        signature: '{$wxconfig.signature}',// 必填，签名，见附录1
+        jsApiList: ['chooseImage','previewImage','uploadImage','downloadImage','openLocation','getLocation','onMenuShareTimeline','onMenuShareAppMessage','onMenuShareQQ'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+    });
+</script>
+{/if}
+<link rel="stylesheet" href="__CSS__/bootstrap.css?v=01292">
+<link rel="stylesheet" href="__CSS__/style.css?v=1?v=012">
+<link rel="stylesheet" href="__CSS__/member.css?v=01292">
+<link rel="stylesheet" href="__CSS__/order3.css?v=01292">
+<link rel="stylesheet" href="__CSS__/address.css?v=01292">
+<link rel="stylesheet" href="__CSS__/money.css?v=01291">
+<link rel="stylesheet" href="__CSS__/m.css?v=01291">
+<!-- 信息提示框 -->
+{include file="common/tip" /}
+{include file="common/toast" /}

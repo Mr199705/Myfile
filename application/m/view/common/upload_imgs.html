@@ -1,0 +1,71 @@
+<script type="text/template" id="uploadImgsTemplate">
+    <div class="weui-cell" style="border-bottom:0px solid #000;" id="uploadimgs">
+        <div class="weui-cell__hd">
+           <label class="weui-label">附件(<span style="color: red;" id="uploadedNum">{{?(ljk)}}{{?(ljk.urls.length)}}{{=ljk.urls.length}}{{??(ljk.urls.length==0)}}0{{??}}0{{?}}{{??}}0{{?}}</span>/9)</label>
+        </div>
+        <div class="weui-cell__bd">
+            <div class="page__bd">
+                <div class="weui-gallery" id="gallery" onclick="imgToSmall();">
+                    <span class="weui-gallery__img" id="galleryImg"></span>
+                    <div class="weui-gallery__opr" style="position:absolute;margin-bottom: 50px;opacity: 0.6;background: #000;">
+                        <a href="javascript:" class="weui-gallery__back" style="">
+                            {{?ljk}}
+                            <i class="weui-icon-delete weui-icon_gallery-delete" style="margin-right: 20px;" data-id="{{?(ljk.upimgurl)}}{{=ljk.upimgurl}}{{?}}" id="delImg"></i>
+                            {{??}}
+                            <i class="weui-icon-delete weui-icon_gallery-delete" style="margin-right: 20px;" data-id="" id="delImg"></i>
+                            {{?}}
+                            <i class="weui-icon-back weui-icon_gallery-back" style="margin-left: 20px;"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="weui-uploader">
+                    <div class="weui-uploader__bd">
+                        <ul class="weui-uploader__files" id="uploaderFiles">
+                        {{?(ljk)}}
+                            <input type="hidden" id="imgids" name="imgsid" value="{{=ljk.imgsid}}" />
+                            {{for(var i=0; i<ljk.urls.length; i++){}}
+                                {{?(ljk.urls[i]!='')}}
+                                <li class="weui-uploader__file fjimg" style="background-image:url(/public/{{=ljk.urls[i]}});" onclick="imgToBig(this,this.parentNode);"></li>
+                                {{?}}
+                            {{}}}
+                            {{?(ljk.localids)}}
+                                {{for(var i=0; i<ljk.localids.length; i++){}}
+                                <li class="weui-uploader__file weui-uploader__file_status fjimg" data-filename="{{=ljk.localids[i]}}" style="background-image:url({{=ljk.localids[i]}})" onclick="imgToBig(this,this.parentNode);"></li>
+                                {{}}}
+                            {{?}}
+                        {{?}}
+                        </ul>
+                        {{?ljk}}
+                            {{?(ljk.urls.length<9)}}
+                                {if !is_weixin()}
+                                <div class="weui-uploader__input-box" style="margin-right:3px;margin-bottom: 3px;" id="fileInputBox">
+                                    <input id="uploaderInput" class="weui-uploader__input" type="file" onchange="uploadImg(this);" accept="image/png,image/gif,image/jpeg" multiple />
+                                </div>
+                                {else}
+                                <button class="weui-uploader__input-box" style="margin-right:3px;margin-bottom: 3px;" id="fileInputBox" onclick="wxUpload(this.form,{$gUser.wx_upload_type});"></button>
+                                {/if}
+                            {{?}}
+                            {{?(ljk.urls.length>=9)}}
+                                {if !is_weixin()}
+                                <div class="weui-uploader__input-box" id="fileInputBox" style="display: none;">
+                                    <input id="uploaderInput"  style="margin-right:3px;margin-bottom: 3px;" class="weui-uploader__input" type="file" onchange="uploadImg(this);" accept="image/png,image/gif,image/jpeg" multiple />
+                                </div>
+                                {else}
+                                <button class="weui-uploader__input-box" id="fileInputBox" style="margin-right:3px;margin-bottom: 3px;display: none;" onclick="wxUpload(this.form,{$gUser.wx_upload_type});"></button>
+                                {/if}
+                            {{?}}
+                        {{??}}
+                            {if !is_weixin()}
+                            <div class="weui-uploader__input-box" style="margin-right:3px;margin-bottom: 3px;" id="fileInputBox">
+                                <input id="uploaderInput" class="weui-uploader__input" type="file" onchange="uploadImg(this);" accept="image/png,image/gif,image/jpeg" multiple />
+                            </div>
+                            {else}
+                            <button class="weui-uploader__input-box" style="margin-right:3px;margin-bottom: 3px;" id="fileInputBox" onclick="wxUpload(this.form,{$gUser.wx_upload_type});"></button>
+                            {/if}
+                        {{?}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>

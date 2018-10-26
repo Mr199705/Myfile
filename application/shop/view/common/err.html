@@ -1,0 +1,33 @@
+{include file="head"}
+<body ontouchstart>
+    <div class="weui-toptips weui-toptips_warn js_tooltips"></div>
+    <div class="container" id="container"></div>
+<!--首页-->
+<script type="text/html" id="tpl_home">
+    <div class="page">
+        <!--内容-->
+        <div class="ljk_neirong ljk_neirong_home"></div>
+        <!--内容-->
+    </div>
+    <script type="text/javascript">
+        $(function (){
+            $('#dialogs').remove();
+            var tip = {
+                type:1,
+                title:'提示信息',
+                content:'{$r.msg}',
+                btn:1,
+                btns:1,
+                btnsc:'关闭',
+                btnsa:'onclick="window.location.href=\'/m/pay/index.html#home\'"',
+            };
+            var template = doT.template($('#tpldialogs').html());
+            var t_html = template(tip);
+            $('.ljk_neirong_home').append(t_html);
+            return false;
+        });
+    </script>
+</script>
+{include file="dialog" /}
+</body>
+</html>

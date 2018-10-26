@@ -1,0 +1,619 @@
+<!--我的客户-->
+<script type="text/html" id="tpl_tianjiashangpin">
+    <div class="page">
+        <div class="ljk_top">
+            <a class="top_left js_item" href="javascript:;" data-id="dingdanxiangqing">
+                <i class="fa fa-angle-left fa-2x"></i>
+            </a>
+            <p class="weui-flex__item top_center">添加商品</p>
+        </div>
+        <div class="ljk_neirong">
+            <div class="order_add_goods_search_form">
+            </div>
+            <div class="goods_shousuo order_add_goods_cat">
+            </div>
+            <!--商品搜索结果列表-->
+            <div class="addordergoodscontents">
+            </div>
+            <!--商品搜索结果列表-->
+             <!--执行添加商品操作-->
+            <div class="order_addGoodsForm">
+            </div>
+            <!--执行添加商品操作-->
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(function(){
+            dianjiGoOrder();
+            goSys('{$m_index_home.url_name}');
+            $("#{$m_order_index.url_name}").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+            var searchFm = doT.template($('#order_add_goods_search_form').html());
+            $('.order_add_goods_search_form').html(searchFm());
+            getGoodsCat();
+            getAddGoodsList({cid:'',type:0,t:''},false);//先加载所有商品
+        });
+        $(function(){
+            var $iosActionsheet = $('#iosActionsheet');
+            var $iosMask = $('#iosMask');
+            function hideActionSheet() {
+                $iosActionsheet.removeClass('weui-actionsheet_toggle');
+                $iosMask.fadeOut(200);
+            }
+            $iosMask.on('click', hideActionSheet);
+            $('.iosActionsheetCancel').on('click', hideActionSheet);
+            $("#showIOSActionSheet").on("click", function(){
+                $iosActionsheet.addClass('weui-actionsheet_toggle');
+                $iosMask.fadeIn(200);
+            });
+        });
+    </script>
+</script>
+{include file="home/order/goods_add_cat"}
+{include file="home/order/order_add_goods_search_form"}
+<script type="text/template" charset="utf-8" id="order_addGoodsForm">
+{{if(ljk){}}
+<form method="post" action="/m/order/addordergoods/" id="addOrderGoodsForm" onsubmit="return false;">
+    <input type="hidden" name="goodid" value="{{=ljk.goods_id}}" />
+    <input type="hidden" name="name" value="{{=ljk.goods_name}}" />
+    <input type="hidden" name="oid" value="{{=ljk.oid}}" />
+    <input type="hidden" name="unitg" value="{{=ljk.gunit}}" />
+    <input type="hidden" name="laiyuan" value="2" />
+    <input type="hidden" name="unitgid" value="{{=ljk.unitgid}}" />
+    <input type="hidden" name="action" value="addordergoods" />
+    <input type="hidden" id="uid" name="uid" value="">
+    <div class="weui-mask" id="iosMask_1" style="display: none"></div>
+        <div class="weui-actionsheet" id="iosActionsheet_1" style="right: 0px;width: 80%;left: 20%;height: 100%;overflow-y:auto;">
+            <div class="weui-actionsheet__menu">
+                <div class="weui-panel__bd">
+                    <a class="weui-media-box weui-media-box_appmsg">
+                        <div class="weui-media-box__hd" style="width: 85px;height: 85px;">
+                            <img class="weui-media-box__thumb" src="{{=ljk.goods_img}}" alt="">
+                        </div>
+                        <div class="weui-media-box__bd">
+                            <p style="font-weight:initial;" >{{=ljk.goods_name}}</h6>
+                            <p class="weui-media-box__desc">货号：{{=ljk.goods_sn}}</p>
+                            <p class="weui-media-box__desc">积分：{{=ljk.yd_score}}</p>
+                            <p class="weui-media-box__desc">规格：{{=ljk.gunit}}</p>
+                            <input type="hidden" class="data-tuan1" data-tuan="{{=ljk.tuanprice}}">
+                        </div>
+                    </a>
+                    <div id="skulistdiv1" {{? ljk.sku.length>0 }}data-skus="1" {{??}}data-skus="0"  {{?}}></div>
+                    {{? ljk.sku.length>0 }}
+                    <div>
+                    <div class="weui-cell__bd">
+                        <p>&emsp;属性</p>
+                    </div>
+                        <div >
+                            <ul id="skulist1">
+                                {{for(var i=0; i<ljk.sku.length; i++){ }}
+                                    <li style="overflow:hidden; white-space:nowrap; text-overflow:ellipsis;" {{if(i==0){}} class="weui-btn weui-btn_mini form-sku form-sku-checked weui-btn_primary"{{}else{}}class="weui-btn weui-btn_mini form-sku weui-btn_default"{{}}} data-id="{{? ljk.sku[i].price!=null}}{{=ljk.sku[i].price.tuanprice}}{{??}}0{{?}}" data-storage="{{=ljk.sku[i].storage_num}}" data-price="{{? ljk.sku[i].price!=null}}{{=ljk.sku[i].price.id}}{{??}}0{{?}}" data-avs="{{=ljk.sku[i].attrs_value}}" data-skuid="{{=ljk.sku[i].id}}" onclick="setSku(this);">
+                                        <input type="radio" name="skuid" {{if(i==0){}}checked="checked"{{}else{}}{{}}} value="{{=ljk.sku[i].id}}" style="opacity:0;display:none;border-radius:10px;" />{{=ljk.sku[i].attrs_value}}
+                                    </li>
+                                {{}}}
+                                <input type="hidden" id="priceid1" name="priceid"  value="">
+                                <input type="hidden" id="attrs_value1" name="attrs_value"  value="">
+                            </ul>
+                        </div>
+                        </div>
+                    {{??}}&emsp;<span id="skus1" data-skus="0">无属性</span>{{?}}
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <p>数量</p>
+                        </div>
+                        <div class="weui-cell__ft">
+                            <span class="input-number-decrement" onclick="decre(this);">–</span>
+                                    <input class="input-number" type="text" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" autocomplete="off" oninput="checksto(this);" value="1" style="width: 30px;" maxlength="4" id="num1" name="num" />
+                            <span id="getstoNum1" data-sto="" class="input-number-increment" onclick="incre(this);">+</span>
+                            <div id="div-sto-msg1" style="display: none;font-size: 10px;" class="weui-cell__bd"></div>
+                        </div>
+                    </div>
+                    <div class="weui-cell" style="padding-bottom:0px;padding-top:0px;">
+                        <div class="weui-cell__bd">
+                            <p>库存</p>
+                        </div>
+                        <div class="weui-cell__ft">
+                            <span class="weui-form-preview__value weui-cells__title" style="margin:0px;">
+                            <span id="ordergoodsstoragenum1" class="weui-media-box__desc" pattern="[0-9\.]*" data-id="">--</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="weui-cell" style="padding-bottom:0px;padding-top:0px;">
+                        <div class="weui-cell__bd">
+                            <p>单位</p>
+                        </div>
+                        <div class="weui-cell__ft">
+                            <span id="storageList1" class="weui-form-preview__value weui-cells__title" style="margin:0px;">
+                            {{? ljk.unit.length>0}}
+                                {{for(var i=0;i<ljk.unit.length;i++){}}
+                                    <a {{if(i==0){}}class="weui-btn weui-btn_mini form-unitid form-unitid-checked weui-btn_primary"{{}else{}}class="weui-btn weui-btn_mini form-unitid weui-btn_default"{{}}} data-id="{{=ljk.unit[i].coefficient}}" onclick="setUnit(this);">
+                                        <input style="opacity:0;display:none;" type="radio" name="unitid" {{if(i==0){}}checked="checked"{{}else{}}{{}}}  value="{{=ljk.unit[i].id}}" data-value="{{=ljk.unit[i].uname}}" style="border-radius:10px;" />{{=ljk.unit[i].uname}}
+                                    </a>
+                                    {{}}}
+                            {{??}}
+                            {{ for(var i=0; i< ljk.sku.length; i++){ }}
+                                <div style="display: none;" id="unit1_{{=ljk.sku[i].id}}">
+                                    {{ for(var j=0; j < ljk.sku[i].unitlist.length; j++) { }}
+                                        <a {{if(j==0){}}class="weui-btn weui-btn_mini form-unitid form-unitid-checked weui-btn_primary"{{}else{}} class="weui-btn weui-btn_mini form-unitid weui-btn_default"{{}}} data-tuanprice="{{? ljk.sku[i].price.length>0}}{{=ljk.sku[i].price[j].tuanprice}}{{??}}0{{?}}" data-id="{{? ljk.sku[i].price.length>0}}{{=ljk.sku[i].price[j].id}}{{??}}0{{?}}"  data-coefficient="{{=ljk.sku[i].unitlist[j].coefficient}}" onclick="setUnit(this);">
+                                            <input style="opacity:0;display:none;" type="radio"  data-id="{{=ljk.sku[i].unitlist[j].id}}" data-value="{{=ljk.sku[i].unitlist[j].uname}}" style="border-radius:10px;" />{{= ljk.sku[i].unitlist[j].uname}}
+                                        </a>
+                                    {{ } }}
+                                </div>
+                            {{ } }}
+                            <input type="hidden" id="unitid" name="unitid" value="">
+                            {{?}}
+                            <input type="hidden" id="unit1" name="unit" value="">
+                            </span>
+                        </div>
+                    </div>
+                    <div class="weui-cell" style="padding-bottom: 0px;padding-top: 0px;">
+                        <div class="weui-cell__bd">
+                            <p>销售类型</p>
+                        </div>
+                        <div class="weui-cell__ft">
+                            <span class="weui-form-preview__value weui-cells__title" style="margin: 0px;">
+                                {{for(var i=0;i<ljk.selltype.length;i++){}}
+                                <a {{if(ljk.selltype[i].id==1){}}class="weui-btn weui-btn_mini form-selltypeid weui-btn_primary"{{}else{}}class="weui-btn weui-btn_mini form-selltypeid weui-btn_default"{{}}} onclick="setSelltype(this,{{=ljk.selltype[i].id}});"><input style="opacity:0;display:none;" {{if(ljk.selltype[i].id==1){}}checked="checked"{{}}} type="radio" name="type" value="{{=ljk.selltype[i].id}}" style="border-radius:10px;" />{{=ljk.selltype[i].title}}</a>
+                                {{}}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="weui-cells weui-cells_form"  style="margin-top: 0px;">
+                        <div class="weui-cell" >
+                            <div class="weui-cell__hd"><label class="weui-label">价格(¥)</label></div>
+                            <div class="weui-cell__bd">
+                                <input id="ordergoodsPrice1" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" class="weui-input" type="number" name="price" placeholder="请输入价格"/>
+                            </div>
+                        </div>
+                        <div class="weui-cells__title">备注</div>
+                        <div class="weui-cells">
+                            <div class="weui-cell">
+                                <div class="weui-cell__bd">
+                                    <input class="weui-input" type="text" name="desc" autocomplete="off" placeholder="请输入.."/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{if(ljk.cuxiao){}} <div class="weui-cells__title">促销：{{=ljk.cuxiao}}</div> {{}}}
+            </div>
+            <div class="weui-actionsheet__action">
+                <button id="iosActionsheetCancel_1" class="weui-actionsheet__cell" type="submit" onclick="return post(this.form);" style="width:100%;display:inline-block;background:#1AAD19;color: #FFFFFF;border;none;">添加</button>
+                <button id="iosActionsheetCancel_2" class="weui-actionsheet__cell" type="submit"  disabled style="width:100%;display:inline-block;background:#7F7F7F;color: #FFFFFF;border;none;display:none">库存不足，无法购买！</button>
+            </div>
+        <a class="weui-media-box weui-media-box_appmsg">
+        <div class="weui-media-box__hd"></div>
+        <div class="weui-media-box__bd"></div>
+        </a>
+        </div>
+    </div>
+    <div class="weui-mask add-goods-dialog" style="display: none;z-index:9999;"></div>
+    </form>
+    <script type="text/javascript">
+    $(function(){
+        $("#m_user_index").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+        goSys('m_index_home');
+        $("#uid").val(Number($('#useruid').val()));
+        var price=Number($('.data-tuan1').data('tuan'));
+        var type = $("input[name='type']:checked").val();
+        var skulistnum=Number($('#skulistdiv1').data('skus'));
+        if(skulistnum==0){
+            var ss=Number($("#storageList1").find('.form-unitid-checked').data('id'));
+            if(type==2){
+                $('#ordergoodsPrice1').val(Number(0).toFixed(2));
+            }else{
+                $('#ordergoodsPrice1').val(Number(price*ss).toFixed(2));
+            }
+            var danwei1=$("#storageList1").find('.form-unitid-checked').find('input').data('value');
+            $("#unit1").val(danwei1);
+        }else if(skulistnum==1){
+            if($('#skulist1>li').find('input').attr('checked')){
+                var sku_id=$('.form-sku-checked').data('skuid');
+                var danwei=$("#unit1_"+sku_id).find('.form-unitid-checked').find('input').data('value');
+                $("#unit1").val(danwei);
+                $("#attrs_value1").val($('.form-sku-checked').data('avs'));
+                $("#priceid1").val($("#unit1_"+sku_id).find('.form-unitid-checked').data('id'));
+                var $unit_id=$('#unit1_'+sku_id);
+                $unit_id.css('display','block').siblings('display','none');
+                $unit_id.find('a').eq(0).find('input').attr('checked','checked');
+                $unit_id.siblings().find('a').find('input').removeAttr('checked','checked');
+                var price1=$unit_id.find('.form-unitid-checked').data('tuanprice');
+                $('#unitid').val($unit_id.find('.form-unitid-checked').children().data('id'));
+
+                var storage=Number($('.form-sku-checked').data('storage'));
+                var coe=Number($unit_id.find('.form-unitid-checked').data('coefficient'));
+                var sto=Math.floor(storage/coe);
+
+                $('#getstoNum1').data('sto',sto);
+                $("#ordergoodsstoragenum1").data('value',sto);
+                $("#ordergoodsstoragenum1").text(sto);
+                if(sto>0){
+                    isNaN(sto)?$('#ordergoodsstoragenum1').text('--'):$('#ordergoodsstoragenum1').text(sto);
+                }else{
+                    isNaN(sto)?$('#ordergoodsstoragenum1').text('--'):$('#ordergoodsstoragenum1').text(0);
+                }
+
+                if(type==2){
+                    $('#ordergoodsPrice1').val(Number(0).toFixed(2));
+                }else{
+                    $('#ordergoodsPrice1').val(Number(price1).toFixed(2));
+                }
+
+                if($("#num1").val()<=sto && $("#num1").val()>0){
+                    $("#iosActionsheetCancel_1").css('display','block');
+                    $("#iosActionsheetCancel_2").css('display','none');
+                    $("#div-sto-msg1").css('display','none');
+                }else{
+                    $("#iosActionsheetCancel_1").css('display','none');
+                    $("#iosActionsheetCancel_2").css('display','block');
+                    $("#div-sto-msg1").text('库存不足，无法下单！');
+                    $("#div-sto-msg1").css('display','block');
+                }
+            }
+        }
+    });
+    function setSku(btn){
+        $('.form-sku').each(function (){
+            $(this).attr('class','weui-btn weui-btn_mini form-sku weui-btn_default');
+            $(this).children('input').removeAttr('checked');
+
+        });
+        $(btn).attr('class','weui-btn weui-btn_mini form-sku form-sku-checked weui-btn_primary');
+        $(btn).children('input').attr('checked','checked');
+        $(btn).each(function () {
+            if($(btn).children('input').attr('checked')){
+                var attrs_value=$(this).data('avs');
+                var sku_id=$(this).data('skuid');
+                var $unit_id=$('#unit1_'+sku_id);
+                $('#attrs_value1').val(attrs_value);
+                $("#priceid1").val($("#unit1_"+sku_id).find('.form-unitid-checked').data('id'));
+                $unit_id.css('display','block').siblings().css('display','none');
+                $unit_id.find('a').eq(0).find('input').attr('checked','checked');
+                $unit_id.siblings().find('a').find('input').removeAttr('checked','checked');
+
+                if($unit_id.find('a').length!==1){
+                    $unit_id.find('a').eq(0).removeClass('weui-btn weui-btn_mini form-unitid weui-btn_default');
+                    $unit_id.find('a').eq(0).addClass('weui-btn weui-btn_mini form-unitid form-unitid-checked weui-btn_primary');
+                    $unit_id.find('a').eq(0).siblings().removeClass('weui-btn weui-btn_mini form-unitid form-unitid-checked weui-btn_primary');
+                    $unit_id.find('a').eq(0).siblings().addClass('weui-btn weui-btn_mini form-unitid weui-btn_default');
+                }else{
+                    $unit_id.find('a').eq(0).removeClass('weui-btn weui-btn_mini form-unitid weui-btn_default');
+                    $unit_id.find('a').eq(0).addClass('weui-btn weui-btn_mini form-unitid form-unitid-checked weui-btn_primary')
+                }
+                var danwei=$("#unit1_"+sku_id).find('.form-unitid-checked').find('input').data('value');
+                $("#unit1").val(danwei);
+                var type = $("input[name='type']:checked").val();
+                var price1=$unit_id.find('.form-unitid-checked').data('tuanprice');
+                var storage=Number($('.form-sku-checked').data('storage'));
+                $('#unitid').val($unit_id.find('.form-unitid-checked').children().data('id'));
+
+                var coe=Number($unit_id.find('.form-unitid-checked').data('coefficient'));
+                var sto=Math.floor(storage/coe);
+                $('#getstoNum1').data('sto',sto);
+                $("#ordergoodsstoragenum1").data('value',sto);
+                $('#ordergoodsstoragenum1').text(sto);
+
+                if(sto>0 || isNaN(sto)==false){
+                    $('#ordergoodsstoragenum').text(sto);
+                }else{
+                    isNaN(sto)?$('#ordergoodsstoragenum1').text('--'):$('#ordergoodsstoragenum1').text(0);
+                }
+                if($("#num1").val()<=sto && $("#num1").val()>0){
+                    $("#iosActionsheetCancel_1").css('display','block');
+                    $("#iosActionsheetCancel_2").css('display','none');
+                    $("#div-sto-msg1").css('display','none');
+                }else{
+                    $("#iosActionsheetCancel_1").css('display','none');
+                    $("#iosActionsheetCancel_2").css('display','block');
+                    $("#div-sto-msg1").text('库存不足，无法下单！');
+                    $("#div-sto-msg1").css('display','block');
+                }
+                if(type==2){
+                    $('#ordergoodsPrice1').val(Number(0).toFixed(2));
+                }else{
+                    $('#ordergoodsPrice1').val(Number(price1).toFixed(2));
+                }
+            }
+        });
+    }
+    function setUnit(btn){
+        $('.form-unitid').each(function (){
+            $(this).attr('class','weui-btn weui-btn_mini form-unitid weui-btn_default');
+            $(this).children('input').removeAttr('checked');
+        });
+        $(btn).attr('class','weui-btn weui-btn_mini form-unitid form-unitid-checked weui-btn_primary');
+        $(btn).children('input').attr('checked','checked');
+        var type = $("input[name='type']:checked").val();
+        var skulistnum=Number($('#skulistdiv1').data('skus'));
+        if(skulistnum==0){
+            var price2=$('.data-tuan1').attr('data-tuan');
+            var danwei1=$("#storageList1").find('.form-unitid-checked').find('input').data('value');
+            $("#unit1").val(danwei1);
+            var ss=$("#storageList1").find('.form-unitid-checked').data('id');
+            if(type==2){
+                $('#ordergoodsPrice1').val(Number(0).toFixed(2));
+            }else{
+                $('#ordergoodsPrice1').val(Number(price2*ss).toFixed(2));
+            }
+        }else if(skulistnum==1){
+            $('#storageList1').children('div').each(function () {
+                if($(this).css("display")=="block") {
+                    if ($(btn).children('input').attr('checked')) {
+                        $("#priceid1").val($(this).find('.form-unitid-checked').data('id'));
+                        var danwei = $(this).find('.form-unitid-checked').find('input').data('value');
+                        $("#unit1").val(danwei);
+                        $('#unitid').val($(this).find('.form-unitid-checked').children().data('id'));
+
+                        var price1 = $(btn).children('input').attr('checked') ? $(this).find('.form-unitid-checked').data('tuanprice') : $('.data-tuan1').data('tuan');
+                        var storage = Number($('.form-sku-checked').data('storage'));
+                        var coe = Number($(this).find('.form-unitid-checked').data('coefficient'));
+                        var sto = Math.floor(storage / coe);
+
+                        $("#ordergoodsstoragenum1").data('value', sto);
+                        if (sto > 0 || isNaN(sto) == false) {
+                            $('#ordergoodsstoragenum1').text(sto);
+                        } else {
+                            isNaN(sto) ? $('#ordergoodsstoragenum1').text('--') : $('#ordergoodsstoragenum1').text(0);
+                        }
+                        if (type == 2) {
+                            $('#ordergoodsPrice1').val(Number(0).toFixed(2));
+                        } else {
+                            $('#ordergoodsPrice1').val(Number(price1).toFixed(2));
+                        }
+                        $('#getstoNum').data('sto', sto);
+                        if ($("#num1").val()<=sto && $("#num1").val()>0) {
+                            $("#iosActionsheetCancel_1").css('display', 'block');
+                            $("#iosActionsheetCancel_2").css('display', 'none');
+                            $("#div-sto-msg1").css('display', 'none');
+                        } else {
+                            $("#iosActionsheetCancel_1").css('display', 'none');
+                            $("#iosActionsheetCancel_2").css('display', 'block');
+                            $("#div-sto-msg1").text('库存不足，无法下单！');
+                            $("#div-sto-msg1").css('display', 'block');
+                        }
+                    }
+                }
+            });
+        }
+    }
+    function setSelltype(btn,id){
+        $('.form-selltypeid').each(function (){
+            $(this).attr('class','weui-btn weui-btn_mini form-selltypeid weui-btn_default');
+            $(this).children('input').removeAttr('checked');
+        });
+        $(btn).attr('class','weui-btn weui-btn_mini form-selltypeid weui-btn_primary');
+        $(btn).children('input').attr('checked','checked');
+
+        if(Number($('#skulistdiv1').data('skus'))==0){
+            var ss=$("#storageList1").find('.form-unitid-checked').data('id');
+            var price=$('.data-tuan1').attr('data-tuan');
+            if(id===2){
+                $('#ordergoodsPrice1').val(Number(0).toFixed(2));
+            }else{
+                $('#ordergoodsPrice1').val(Number(price*ss).toFixed(2));
+            }
+        }else{
+            var price1=$('.form-unitid-checked').data('tuanprice');
+            if(id==2){
+                $('#ordergoodsPrice1').val(Number(0).toFixed(2));
+            }else{
+                $('#ordergoodsPrice1').val(Number(price1).toFixed(2));
+            }
+        }
+        console.log($('#addOrderGoodsForm').serializeArray());
+    }
+    function decre(obj){
+        var $num=0;
+        var sl=$(obj).next('input').val();
+        if(isNaN(sl) || sl=='' || sl=='undefined'){
+            $(obj).next('input').val(1);
+            return false;
+        }
+        var sto=Number($('#getstoNum1').attr('data-sto'));
+        var goods_num=Number($('#ordergoodsstoragenum1').text());
+        if($("#skulistdiv1").data('skus')===0) {
+            $num = parseInt($(obj).next('input').val()) - 1;
+            $num < 1 ? $num = 1 : null;
+            $(obj).next('input').val($num);
+        }else{
+            $num = parseInt($(obj).next('input').val()) - 1;
+            $num < 1 ? $num = 1 : null;
+            $(obj).next('input').val($num);
+            if($("#num1").val()<=goods_num && $("#num1").val()>0){
+                $("#iosActionsheetCancel_1").css('display','block');
+                $("#iosActionsheetCancel_2").css('display','none');
+                $("#div-sto-msg1").css('display','none');
+            }else{
+                $("#iosActionsheetCancel_1").css('display','none');
+                $("#iosActionsheetCancel_2").css('display','block');
+                $("#div-sto-msg1").text('库存不足，无法下单！');
+                $("#div-sto-msg1").css('display','block');
+            }
+        }
+    }
+    function incre(obj){
+        var $num=0;
+        if($("#skulistdiv1").data('skus')===0) {
+            $num = parseInt($(obj).prev('input').val()) + 1;
+            $num >9999 ? $num = 9999 : null;
+            $(obj).prev('input').val($num);
+        }else{
+            if($("#skus1").data('skus')===0){
+                $num = parseInt($(obj).prev('input').val()) + 1;
+                $num >9999 ? $num = 9999 : null;
+                $(obj).prev('input').val($num);
+            }else{
+                var sto=Number($('#getstoNum1').attr('data-sto'));
+                var goods_num=Number($('#ordergoodsstoragenum1').text());
+                if(isNaN(goods_num)===false && goods_num!==0 && $("#num1").val()<=goods_num && $("#num1").val()>0){
+                    $num = parseInt($(obj).prev('input').val()) + 1;
+                    $num >9999 ? $num = 9999 : null;
+                    $(obj).prev('input').val($num);
+                    if($num>goods_num || $num===goods_num){
+                        $(obj).prev('input').val(goods_num);
+                    }
+                    $("#iosActionsheetCancel_1").css('display','block');
+                    $("#iosActionsheetCancel_2").css('display','none');
+                    $("#div-sto-msg1").css('display','none');
+                }else{
+                    $("#iosActionsheetCancel_1").css('display','none');
+                    $("#iosActionsheetCancel_2").css('display','block');
+                    $("#div-sto-msg1").text('库存不足，无法下单！');
+                    $("#div-sto-msg1").css('display','block');
+                }
+            }
+        }
+    }
+
+    function checksto(obj) {
+        var sl=$(obj).val();
+        if(isNaN(sl) || sl=='' || sl=='undefined'){
+            $(obj).val(1);
+            $('#iosActionsheetCancel_1').attr('onclick','');
+            return false;
+        }
+        var sto=Number($('#getstoNum1').attr('data-sto'));
+        var num=Number($(obj).val());
+        if($("#skulistdiv1").data('skus')===1) {
+            if(isNaN(num)==true || num===0){
+                $(obj).val('1');
+            }else{
+                if(num>sto || num<=0){
+                    $("#iosActionsheetCancel_1").css('display','none');
+                    $("#iosActionsheetCancel_2").css('display','block');
+                    $("#div-sto-msg1").text('库存不足，无法下单！');
+                    $("#div-sto-msg1").css('display','block');
+                    return false;
+                }else{
+                    $("#iosActionsheetCancel_1").css('display','block');
+                    $("#iosActionsheetCancel_2").css('display','none');
+                    $("#div-sto-msg1").css('display','none');
+                    return true;
+                }
+            }
+        }
+    }
+    function post(formObj){
+        $('#dialogs').remove();
+        $('.add-goods-dialog').show();
+        $.ajax({
+            type:'post',
+            url:$(formObj).attr('action'),
+            data:$(formObj).serializeArray(),
+            dataType:'json',
+            beforeSend:function (){
+                var tip = {
+                    type:1,
+                    title:'添加商品',
+                    content:'正在添加商品，请稍后！'
+                };
+                var template = doT.template($('#tpldialogs').html());
+                var t_html = template(tip);
+                $('.add-goods-dialog').append(t_html);
+            },
+            success:function (data){
+                console.log(data['code']);
+                if(data['code']==0){
+                    var tip = {
+                        type:1,
+                        title:'添加商品',
+                        content:data['msg'],
+                        btn:1,
+                        btns:1,
+                        btnm:1,
+                        btnsc:'继续购买',
+                        btnsa:'onclick="back()"',
+                        btnmc:'返回订单详情',
+                        btnma:'onclick="go()"'
+                    };
+                    var template = doT.template($('#tpldialogs').html());
+                    var t_html = template(tip);
+                    $('#dialogs').remove();
+                    $('.add-goods-dialog').append(t_html);
+                    formObj.reset();
+                }else{
+                    var tip = {
+                        type:2,
+                        title:'添加商品',
+                        content:data['msg'],
+                        btn:1,
+                        btnc:'关闭',
+                    };
+                    var template = doT.template($('#tpldialogs').html());
+                    var t_html = template(tip);
+                    $('#dialogs').remove();
+                    $('.add-goods-dialog').append(t_html);
+                }
+            }
+        });
+    }
+    function go(){
+        var url="/m/order/detail";
+        var oid =$('#oid').html();
+        if(!oid){
+            oid=0;
+        }
+        hideActionSheet();
+        showLA(url,'orderdetail',{oid:oid});
+        window.location.href='#dingdanxiangqing';
+    }
+    function back() {
+        $('.add-goods-dialog').hide();
+    }
+    function hideActionSheet() {
+        $('.add-goods-dialog').hide();
+        var $iosMask = $('#iosMask_1');
+        var $iosActionsheet = $('#iosActionsheet_1');
+        $iosActionsheet.removeClass('weui-actionsheet_toggle');
+        $iosMask.fadeOut(200);
+    }
+    $(function(){
+        $('.add-goods-dialog').hide();
+        var $iosActionsheet = $('#iosActionsheet_1');
+        var $iosMask = $('#iosMask_1');
+        $iosActionsheet.addClass('weui-actionsheet_toggle');
+        $iosMask.fadeIn(200);
+        $iosMask.on('click', hideActionSheet);
+    });
+    $(function(){
+        var $androidActionSheet = $('#androidActionsheet_1');
+        var $androidMask = $androidActionSheet.find('.weui-mask');
+        $("#showAndroidActionSheet").on('click', function(){
+            $androidActionSheet.fadeIn(200);
+            $androidMask.on('click',function () {
+                $androidActionSheet.fadeOut(200);
+            });
+        });
+    });
+{{}}}
+</script>
+<script type="text/template" charset="utf-8" id="addgoodsList">
+{{if(ljk){}}
+{{for(var i=0;i<ljk.length;i++){}}
+<a href="javascript:;" class="weui-media-box weui-media-box_appmsg" style="padding:8px;" data-click="setOrderAddGoodsForm({{=ljk[i].id}},{{=ljk[i].bj_type}});" onclick="isRequest(this);">
+    <div style="width:100%;">
+        <div style="width:4em; height:3.5em; float:left; margin-right: 5px; margin-bottom: 5px;">
+        <img class="weui-media-box__thumb" src="{{=ljk[i].goods_img}}" alt=""></div>
+        <div style=" float:left; width:70%;margin-bottom: 5px; ">
+            <span class="weui-media-box__ti">{{=ljk[i].goods_name}}</span>
+            <p class="weui-media-box__desc">价格：¥<span style="color:red;">{{=ljk[i].tuanprice}}</span>{{=ljk[i].unit}}</p>
+            <p style=" color:#838B8B;"  class="mb0"> <del class="old-price">¥{{=ljk[i].retailprice}}/{{=ljk[i].unit}}</del> </p>
+        </div>
+
+        {{if(ljk[i].cuxiao!=''){}}
+        <p style=" width: 100%; color: #999999; overflow: hidden;" >{{=ljk[i].cuxiao}}</p>
+        {{}}}
+    </div>
+</a>
+{{}}}
+{{ }else{ }}
+<div style="  width: 100%;height: 15em; text-align: center;  margin-top: 10em;   color: #ddd;">
+    <i class="fa fa-file-text-o fa-5x" aria-hidden="true"></i>
+    <p>未找到符合条件的商品！</p><br>
+</div>
+{{ } }}
+<script type="text/javascript">
+    dianji();
+    $("#m_user_index").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+    goSys('m_index_home');
+    {{if(!ljk){}}$('.dropload-down').remove();{{}}}
+</script>

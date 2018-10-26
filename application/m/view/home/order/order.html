@@ -1,0 +1,201 @@
+<script type="text/html" id="tpl_m_order_index">
+<div class="page">
+    <div id="order_list_contents">
+        <div class="ljk_top">
+            <a class="top_left" href="javascript:;" style="padding-top: 12px;" data-click="orderList(false,false);" onclick="isRequest(this);">
+                <i class="fa fa-refresh" style="font-size:1.3em;"></i>
+            </a>
+            <a class="js_item top_right"  id="dindan_showIOSActionSheet"  href="javascript:;">
+                <i class="fa fa-list fa-2x db_xinxi"></i>
+            </a>
+            <p class="weui-flex__item top_center order_list_title">所有订单</p>
+        </div>
+        <div class="ljk_neirong" style="position: fixed;width: 100%;height: 100%;overflow: scroll;">
+            <div class="weui-mask" id="dindan_iosMask" style="display: none"></div>
+            <div class="weui-actionsheet" id="dindan_iosActionsheet" style="bottom: 53px;">
+                <div class="weui-actionsheet__menu">
+                    <div class="weui-actionsheet__cell orderlistMemu" data-click="orderList({confirm:1},false);" data-confirm="1">已确认订单</div>
+                    <div class="weui-actionsheet__cell orderlistMemu" data-click="orderList({confirm:0},false);" data-confirm="0">未确认订单</div>
+                    <div class="weui-actionsheet__cell orderlistMemu" data-click="orderList({confirm:-1},false);" data-confirm="-1">无效订单</div>
+                    <div class="weui-actionsheet__cell orderlistMemu current_selected_memu" data-click="orderList({confirm:''},false);" data-confirm="">所有订单</div>
+                </div>
+            </div>
+            <div class="weui-panel__bd">
+                <div class="weui-media-box weui-media-box_small-appmsg">
+                    <div class="weui-cells">
+                      <div class="weui-search-bar weui-search-bar_focusing" id="orderSearchBar">
+                        <form class="weui-search-bar__form">
+                            <div class="weui-search-bar__box">
+                                <i class="weui-icon-search" style=" margin-top:5px;"></i>
+                                <input type="search" class="weui-search-bar__input morder_search_input" id="orderSearchInput" placeholder="请输入订单号！" required  style="height:30px;" />
+                                <a href="javascript:" class="weui-icon-clear morder_search_clear" id="orderSearchClear" style=" margin-top:5px;"></a>
+                            </div>
+                        </form>
+                        <a class="weui-search-bar__cancel-btn order_search_more" href="javascript:;" style="margin-top:5px;display: block;">更多</a> </div>
+                    </div>
+                </div>
+            </div>
+            <div class="orderlistContents"></div>
+        </div>
+    </div>
+    <div id="search_order_form" style="display: none;">
+        <div class="ljk_top">
+            <a class="top_left" href="javascript:;" style="padding-top: 12px;" onclick="$('#search_order_form').fadeOut(100);$('#order_list_contents').fadeIn(100);">
+                <i class="fa fa-angle-left fa-2x"></i>
+            </a>
+            <p class="weui-flex__item top_center order_list_title">订单查询</p>
+        </div>
+            <div class="order_list_search_form"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    dianji();
+    goSys('m_index_home');
+    $('.order_search_more').on('click',function (){
+        $('#search_order_form').fadeIn(100);
+        $('#order_list_contents').fadeOut(100);
+    });
+    $('.order_back_btn').on('click',function (){
+        $('#search_order_form').fadeOut(100);
+        $('#order_list_contents').fadeIn(100);
+    });
+    $(function(){
+        var $dindan_iosActionsheet = $('#dindan_iosActionsheet');
+        var $dindan_iosMask = $('#dindan_iosMask');
+	function hideActionSheet() {
+            $dindan_iosActionsheet.removeClass('weui-actionsheet_toggle');
+            $dindan_iosMask.fadeOut(200);
+        }
+	$dindan_iosMask.on('click', hideActionSheet);
+        $('.orderlistMemu').on('click',function (){
+            isRequest(this);
+            hideActionSheet();
+        });
+         $("#dindan_showIOSActionSheet").on("click", function(){
+            if($(this).hasClass('showSheet')){
+                hideActionSheet();
+                $(this).removeClass('showSheet');
+            }else{
+                $(this).addClass('showSheet');
+                $dindan_iosActionsheet.addClass('weui-actionsheet_toggle');
+                $dindan_iosMask.fadeIn(200);
+            }
+        });
+
+    });
+    function showorderviewtpl(s,oid){
+        var order_detail = $('.order_detail');
+        if(order_detail){
+            url="/m/order/detail";
+            showLA(url,'order_detail',{oid:oid});
+            var id = $(s).data('id');
+        }
+        $('#oid').html(oid);
+        window.pageManager.go(id);
+    }
+    $(function (){
+        var template = doT.template($('#tpl_dindanchaxun').html());
+        var _html = template();
+        $('.order_list_search_form').html(_html);
+        orderList(false,false);
+    });
+    $('.morder_search_clear').on('click',function (){
+        var template = doT.template($('#tpl_dindanchaxun').html());
+        var _html = template();
+        $('.order_list_search_form').html(_html);
+        orderList({number:''},false);
+        $('.morder_search_input').val('');
+    });
+    $(function (){
+        var t = false;
+        var lock =false;
+        $('.morder_search_input').off().on('compositionstart',function (){
+            lock = true;
+        }).on('compositionend',function (){
+            lock = false;
+        }).on('input',function (){
+            var that = this;
+            if(t){
+                clearTimeout(t);
+            }
+            t = setTimeout(function (){
+                clearTimeout(t);
+                if(!lock){
+                    var keywords = $(that).val().trim();
+                    var template = doT.template($('#tpl_dindanchaxun').html());
+                    var _html = template();
+                    $('.order_list_search_form').html(_html);
+                    orderList({number:keywords},false);
+                }
+            },500);
+        });
+    });
+    $(function(){
+        var $iosActionsheet = $('#iosActionsheet');
+        var $iosMask = $('#iosMask');
+        function hideActionSheet() {
+            $iosActionsheet.removeClass('weui-actionsheet_toggle');
+            $iosMask.fadeOut(200);
+        }
+        $iosMask.on('click', hideActionSheet);
+        $('#iosActionsheetCancel').on('click', hideActionSheet);
+        $("#showIOSActionSheet").on("click", function(){
+            $iosActionsheet.addClass('weui-actionsheet_toggle');
+            $iosMask.fadeIn(200);
+        });
+    });
+    $(function(){
+        var $androidActionSheet = $('#androidActionsheet');
+        var $androidMask = $androidActionSheet.find('.weui-mask');
+        $("#showAndroidActionSheet").on('click', function(){
+            $androidActionSheet.fadeIn(200);
+            $androidMask.on('click',function () {
+                $androidActionSheet.fadeOut(200);
+            });
+        });
+    });
+</script> 
+</script> 
+{include file="home/order/order_list"}
+{include file="home/order/order_dingdanchaxun"}
+{include file="home/order/order_cart"}
+<!--订单详情-->
+<script type="text/html" id="tpl_dingdanxiangqing">
+<div class="page">
+    <div class="orderdetail">
+    </div>
+</div>
+<script type="text/javascript">
+    $(function(){
+        var url="/m/order/detail";
+        var oid =$('#oid').html();
+        if(!oid) oid=0;
+        showLA(url,'orderdetail',{oid:oid});
+        dianji();
+        goSys('m_index_home');
+        $("#m_order_index").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+    });
+</script>
+</script>
+{include file="home/order/order_detail"}
+<!--订单查询-->
+<!--商品修改--> 
+<script type="text/html" id="tpl_shangpinxiugai">
+<div class="page">
+    <div class="ordergoods"></div>
+</div>
+<script type="text/javascript">
+    $(function(){
+        var url="/m/order/editgoods";
+        var goodsid =$('#goodsid').html();
+        if(!goodsid) goodsid=0;
+        showLA(url,'ordergoods',{action:'showgoods',id:goodsid})
+    });
+</script> 
+</script> 
+{include file="home/order/order_goods"}
+<!--商品修改--> 
+<!--添加商品--> 
+{include file="home/order/order_add_goods"}
+<!--添加商品--> 
+</script> 

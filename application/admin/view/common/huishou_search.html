@@ -1,0 +1,32 @@
+<form method="post" action="/admin/{$_controllerName|strtolower}/{$_actionName|strtolower}search" onsubmit="return false;" id="huiShouSearchForm">
+<input type='hidden' id='submitType' value='搜索' name='searchsubmit'/>
+{if $i == 1}<input type="hidden" name="i" value="1" />{/if}
+<div class="row">
+   <div class="col-sm-1" style=" padding-right:0px; width:110px;margin-right: 10px;" >
+        <div class="input-group">
+            <select name="status" class="input-sm form-control" onchange="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" style="width: 110px;">
+                <option value="" {if $conditions.status == ''}selected{/if}>状态</option>
+                <option value="1" {if $conditions.status == '1'}selected{/if}>生效</option>
+                <option value="0" {if $conditions.status === '0'}selected{/if}>禁用</option>
+            </select>
+        </div>
+    </div> 
+   <div class="col-sm-1" style=" padding-right:0px; width:110px;margin-right: 10px;" >
+        <div class="input-group">
+            <select name="type" class="input-sm form-control" onchange="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" style="width: 110px;">
+                <option value="snm" {if $conditions.type == 'snm'}selected{/if}>编码</option>
+                <option value="sname" {if $conditions.type == 'sname'}selected{/if}>名称</option>
+            </select>
+        </div>
+    </div> 
+ <!--style=" padding-left:0px; margin-right:0px;"-->
+    <div class="col-sm-3"  >
+        <div class="input-group">
+            <input type="text" name="keywords" class="input-sm form-control" value="{if $conditions.keywords}{$conditions.keywords}{else/}{/if}" oninput="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" size="15" />
+            <span class="input-group-btn">
+            <button type="button" class="btn btn-sm btn-primary" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);"> 搜索</button> </span>
+            </span>
+        </div>
+    </div> 
+</div>
+</form>

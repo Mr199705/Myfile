@@ -1,0 +1,46 @@
+<!-- 订单支付 -->
+<div class="modal inmodal in" id="orderMcardPayDialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"> <span aria-hidden="true">×</span> <span class="sr-only">Close</span> </button>
+                <h4 class="modal-title">会员卡支付</h4>
+            </div>
+            <form class="form-horizontal jl_order_mcard_pay" method="post" action="/admin/orderrn/orderInfo" id="cpform" enctype="multipart/form-data" onsubmit="return false;">
+                <div class="modal-body">
+                    <input type="hidden" name="action" value="ordermcardpay">
+                    <input type="hidden" name="oid" value="{$orderInfo.oid}">
+                    <div class="form-group"> 
+                        <label class="col-sm-4 control-label">订单号:</label> 
+                        <div class="col-sm-6"> 
+                            <input type="text" class="form-control" readonly="true" value="{$orderInfo.number }">             
+                        </div> 
+                    </div>
+                    <div class="form-group"> 
+                        <label class="col-sm-4 control-label">客户名称:</label> 
+                        <div class="col-sm-6"> 
+                            <input type="text" class="form-control" readonly="true" value="{$orderInfo.user_info.realname }">             
+                        </div> 
+                    </div>
+                    <div class="form-group"> 
+                        <label class="col-sm-4 control-label">客户会员卡余额:</label> 
+                        <div class="col-sm-6"> 
+                            <input type="text" class="form-control" readonly="true" value="{$orderInfo.user_um.useable }">             
+                        </div> 
+                    </div>
+                    <div class="form-group"> 
+                        <label class="col-sm-4 control-label">支付总额:</label> 
+                        <div class="col-sm-6"> 
+                            <input type="text" name="price" class="form-control" value="{$orderInfo.total }">             
+                        </div> 
+                    </div> 
+                    <div class="modal-footer"> 
+                        <input type="submit" value="提交" class="btn btn-sm btn-primary" onclick="formAct(this.form);"> 
+                        <button type="button" class="btn btn-sm btn-white" data-dismiss="modal">返回</button> 
+                    </div> 
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- 订单支付 end -->

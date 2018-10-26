@@ -1,0 +1,134 @@
+<form id="priceBoxForm" action="/shop/shopcart/cartfun" onsubmit="return false;" method="post">
+    <input type="hidden" name="action" value="add" />
+    <input type="hidden" name="bjid" value="{{=ljk.prices.id}}" />
+    <input type="hidden" name="ptype" value="1" />
+    <input type="hidden" name="unitid" value="{{=ljk.prices.unitid}}" id="unitid" />
+    <ul>
+        {if $Think.session.gid == 205 ||  $Think.session.gid == 133}
+        <li><label>会员价：</label><span id="tuanprice" style="font-size:18px;font-weight:bold;color:red;">¥{{=ljk.prices.tuanprice}}</span></li>
+        {{?ljk.prices.retailprice}}
+        <li><label>非会员价：</label><span id="retailprice" style="font-size:18px;font-weight:bold;color:red;">¥{{=ljk.prices.retailprice}}</span></li>
+        {{?}}
+        {else}
+        <li><label>商城价格：</label><span id="tuanprice" style="font-size:18px;font-weight:bold;color:red;">¥{{=ljk.prices.tuanprice}}</span></li>
+        {{?ljk.prices.retailprice}}
+        <li><label>市场价格：</label><span id="retailprice" style="text-decoration: line-through;color:#ccc;font-size:14px;font-style: italic;font-weight: normal;">¥{{=ljk.prices.retailprice}}</span></li>
+        {{?}}
+        {/if}
+        <li>
+            <label>单位：</label>
+            <span style="display:inline-block;" id="units">
+                {{for(var unitid in ljk.units){}}
+                    {{?unitid == ljk.prices.unitid}}
+                    <button class="btn btn-sm btn-success" data-unitid="{{=unitid}}">{{=ljk.units[unitid].uname}}</button>
+                    {{??}}
+                    <button class="btn btn-sm btn-default" data-unitid="{{=unitid}}">{{=ljk.units[unitid].uname}}</button>
+                    {{?}}
+                {{}}}
+            </span>
+        </li>
+        {{?(typeof ljk.prices.storage_num !== 'undefined')}}<li><label>库存：</label><span class="price" id="storage">{{=Math.floor(ljk.prices.storage_num / ljk.units[ljk.prices.unitid].coefficient)}}</span></li>{{?}}
+        <li>
+            <label>数量：</label>
+            <div class="count_div" style="height: 30px; width: 180px;">
+                <a href="javascript:void(0);" class="minus set_og_num"></a>
+                    <input type="text" style="text-align:center;width:80px;" id="ognum" class="count" value="1" name="num" readonly />
+                <a href="javascript:void(0);" class="add set_og_num"></a>
+            </div>
+        </li>
+    </ul>
+    <div class="fixed-foot">
+        <div style="display:flex;flex-direction: row;flex-wrap: nowrap;justify-content: space-between;background: #fff;">
+            <div id="actItems" style="display:flex;flex-direction: row;flex-wrap: nowrap;width: calc(100% - 60px);align-items: center;"></div>
+            <a class="cart-wrap" href="shopcart.html"> 
+                <i class="i-cart"></i>
+                <span>购物车</span>
+                <span class="add-num" id="totalNum">{{=cartNum}}</span>
+            </a>
+        </div>
+    </div>
+</form>
+{{ 
+    setTimeout(function (){
+        var $ognum = $('#ognum');
+        var $units = $('#units');
+        var cunitid = ljk.prices.unitid;
+        var $unitid = $('#unitid');
+        var $tp = $('#tuanprice');
+        var $rp = $('#retailprice');
+        var $st = $('#storage');
+        if(typeof ljk.prices.storage_num !== 'undefined'){ 
+            if(Math.floor(ljk.prices.storage_num / ljk.units[ljk.prices.unitid].coefficient) <= 0){
+                loadTpl({act:false},['actItems']);
+                $('.set_og_num').addClass('og_disabled');
+                $ognum.val(0);
+            }else{ 
+                loadTpl({act:true},['actItems']);
+            }
+        }else{
+            loadTpl({act:true},['actItems']);
+        } 
+        if(typeof ljk.prices.retailprice === 'undefined'){
+            ljk.prices.retailprice = 0;
+        }
+        $('.set_og_num').on('click',function (){ 
+            if($(this).hasClass('og_disabled')){
+                showTip({msg:'库存不足无法进行该操作！'});
+                setTimeout(function (){
+                    closeModal('tipModal');
+                },1000);
+                return false;
+            }
+            var cn = parseInt($ognum.val());
+            if($(this).hasClass('minus')){
+                cn -= 1;
+                if(cn <= 1){
+                    cn = 1;
+                }
+            }else if($(this).hasClass('add')){
+                cn += 1;
+                if($st.length === 1){
+                    var max = parseInt($st.html());
+                    if(isNaN(max) || max < 1){
+                        max = 0;
+                    }
+                }else{
+                    max = 9999;
+                }
+                cn = cn > max ? max : cn;
+            }
+            $ognum.val(cn);
+        });
+        $units.children('.btn').on('click',function (){
+            var bunitid = $(this).data('unitid');
+            if(cunitid != bunitid){
+                cunitid = bunitid;
+                $('#unitid').val(cunitid);
+                var coe = ljk.units[cunitid].coefficient;
+                var tp = (Math.ceil(100 * (ljk.prices.tuanprice * coe / ljk.units[ljk.prices.unitid].coefficient)) / 100).toFixed(2);
+                var rp = (Math.ceil(100 * (ljk.prices.retailprice * coe / ljk.units[ljk.prices.unitid].coefficient)) / 100).toFixed(2);
+                $(this).removeClass('btn-default').addClass('btn-success').siblings().removeClass('btn-success').addClass('btn-default');
+                $tp.html('¥' + tp);
+                if($rp.length === 1){
+                    $rp.html('¥' + rp);
+                }
+                $ognum.val(1);
+                if($st.length === 1){
+                    var st = Math.floor(ljk.prices.storage_num / coe);
+                    if(st === 0){
+                        $ognum.val(0);
+                        $('.set_og_num').addClass('og_disabled');
+                        loadTpl({act:false},['actItems']);
+                    }else{
+                        $('.set_og_num').removeClass('og_disabled');
+                        loadTpl({act:true},['actItems']);
+                    }
+                    $st.html(st);
+                }else{ 
+                    $('.set_og_num').removeClass('og_disabled');
+                    loadTpl({act:true},['actItems']);
+                }
+            }
+        });
+    },10);
+}}

@@ -1,0 +1,68 @@
+<script type="text/html" id="order_add_goods_cat">
+    {{?(ljk)}}
+    <div class="page__bd add_order_goods_cat type1" style="padding-top: 0px; height:83%; ">
+        <ul style="margin-bottom:0px;">
+            <li id="addOrderGoodsBuHuo" style="background: rgba(219, 219, 219, 0.48);">补货</li>
+        </ul>
+        {{for(var j=0;j<ljk.length;j++){}}
+        <dl style="margin-bottom:0px;">
+            <dt data-id="{{=ljk[j].p.id}}" style="font-weight: 200;background: rgba(219, 219, 219, 0.48);">{{=ljk[j].p.title}}</dt>
+            <dd class=" type1_dd" data-id="{{=ljk[j].p.id}}">全部</dd>
+            {{for(var i=0;i<ljk[j].c.length;i++){}}
+            <dd class="type1_dd" data-id="{{=ljk[j].c[i].id}}">{{=ljk[j].c[i].title}}</dd>
+            {{}}}
+        </dl>
+        {{}}}
+    </div>
+    {{?}}
+    <script type="text/javascript">
+        var dl=$('.add_order_goods_cat').children('dl')[0];
+        var dd = $(dl).children('dd')[0];
+        var url = '/admin/order/addordergoods';
+        $('#addOrderGoodsBuHuo').on('click',function (){
+            var data = {limit:10,p:1,action:'aogrog',oid:'{$orderinfo.order.oid}'};
+            $('.end_dt').removeClass('end_dt');
+            $('.add_goods_cat dd').hide();
+            $(this).addClass('end_dt');
+            var el = '<div class="listcontent listorder_bjGoods type2"  style="width: 56%; height:83%; right: 12%; top:59px;"><div class="weui-panel__bd order_bjGoods"></div></div>';
+            $('.addordergoodscontents').html(el);
+            showLL(url,'order_bjGoods',data);
+        });
+        $($(dl).children('dt')).addClass('end_dt');
+        $($(dl).children('dd')).show();
+        $(dd).addClass('end_dt');
+        $('.add_order_goods_cat').find('dd').each(function (){
+            $(this).on('click',function (){
+                var cid = $(this).attr('data-id');
+                $(this).addClass('end_dt');
+                $(this).siblings('dd').removeClass('end_dt');
+                $('#addOrderGoodsBuHuo').removeClass('end_dt');
+                var el = '<div class="listcontent listorder_bjGoods type2"  style="width: 56%; height:83%; right: 12%; top:59px;"><div class="weui-panel__bd order_bjGoods"></div></div>';
+                $('.addordergoodscontents').html(el);
+                showLL(url,'order_bjGoods',{limit:10,p:1,cid:cid,action:'bjgoods',oid:'{$orderinfo.order.oid}'});
+            });
+        });
+        $('.add_order_goods_cat').find('dt').on('click',function (){
+            var dl = $(this).parent();
+            var dd = dl.children('dd'); 
+            var cid = $(this).attr('data-id');
+            $('.add_order_goods_cat').find('dl').children('dd').hide();
+            $('.add_order_goods_cat').find('dl').children('dd').removeClass('end_dt');
+            $('#addOrderGoodsBuHuo').removeClass('end_dt');
+            if($(this).hasClass('end_dt')){
+                $('.add_order_goods_cat').find('dl').children('dt').removeClass('end_dt');
+                $(dd).hide();
+            }else{
+                $('.add_order_goods_cat').find('dl').children('dt').removeClass('end_dt');
+                $(dd[0]).addClass('end_dt');
+                var el = '<div class="listcontent listorder_bjGoods type2"  style="width: 56%; height:83%; right: 12%; top:59px;"><div class="weui-panel__bd order_bjGoods"></div></div>';
+                $('.addordergoodscontents').html(el);
+                showLL(url,'order_bjGoods',{limit:10,p:1,cid:cid,action:'bjgoods',oid:'{$orderinfo.order.oid}'});
+                $(this).addClass('end_dt');
+                $(dd).each(function (){
+                    $(this).show();
+                });
+            }
+        });
+    </script>
+</script>

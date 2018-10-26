@@ -1,0 +1,12 @@
+<script type="text/template" id="driverlistdot">
+    {{?ljk && ljk.length}}
+    <select name="guid" class="form-control m-b">
+        {{for(var i in ljk){}}
+        <option value="{{=ljk[i].guid}}" {{?ljk[i].guid=={$orderinfo.is_fpsj}}}selected="selected"{{?}}>{{=ljk[i].realname}}</option>
+        {{}}}
+        {if @$orderinfo.is_fpsj} <option value="0">取消分配</option>{/if}
+    </select>
+    {{}else{}}
+    <p style="color:red;">您目前还未创建司机，请先在权限操作中为员工分配司机权限！</p>
+    {{?}}
+</script> 

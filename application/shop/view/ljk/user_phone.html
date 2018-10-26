@@ -1,0 +1,125 @@
+{include file="common/top" /}
+<title>验证手机号码</title>
+</head><body>
+<div class="fanhui_cou">
+  <div class="fanhui_1"></div>
+  <div class="fanhui_ding">顶部</div>
+</div>
+{include file="common/tip" /}
+<header class="header">
+  <div class="fix_nav">
+    <div style="max-width:768px;margin:0 auto;background:#FE5400;position: relative;"> <a class="nav-left back-icon" href="javascript:history.back();">返回</a>
+      <div class="tit">验证手机号码</div>
+    </div>
+  </div>
+</header>
+<div class="container" style="padding:0px;">
+<form method="post" name="phoneForm">
+	   <div style="background:#fff;">
+		<div class="dizhi_x"> <span>手机号码</span>
+			<div class="dizhi">
+				<input type="text" id="setmobilesendsms" placeholder="请输入手机号" name="phone" value="{$userinfo.mobile}" data-old="{$userinfo.mobile}" >
+			</div>
+		</div>
+		<div class="dizhi_x">
+        	<span style="width:22%;">验证码</span>
+        	<div class="dizhi" style="width:33%">
+        		<input id="yanzhen" type="text" placeholder="请输入短信验证码" name="Verification"  value=""  >
+        	</div>
+        	<div  class="yanzhen"  style=" width:45%; float:left;">
+				<input type="button" name="yanzhen" value="获取验证码" onClick="sendsms(this);" />
+        	</div>
+        </div>
+	</div>
+	<div class="fixed-foot">
+		<div class="fixed_inner"> <a href="javascript:;"  onClick="return phone_update(this, this.form);" class="btn btn-danger btn-b" style="width:100%; ">提&nbsp;交</a> </div>
+	</div>
+</form>
+</div>
+
+<div class="clear"></div>
+{include file="common/footer_nav" /}
+
+<script type="text/javascript">
+	var countdown=60;
+	function sendsms(obj){
+		mobile=$("#setmobilesendsms").val();
+		var dh=/^1[3456789]\d{9}$/;
+		if( !dh.test(mobile) ){
+			showTip({msg:'请输入正确的手机号码'});
+			return false;
+		}
+		settime(obj);
+		$.ajax({
+			 　　type: "POST", //用POST方式传输
+			 　　dataType: "JSON", //数据格式:JSON
+			 　　url: '/shop/login/sendsms', //目标地址
+			　　 data: "codetype=3&mobile=" + mobile,
+			 　　success: function (msg){ }
+			 });
+		}	 
+	function settime(obj) {   
+		if (countdown == 0) {   
+			obj.removeAttribute("disabled");      
+			obj.value="获取验证码";   
+			countdown = 60;   
+			return;  
+		} else {   
+			obj.setAttribute("disabled", true);   
+			obj.value="重新发送(" + countdown + ")";   
+			countdown--;   
+		}   
+	setTimeout(function() {   
+		settime(obj) }  
+		,1000)   
+	} 	
+	//	内容
+	var container = $(".container");
+	
+	//	提交新的用户信息
+	function phone_update(form){
+		//	获取输入内容
+		form = document.phoneForm;
+		var phone 		= form.phone.value;
+		var phoneCode 	= form.Verification.value;
+		var dh=/^1[3456789]\d{9}$/;
+		if( !dh.test(phone) ){
+			showTip({msg:'请输入正确的手机号码'});
+			return false;
+		}
+		if( phoneCode === '' ){
+			showTip({msg:'请输入手机验证码'});
+			return false;
+		}
+
+		//	提交后台更新
+		$.ajax({
+			type : "POST",
+	        url : "/shop/user/updatePhone",
+	        dataType: 'json',
+	        data: {
+	        	phone: phone,
+	        	phoneCode: phoneCode
+	        },
+	        beforeSend:function(){
+	        	console.log('正在更新手机号码...');
+	        },
+	        success : function(res){
+	        	if( res.code == 1 ){
+					showTip({msg:'验证手机号码成功'});
+					window.location.reload();
+	        	}else{
+	        		showTip({msg:res.msg});
+	        	}
+	        },
+	        error: function(res){
+				showTip({msg:'正在更新手机号码...连接服务器失败'});
+	        }
+		});
+
+		return 0;
+	}
+
+</script>
+</body>
+</html>

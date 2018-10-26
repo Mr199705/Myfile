@@ -1,0 +1,33 @@
+<script type="text/template" id="addrsTpl">
+    {{for (var i in addrs){}}
+    <div style="cursor:pointer;margin:2px 0px;display:flex;flex-direction:row;align-items:center;cursor:pointer;padding:5px 0px;background:#fff;border:1px solid #ccc;border-left:none;">
+        <div style="width:5%;text-align:center;">
+            {{?i == addrId}}
+            <div class="addr-item checked-item" data-addrid="{{=addrs[i].id}}"></div>
+            {{??}}
+            <div class="addr-item unchecked-item" data-addrid="{{=addrs[i].id}}"></div>
+            {{?}}
+        </div>
+        <div style="width:25%;text-align:center;">{{=addrs[i].consignee}}</div>
+        <div style="width:30%;text-align:center;">{{=addrs[i].areaname}}{{=addrs[i].address}}</div>
+        <div style="width:20%;text-align:center;">{{=addrs[i].mobile}}</div>
+        <div style="width:20%;text-align:center;">
+            <a href="javascript:void(0);" class="btn btn-xs btn-warning" data-addrid='{{=addrs[i].id}}' onclick="uafm(this);">修改</a>
+        </div>
+    </div>
+    {{}}}
+    <script type="text/javascript">
+        var $addr = $('#addrList');
+        var $addrItems = $addr.find('.addr-item');
+        $addrItems.off().on('click',function (){
+            var id = $(this).data('addrid');
+            addrId = id;
+            var addrInfo = addrs[addrId];
+            loadTpl(addrInfo,['selectAddr']);
+            $addrItems.removeClass('checked-item').addClass('unchecked-item');
+            $(this).removeClass('unchecked-item').addClass('checked-item');
+            close = 0;
+            $addr.hide();
+        });
+    </script>
+</script>

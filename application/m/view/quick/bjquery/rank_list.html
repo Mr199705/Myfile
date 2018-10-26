@@ -1,0 +1,35 @@
+<script type="text/template" id="user_rank_list">
+    {{?ljk}}
+    <div class="weui-mask" id="iosMask" style="display: none"></div>
+    <div class="weui-actionsheet" id="iosActionsheet">
+        <div class="weui-actionsheet__menu">
+            {{for(var i=0;i<ljk.length;i++){}}
+            <div class="weui-actionsheet__cell" href="javascript:;" data-click="bjquery({rankid:'{{=ljk[i].rankid}}'},false);">{{=ljk[i].rankname}}</div>
+            {{}}}
+        </div>
+        <div class="weui-actionsheet__action">
+            <div class="weui-actionsheet__cell" id="iosActionsheetCancel">取消</div>
+        </div>
+    </div>
+    {{?}}
+    <script type="text/javascript">
+        $(function(){
+            var $iosActionsheet = $('#iosActionsheet');
+            var $iosMask = $('#iosMask');
+            function hideActionSheet() {
+                $iosActionsheet.removeClass('weui-actionsheet_toggle');
+                $iosMask.fadeOut(200);
+            }
+            $iosMask.on('click', hideActionSheet);
+            $('#iosActionsheetCancel').on('click', hideActionSheet);
+            $("#showIOSActionSheet").on("click", function(){
+                $iosActionsheet.addClass('weui-actionsheet_toggle');
+                $iosMask.fadeIn(200);
+            });
+            $('.weui-actionsheet__menu').on('click',hideActionSheet);
+            $('.weui-actionsheet__cell').on('click',function (){
+                isRequest(this);
+            });
+        });
+    </script>
+</script>

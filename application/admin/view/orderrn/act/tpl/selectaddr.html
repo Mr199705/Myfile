@@ -1,0 +1,15 @@
+<script type="text/template" id="selectAddrTpl">
+    <div style="width:5%;text-align:center;"></div>
+    <div style="width:25%;text-align:center;">{{=ljk.consignee}}</div>
+    <div style="width:30%;text-align:center;">{{=ljk.areaname}}{{=ljk.address}}</div>
+    <div style="width:20%;text-align:center;">{{=ljk.mobile}}</div>
+    <div style="width:20%;text-align:center;">
+        {{console.log(close);}}
+        {{?close === 0}}
+        <a href="javascript:void(0);" class="btn btn-xs btn-success" onclick="choseAddr(this);">更换</a>
+        {{??}}
+        <a href="javascript:void(0);" class="btn btn-xs btn-success" onclick="choseAddr(this);">取消</a>
+        {{?}}
+        <a href="javascript:void(0);" class="btn btn-xs btn-warning" data-addrid="{{=ljk.id}}" onclick="uafm(this);">修改</a>
+    </div>
+</script>

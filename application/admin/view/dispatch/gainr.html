@@ -1,0 +1,50 @@
+{include file="common/header"}
+<style type="text/css">
+    *::-webkit-scrollbar{
+        width:0px;
+        height: 0px;
+    }
+</style>
+</head>
+<body>
+    {include file="common/warning" /}
+    {include file="common/tips" /}
+    <div class="modal-backdrop" style="display: none;background: rgba(0,0,0,0.5);z-index: 99990 !important;" id="modalBackdropBox"></div>
+    <div id="wrapper">
+        <div  class="gray-bg dashbard-1">
+            <!--头部-->
+            <div class="row wrapper border-bottom white-bg page-heading" style="padding-bottom:0">
+                <div class="col-sm-7">
+                    <h2>提成记录</h2>
+                </div>
+                <div class="col-sm-5">
+                    <br>
+                    <a class="btn btn-primary btn-sm" href="javascript:location.reload();">刷新</a>
+                </div>
+            </div>
+            <!--头部 end-->
+            <div class="wrapper wrapper-content animated fadeInRight">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-content">
+                                <form target="new" method="post" id='{$initData.sign}SearchForm' action="{$initData.requestUrl}" onSubmit="return false;">
+                                    <input type="hidden" name="action" value="showlist" />
+                                    {include file="/dispatch/search/gainr"}
+                                </form>
+                                <div id="countInfo"></div>
+                                <div id="{$initData.sign}List"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {include file="dispatch/model/gain"}
+    {include file="common/footerjs"}
+    <script type="text/javascript">
+        getList({sign:'{$initData.sign}'});
+    </script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<script type="text/template" charset="utf-8" id="user_search_form">
+    <form method="post" onsubmit="return false;">
+        <div class="page__bd">
+            <div class="weui-cells weui-cells_form">
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">客户名称</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" type="text" name="realname" placeholder="请输入客户名称">
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">联系人</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" type="text" name="contact"  placeholder="请输入联系人">
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">客户地址</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" type="text"  name="address"  placeholder="请输入客户地址">
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">公司电话</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" type="text" name="phone" placeholder="请输入公司电话">
+                    </div>
+                </div>
+                {{if(ljk.v.length>0){}}
+                <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">拜访路线</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <select class="weui-select" name="visitid">
+                            <option value="">请选择</option>
+                            {{for(var i=0;i<ljk.v.length;i++){}}
+                            <option value="{{=ljk.v[i].id}}">{{=ljk.v[i].title}}</option>
+                            {{}}}
+                        </select>
+                    </div>
+                </div>
+                {{}}}
+                {{if(ljk.t.length>0){}}
+                <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">客户类型</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <select class="weui-select" name="tpid">
+                            <option value="">请选择</option>
+                            {{for(var i=0;i<ljk.t.length;i++){}}
+                            <option value="{{=ljk.t[i].id}}">{{=ljk.t[i].title}}</option>
+                            {{}}}
+                        </select>
+                    </div>
+                </div>
+                {{}}}
+                <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">微信绑定</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <select class="weui-select" name="weixin">
+                            <option value="">请选择</option>
+                            <option value="1">已绑定</option>
+                            <option value="2">未绑定</option>
+                        </select>
+                    </div>
+                </div>
+				<div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">拜访周期</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <select class="weui-select" name="bdate">
+                            <option value="">请选择</option>
+                            <option value="7">7天以上</option>
+                            <option value="14">14天以上</option>
+							<option value="30">30天以上</option>
+							<option value="60">60天以上</option>
+							<option value="90">90天以上</option>
+							<option value="120">120天以上</option>
+                        </select>
+                    </div>
+                </div>
+				<div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">下单周期</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <select class="weui-select" name="odate">
+                            <option value="">请选择</option>
+                            <option value="7">7天以上</option>
+                            <option value="14">14天以上</option>
+							<option value="30">30天以上</option>
+							<option value="60">60天以上</option>
+							<option value="90">90天以上</option>
+							<option value="120">120天以上</option>
+                        </select>
+                    </div>
+                </div>
+           </div>
+        </div>
+        <div class="page__bd page__bd_spacing">
+            <button class="weui-btn weui-btn_primary user_search_btn">搜索</button>
+        </div>
+    </form>
+    <!--BEGIN dialog1-->
+    {{?(ljk.v.length > 0)}}
+    <div id="visitPlanBox" style="display: none;">
+        <div class="user_visitids_box">
+            <div class="weui-mask"></div>
+            <div class="weui-dialog" style=" width:90%; margin-top: -8%;">
+                <form name="form" method="post" id="visitPlanForm" onsubmit="return false;">
+                    <div class="weui-dialog__hd" style=" border-bottom:1px solid #D5D5D6;"><strong class="weui-dialog__title">拜访路线</strong></div>
+                    <div class="weui-dialog__bd" style="max-height:370px; overflow-y: overlay; scrollbar: ">
+                        <div class="weui-cells weui-cells_checkbox" style="position: initial;">
+                            {{for(var i=0;i<ljk.v.length;i++){}}     
+                            <label class="weui-cell weui-check__label " style="" >
+                                <div class="weui-cell__hd">
+                                    <input type="checkbox" class="weui-check" name="visitids[]" value="{{=ljk.v[i].id}}" />
+                                    <i class="weui-icon-checked"></i>
+                                </div>
+                                <div class="weui-cell__bd">
+                                    <p>{{=ljk.v[i].title}}</p>
+                                </div>
+                            </label>
+                            {{}}}
+                        </div>
+                    </div>
+                    <div class="weui-dialog__ft">
+                        <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default" onclick="cancelSerach('visitids');">取消</a>
+                        <button class="weui-dialog__btn weui-dialog__btn_primary" style="background:none;border:none;font-size:16px;" onclick="doSearch(this.form,'visitids');">确定</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {{?}}
+    <!--END dialog1-->
+    <!--BEGIN dialog2-->
+    {{?(ljk.t.length>0)}}
+    <div class="js_dialog" id="userTypeBox"  style="display: none;">
+        <div class="user_tpids_box">
+            <div class="weui-mask"></div>
+            <div class="weui-dialog"  style=" width:90%; margin-top: -8%;">
+                <form name="form" onsubmit="return false;">
+                    <div class="weui-dialog__hd" style=" border-bottom:1px solid #D5D5D6;"><strong class="weui-dialog__title">客户类型</strong></div>
+                    <div class="weui-dialog__bd" style="max-height:370px; overflow-y: overlay; scrollbar: ">
+                        <div class="weui-cells weui-cells_checkbox" style="position: initial;">
+                            {{for(var i=0;i<ljk.t.length;i++){}}
+                            <label class="weui-cell weui-check__label" style=""  data-id="qiye">
+                                <div class="weui-cell__hd">
+                                    <input type="checkbox" class="weui-check" name="tpids[]" value="{{=ljk.t[i].id}}">
+                                    <i class="weui-icon-checked"></i>
+                                </div>
+                                <div class="weui-cell__bd">
+                                    <p>{{=ljk.t[i].title}}</p>
+                                </div>
+                            </label>
+                            {{}}}
+                        </div>
+                    </div>
+                    <div class="weui-dialog__ft">
+                        <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default" onclick="cancelSerach('tpids');">取消</a>
+                        <button class="weui-dialog__btn weui-dialog__btn_primary" style="background:none;border:none;font-size:16px;" onclick="doSearch(this.form,'tpids');">确定</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {{?}}
+    <!--END dialog2-->
+    <script type="text/javascript">
+        $('.user_search_btn').on('click',function (){
+            var fm = this.form;
+            var data = {};
+            data.realname = $(fm.realname).val();
+            data.visitid = $(fm.visitid).val();
+            data.contact = $(fm.contact).val();
+            data.address = $(fm.address).val();
+            data.tpid = $(fm.tpid).val();
+            data.weixin = $(fm.weixin).val();
+			data.bdate = $(fm.bdate).val();
+			data.odate = $(fm.odate).val();
+            data.phone = $(fm.phone).val();
+            $('.searchuserform').fadeOut(100);
+            $('.searchuserlist').fadeIn(100);
+            userList(data,false);
+        });
+        $('.user_search_visit_btn').on('click',function (){
+            $('#searchUserDialog').css('display','none');
+            $('.visit_plan_box').hide();
+        });
+        function doSearch(fm,sign){
+            var inputData = $(fm).serializeArray();
+            $('#searchUserDialog').css('display','none');
+            $('.user_' + sign + '_box').css('display','none');
+            $('.user_' + sign).hide();
+            $('.type1_dd').each(function (){
+                if($(this).data('span') === sign){
+                    $(this).removeClass('end_dt');
+                }
+            });
+            var v = '';
+            if(inputData.length !== 0){
+                for(var i=0;i < inputData.length;i++){
+                    if(i===0){
+                        v += inputData[i].value;
+                    }else{
+                        v += ',' + inputData[i].value;
+                    }
+                }
+                $('#user_' + sign).val(v);
+            }else{
+                $('#user_' + sign).val('');
+            }
+            if(v !== ''){
+                $('.exclude').removeClass('end_dt');
+                $('.exclude').each(function (){
+                    var sp = $(this).data('span');
+                    $('.user_' + sp).hide();
+                });
+                $('.user_' + sign).show();
+                $('.type1_dd').each(function (){
+                    if($(this).data('span') === sign){
+                        $(this).addClass('end_dt');
+                    }
+                });
+            }
+            var $fm = $('#quickSearchForm');
+            var t = $('#userMineSearchInput').val();
+            var dataA = $fm.serializeArray();
+            var data = {};
+            var hasData = false;
+            for(var i=0;i < dataA.length;i++){
+                if(dataA[i].value.trim() !== ''){
+                    data[dataA[i].name] =  dataA[i].value;
+                    hasData = true;
+                }
+            }
+            if(!hasData){
+                $('.span_title').hide();
+                $('#allUsers').addClass('end_dt').siblings('.type1_dd').removeClass('end_dt');
+                $('.user_' + $('#allUsers').data('span')).show();
+            }
+            if(t.trim() !== ''){
+                data.t = t;
+            }
+            userList(data,false);
+        }
+        function cancelSerach(sign){
+            var $fm = $('#quickSearchForm');
+            var t = $('#userMineSearchInput').val();
+            $('#searchUserDialog').css('display','none');
+            $('.user_' + sign + '_box').css('display','none');
+            $('#user_' + sign).val('');
+            $('.user_' + sign).hide();
+            $('.type1_dd').each(function (){
+                if($(this).data('span') === sign){
+                    $(this).removeClass('end_dt');
+                }
+            });
+            var dataA = $fm.serializeArray();
+            var data = {};
+            var hasData = false;
+            for(var i=0;i < dataA.length;i++){
+                if(dataA[i].value.trim() !== ''){
+                    data[dataA[i].name] =  dataA[i].value;
+                    hasData = true;
+                }
+            }
+            if(!hasData){
+                $('.span_title').hide();
+                $('#allUsers').addClass('end_dt').siblings('.type1_dd').removeClass('end_dt');
+                $('.user_' + $('#allUsers').data('span')).show();
+            }
+            if(t.trim() !== ''){
+                data.t = t;
+            }
+            userList(data,false);
+        }
+    </script>
+</script>

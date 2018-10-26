@@ -1,0 +1,95 @@
+{include file="common/header"}
+</head>
+<body>
+{include file="common/warning"}
+    {include file="common/tips"}
+    <div id="wrapper">
+  <div  class="gray-bg dashbard-1">
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-sm-8">
+            <h2>客户管理</h2>
+        </div>
+        <div class="col-sm-4">
+            <br />
+            <a class="btn btn-sm btn-success" href="/admin/user/add" data-index="admin_user_add" onClick="return c(this);">新增客户</a> 
+            <a class="btn btn-sm btn-primary " href="javascript:void(0);" onClick="getList({sign:'{$initData.sign}'});">刷新</a>
+            <a class="btn btn-sm btn-primary " href="javascript:void(0);" onClick="SendEmail()">发送Email</a>
+            {if isset($admin_user_import)}
+            <a class="btn btn-sm btn-primary " href="/admin/user/import" data-index="admin_user_import" onClick="return c(this);">导入<span style="display: none;">客户资料</span></a>
+            {/if}
+        </div>
+    </div>
+    <div class="wrapper wrapper-content animated fadeInRight">
+      <div class="row">
+            <div class="col-sm-12">
+          <div class="ibox float-e-margins">
+            <form id='{$initData.sign}SearchForm' action="{$initData.requestUrl}" onSubmit="return false;">
+              {include file="user/search/user_search"}
+            </form>
+              <div class="ibox-content" id="{$initData.sign}List"></div>
+              </div>
+        </div>
+          </div>
+    </div>
+    <div class="modal inmodal" id="gxuser" tabindex="-1" role="dialog"  aria-hidden="true">
+      <div class="modal-dialog ">
+            <div class="modal-content animated fadeIn">
+          <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"> <span aria-hidden="true">&times;</span> <span class="sr-only">Close</span> </button>
+                <h4 class="modal-title">员工客户批量操作</h4>
+              </div>
+          <form class="form-horizontal" method="post" action="/admin/user/plupdate" onSubmit="return plupdate(this);">
+                <div class="modal-body">
+              <p>说明：员工名下所有客户的共享转移操作，请谨慎操作。<br>
+                <strong>共享</strong>：员工A的客户共享给员工B。<br>
+                <strong>取消共享</strong>：员工A的客户不在共享给员工B。<br>
+                <strong>转移</strong>：员工A的客户转移给员工B。</p>
+              <input type="hidden" name="t" value="gxuser" />
+              <div class="form-group">
+                    <div class="col-sm-3">
+                  <select class="input-sm form-control" style="width:113px;padding-left: 2px;padding-right: 0px;"  name="gx_guid1">
+                 <option value="0">选择员工A</option>
+                  {foreach name="members" item="member"}
+                    <option  value="{$member.uid}">{$member.username}|{$member.realname}</option>
+                  {/foreach}
+             </select>
+                </div>
+                
+                <div class="col-sm-3">
+                  <select class="input-sm form-control" style="width:113px;padding-left: 2px;padding-right: 0px;" name="gxtype" >
+                 <option value="0">选择操作类型</option>
+                 <option value="1">共享</option>
+                 <option value="2">取消共享</option>                 
+                 <option value="3">转移</option>
+                </select>
+                </div>
+                
+                <div class="col-sm-3">
+                  <select class="input-sm form-control" style="width:113px;padding-left: 2px;padding-right: 0px;"  name="gx_guid2">
+                 <option value="0">选择员工B</option>
+                  {foreach name="members" item="member"}
+                    <option  value="{$member.uid}">{$member.username}|{$member.realname}</option>
+                  {/foreach}
+             </select>
+                </div>
+                  </div>
+             
+            </div>
+                <div class="modal-footer">
+              <input type="submit" class="btn btn-primary" id="editusersubmit" name="editusersubmit" value="提交">
+              <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+            </div>
+              </form>
+        </div>
+          </div>
+    </div>
+        <!--操作-->
+
+      </div>
+</div>
+{include file="common/footerjs"} 
+<script type="text/javascript">
+    getList({sign:'{$initData.sign}'});
+</script>
+</body>
+</html>

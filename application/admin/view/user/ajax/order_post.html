@@ -1,0 +1,43 @@
+<p>说明：我的订单指我的客户产生的订单。</p>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>                                              
+                <th>留言备注</th>
+                <th>订单状态</th>
+                <th>付款状态</th>
+                <th>操作者</th>
+                <th>更新时间</th>
+            </tr>
+        </thead>
+        <tbody id="postslist">
+            {foreach name="$posts" item="post"}
+            <tr> 
+                <td style="max-width: 400px;">
+                    {$post.content|nl2br=###}
+                    {if @$post.address}<br />我在：<a href="javascript:void(0);">{$post.address}</a>{/if}
+                    {if @$post.imgsurl}
+                    <div>
+                    {foreach $post.imgsurl as $k=>$imgsurl}
+                    <img onclick="showPostImg(this);" src="{$imgsurl}" style="width:50px;height:50px;cursor: pointer;" title="点击查看大图" />
+                    {/foreach}
+                    </div>
+                    {/if}
+                </td>
+                <td>
+                    {$post.confirm}
+                </td>
+                <td>
+                    {$post.pay}
+                </td>
+                <td> {if @$post.gmrealname}{$post.gmrealname}{/if}</td>
+                <td>{$post.adate}</td>
+            </tr>
+            {/foreach}
+        </tbody>
+    </table>
+</div>
+{include file="common/page"}
+<script type="text/javascript">
+    $('#postnum').html('{$pageInfo.total}');
+</script>

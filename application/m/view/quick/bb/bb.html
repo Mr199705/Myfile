@@ -1,0 +1,75 @@
+<script type="text/html" id="tpl_bb">
+    <div class="page">
+        <div class="ljk_neirong" style="margin:0px;">
+            <div class="weui-form-preview__ft bbmenubtns"></div>
+            <div id="templatecontents"></div>
+        </div>
+    </div>
+<script type="text/javascript">
+    dianji();
+    goSys('m_index_index');
+    $(function (){
+        //显示报表菜单
+        $.ajax({
+            url:'/m/quick/bb',
+            dataType:'json',
+            type:'post',
+            success:function (res){
+                var tpl = 'bbmenubtns';
+                if(res.code===0){
+                    var t = doT.template($('#' + tpl).html());
+                    var t_html = t(res.data);
+                    $('.' + tpl).html(t_html);
+                }else if(res.code===-1){
+                    var tip = {
+                        type:1,
+                        title:'提示信息',
+                        content:res.msg,
+                    };
+                    setTips(tip,tpl);
+                }
+            }
+        });
+    });
+</script>
+<script type="text/template" id="bbmenubtns">
+    {{?ljk}}
+    {{for(var i=0;i<ljk.length;i++){}}
+    <a class="weui-form-preview__btn bbmenubtn" href="javascript:void(0);" data-t="{{=ljk[i].query}}">{{=ljk[i].title}}</a>
+    {{}}}
+    {{?}}
+    <script type="text/javascript">
+    /**请求第一个按钮数据及模板**/
+    $(function (){
+        var i = 0;
+        dianji();
+        goSys('m_index_index');
+        $('.bbmenubtn').each(function (){
+            if(i===0){
+                var t = $(this).data('t');
+                $(this).css('background','#09BB07');
+                $(this).css('color','#fff');
+                showbbcontent(t);
+            }
+            var that = this;
+            $(that).on('click',function (){
+                var t = $(this).data('t');
+                $(this).css('background','#09BB07').siblings('.weui-form-preview__btn').css('background','none');
+                $(this).css('color','#fff').siblings('.weui-form-preview__btn').css('color','#3CC51F');
+                showbbcontent(t);
+            });
+            i++;
+        });
+        function showbbcontent(t){
+            var $tc = $('#templatecontents');
+            var template = doT.template($(t).html());
+            $tc.html(template());
+        }
+    });
+    </script>
+</script>
+</script>
+{if $m_quick_bbch}
+{:view('quick/bb/bbch')->getContent()}
+{/if}
+

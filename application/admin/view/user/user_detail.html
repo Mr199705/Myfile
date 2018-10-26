@@ -1,0 +1,828 @@
+{include file="common/header"}
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=F1e135ea865b3fab751d242cee1f3a67"></script>
+</head>
+<body>
+<div id='imgBox' style='display:none;position: absolute;z-index: 9999;'></div>
+<div class="modal-backdrop" style="display: none;background: rgba(0,0,0,0.5);z-index: 99990 !important;" id="modalBackdropBox"></div>
+<div class="modal-backdrop fade in" style="display: none;z-index: 99990 !important;" id="tipBackdrop"></div>
+    <div class="modal-backdrop" style="display: none;background: rgba(0,0,0,0.5);z-index: 99990 !important;" id="showPostImgBoxBackDrop">
+        <div id="showPostImgsBox" style="background: rgba(255,255,255,0.8);margin: 20px auto;border-radius: 10px;">
+            <div style="width: 100%;height: 100%;border: 3px solid #fff;border-radius: 10px;" id="showPostImgsContent"></div>
+        </div>
+    </div>
+    {include file="common/warning"}
+    {include file="common/tips"}
+    <div id="wrapper">
+        <div class="gray-bg dashbard-1">
+            <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-sm-6">
+                  <h2>客户详细信息</h2>
+                </div>
+                <div class="col-sm-6"><br>
+                    {if $Think.session.gid != 205}
+                    <a class="btn  btn-success btn-sm" data-index="_user_account_uid_<!--{$user.uid}-->" onClick="return c(this);" href="/x/{$Request.module}/account/list/uid/{$user.uid}">账目明细</a>
+                    {/if}
+                    {if $admin_user_mcc && $user.hasmc}
+                    <a class="btn btn-success btn-sm" data-index="mcard_account_uid_{$user.uid}" onclick="return c(this);" href="/admin/mcard/accountdetail/uid/{$user.uid}"><span style="display: none;">{$user.realname}</span>会员卡账户<span style="display: none;">详情</span></a>
+                    {/if}
+                    {if $admin_user_addpost}
+                    <a href="javascript:void(0)" class="btn btn-sm btn-primary"  style="margin-left:10px;" data-toggle="modal" data-target="#kfgj">客户跟进</a>
+                    {/if}
+                    {if $admin_user_mcc}
+                    <a href="javascript:void(0);" data-tpl="mccModal"  class="btn btn-sm btn-primary" data-datas='' onclick="openModal2(this);">会员卡充值</a>
+                    {/if}
+                    {if $admin_order_add}
+                    <a class="btn  btn-primary btn-sm" data-index="order_add_uid_{$user.uid}" onClick="return c(this);" href="/admin/order/add/uid/{$user.uid}"><span style='display: none;'>{if $user.realname}{$user.realname}{else}{$user.mobile}{/if}-</span>下订单</a>
+                    {/if}
+                </div>
+            </div>
+            <div class="row ">
+                <div class="col-sm-12">
+                      <div class="panel blank-panel">
+                    <div class="panel-heading">
+                          <div class="panel-options">
+                        <ul class="nav nav-tabs">
+                              <li class="active"><a href="#ta-4" data-toggle="tab" onClick="hiddenFm();">基本资料</a> </li>
+                              <li> <a href="#ta-5" data-toggle="tab" onClick="hiddenFm('1');">修改信息</a> </li>
+                             <!-- <li> <a href="#useraddressList" onClick="hiddenFm();getList({u:'/admin/user/address',sign:'useraddress'},'1');" data-toggle="tab" style="position:relative;">收货地址</a> </li>-->
+                              <li> <a href="#userFollowsearchList" onClick="hiddenFm('userFollowsearchSearchForm');getList({u:'/admin/user/followsearch',sign:'userFollowsearch'},'1');" data-toggle="tab" style="position:relative;">拜访记录<span class="label label-warning" style="line-height: 12px; padding: 2px 5px; position: absolute;right: 5px; top: 0px;;">{if @$followCount}{$followCount}{else/}<!--<span style="color:#fff;" class="label-warning label">0</span>-->{/if}</span></a> </li>
+                              {if $admin_user_stocksearch}
+                              <li class=""> <a href="#userStocksearchList" onClick="hiddenFm('userStocksearchSearchForm');getList({u:'/admin/user/stocksearch',sign:'userStocksearch'},'1');" data-toggle="tab" style="position:relative;">库存信息<span class="label label-warning" style="line-height: 12px; padding: 2px 5px; position: absolute;right: 5px; top: 0px;;">{if @$stockCount}{$stockCount}{else/}<!--<span style="color:#fff;" class="label-warning label">0</span>-->{/if}</span></a> </li>
+                              {/if}
+                              {if $admin_user_hssearch}
+                              <li class=""> <a href="#userHssearchList" onClick="hiddenFm('userHssearchSearchForm');getList({u:'/admin/user/hssearch',sign:'userHssearch'},'1');" data-toggle="tab" style="position:relative;">回收信息<span class="label label-warning" style="line-height: 12px; padding: 2px 5px; position: absolute;right: 5px; top: 0px;;">{if @$hsCount}{$hsCount}{else/}<!--<span style="color:#fff;" class="label-warning label">0</span>-->{/if}</span></a> </li>
+                              {/if}
+                              <li class=""> <a href="#userOrdersearchList" onClick="hiddenFm('userOrdersearchSearchForm');getList({u:'/admin/user/Ordersearch',sign:'userOrdersearch'},'1');" data-toggle="tab" style="position:relative;">订单列表<span class="label label-warning" style="line-height: 12px; padding: 2px 5px; position: absolute;right: 5px; top: 0px;;">{if @$orderCount}{$orderCount}{else/}<!--<span style="color:#fff;" class="label-warning label">0</span>-->{/if}</span></a> </li>
+                              <li class=""> <a href="#userChsearchList" onClick="hiddenFm('userChsearchSearchForm');getList({u:'/admin/user/chsearch',sign:'userChsearch'},'1');"  data-toggle="tab" style="position:relative;">出货信息<span class="label label-warning" style="line-height: 12px; padding: 2px 5px; position: absolute;right: 5px; top: 0px;;">{if @$chCount}{$chCount}{else/}<!--<span style="color:#fff;" class="label-warning label">0</span>-->{/if}</span></a> </li>
+                            </ul>
+                      </div>
+                        </div>
+                    <div class="panel-body">
+                          <div class="tab-content">
+                        <form method="post" action="/admin/user/followsearch" id="userFollowsearchSearchForm" onSubmit="return false;" style="display: none;">
+                              <input type="hidden" name="uid" value="{$user.uid}"/>
+                              <input type="text" name="csdate" value="{$csdate}" readonly="readonly" style="cursor:pointer;background:#ccc;height:30px;line-height:30px;" class="laydate-input"  />
+                              -
+                              <input type="text" name="cedate" value="{$cedate}" readonly="readonly" style="cursor:pointer;background:#ccc;height:30px;line-height:30px;" class="laydate-input"  />
+                              <input type="submit" name="submit" value="筛选" onClick="$(this.form.interval).attr('checked',false);addType2(this.form);getList({u:'/admin/user/followsearch',sign:'userFollowsearch'},'1');" />
+                              <label>
+                            <input type="radio" name="interval" value="30" onClick="removeType(this.form);getList({u:'/admin/user/followsearch',sign:'userFollowsearch'},'1');" />
+                            近1月</label>
+                              <label>
+                            <input type="radio" name="interval" value="180" onClick="removeType(this.form);getList({u:'/admin/user/followsearch',sign:'userFollowsearch'},'1');" />
+                            近6月</label>
+                              <label>
+                            <input type="radio" name="interval" value="365" onClick="removeType(this.form);getList({u:'/admin/user/followsearch',sign:'userFollowsearch'},'1');" />
+                            近1年</label>
+                            </form>
+                        <form method="post" action="/admin/user/stocksearch" id="userStocksearchSearchForm" onSubmit="return false;" style="display: none;">
+                              <input type="hidden" name="uid" value="{$user.uid}"/>
+                              <input type="text" name="csdate" value="{$csdate}" readonly="readonly" style="cursor:pointer;background:#ccc;height:30px;line-height:30px;" class="laydate-input"  />
+                              -
+                              <input type="text" name="cedate" value="{$cedate}" readonly="readonly" style="cursor:pointer;background:#ccc;height:30px;line-height:30px;" class="laydate-input"  />
+                              <input type="submit" name="submit" value="筛选" onClick="$(this.form.interval).attr('checked',false);addType2(this.form);getList({u:'/admin/user/stocksearch',sign:'userStocksearch'},'1');" />
+                              <label>
+                            <input type="radio" name="interval" value="30" onClick="removeType(this.form);getList({u:'/admin/user/stocksearch',sign:'userStocksearch'},'1');" />
+                            近1月</label>
+                              <label>
+                            <input type="radio" name="interval" value="180" onClick="removeType(this.form);getList({u:'/admin/user/stocksearch',sign:'userStocksearch'},'1');" />
+                            近6月</label>
+                              <label>
+                            <input type="radio" name="interval" value="365" onClick="removeType(this.form);getList({u:'/admin/user/stocksearch',sign:'userStocksearch'},'1');" />
+                            近1年</label>
+                            </form>
+                        <form method="post" action="/admin/user/hssearch" id="userHssearchSearchForm" onSubmit="return false;" style="display: none;">
+                              <input type="hidden" name="uid" value="{$user.uid}"/>
+                              <input type="text" name="csdate" value="{$csdate}" readonly="readonly" style="cursor:pointer;background:#ccc;height:30px;line-height:30px;" class="laydate-input"  />
+                              -
+                              <input type="text" name="cedate" value="{$cedate}" readonly="readonly" style="cursor:pointer;background:#ccc;height:30px;line-height:30px;" class="laydate-input"  />
+                              <input type="submit" name="submit" value="筛选" onClick="$(this.form.interval).attr('checked',false);addType2(this.form);getList({u:'/admin/user/hssearch',sign:'userHssearch'},'1');" />
+                              <label>
+                            <input type="radio" name="interval" value="30" onClick="removeType(this.form);getList({u:'/admin/user/hssearch',sign:'userHssearch'},'1');" />
+                            近1月</label>
+                              <label>
+                            <input type="radio" name="interval" value="180" onClick="removeType(this.form);getList({u:'/admin/user/hssearch',sign:'userHssearch'},'1');" />
+                            近6月</label>
+                              <label>
+                            <input type="radio" name="interval" value="365" onClick="removeType(this.form);getList({u:'/admin/user/hssearch',sign:'userHssearch'},'1');" />
+                            近1年</label>
+                            </form>
+                        <form method="post" action="/admin/user/ordersearch" id="userOrdersearchSearchForm" onSubmit="return false;" style="display: none;">
+                              <input type="hidden" name="uid" value="{$user.uid}"/>
+                              <input type="text" name="csdate" value="{$csdate}" readonly="readonly" style="cursor:pointer;background:#ccc;height:30px;line-height:30px;" class="laydate-input"  />
+                              -
+                              <input type="text" name="cedate" value="{$cedate}" readonly="readonly" style="cursor:pointer;background:#ccc;height:30px;line-height:30px;" class="laydate-input"  />
+                              <input type="submit" name="submit" value="筛选" onClick="$(this.form.interval).attr('checked',false);addType2(this.form);getList({u:'/admin/user/Ordersearch',sign:'userOrdersearch'},'1');" />
+                              <label>
+                            <input type="radio" name="interval" value="30" onClick="removeType(this.form);getList({u:'/admin/user/Ordersearch',sign:'userOrdersearch'},'1');" />
+                            近1月</label>
+                              <label>
+                            <input type="radio" name="interval" value="180" onClick="removeType(this.form);getList({u:'/admin/user/Ordersearch',sign:'userOrdersearch'},'1');" />
+                            近6月</label>
+                              <label>
+                            <input type="radio" name="interval" value="365" onClick="removeType(this.form);getList({u:'/admin/user/Ordersearch',sign:'userOrdersearch'},'1');" />
+                            近1年</label>
+                            </form>
+                        <form method="post" action="/admin/user/chsearch" id="userChsearchSearchForm" onSubmit="return false;" style="display: none;">
+                              <input type="hidden" name="uid" value="{$user.uid}"/>
+                              <input type="text" name="csdate" value="{$csdate}" readonly="readonly" style="cursor:pointer;background:#ccc;height:30px;line-height:30px;" class="laydate-input"  />
+                              -
+                              <input type="text" name="cedate" value="{$cedate}" readonly="readonly" style="cursor:pointer;background:#ccc;height:30px;line-height:30px;" class="laydate-input"  />
+                              <input type="submit" name="submit" value="筛选" onClick="$(this.form.interval).attr('checked',false);addType2(this.form);getList({u:'/admin/user/chsearch',sign:'userChsearch'},'1');" />
+                              <label>
+                            <input type="radio" name="interval" value="30" onClick="removeType(this.form);getList({u:'/admin/user/chsearch',sign:'userChsearch'},'1');" />
+                            近1月</label>
+                              <label>
+                            <input type="radio" name="interval" value="180" onClick="removeType(this.form);getList({u:'/admin/user/chsearch',sign:'userChsearch'},'1');" />
+                            近6月</label>
+                              <label>
+                            <input type="radio" name="interval" value="365" onClick="removeType(this.form);getList({u:'/admin/user/chsearch',sign:'userChsearch'},'1');" />
+                            近1年</label>
+                            </form>
+                        <!--跟进记录-->
+                        <div class="tab-pane " id="userFollowsearchList" > </div>
+                        <!--收货地址-->
+                        <div class="tab-pane " id="useraddressList" > </div>
+                        <div class="tab-pane " id="userStocksearchList" > 
+                              <!--客户库存--> 
+
+                              <!--客户库存--> 
+                            </div>
+                        <div class="tab-pane " id="userHssearchList" > 
+                              <!--回收瓶盖--> 
+                              <!--回收瓶盖--> 
+                            </div>
+                 <div class="modal inmodal in" id="kfgj" tabindex="-1" role="dialog" aria-hidden="false" >
+                <div class="modal-dialog modal-lg">
+                      <div class="modal-content animated fadeIn">
+                    <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal"> <span aria-hidden="true">&times;</span> <span class="sr-only">Close</span> </button>
+                          <h4 class="modal-title">客户跟进</h4>
+                        </div>
+                    <form name="cpform" class="form-horizontal" method="post" action="/admin/user/addpost"  id="cpform" enctype="multipart/form-data" onSubmit="return formAct2(this,'','正在提交跟进客户信息，请稍后！');">
+                          <div class="modal-body">
+                        <input type="hidden" name="uid" value="{$user.uid}" />
+                        <input type="hidden" name="action" value="add"/>
+                        <div class="form-group">
+                              <label class="col-sm-3 control-label">上传图片:</label>
+                              <div class="col-sm-9">
+                            <input type="file" class="form-control" name="thumb" />
+                          </div>
+                            </div>
+                        <div class="form-group">
+                              <label class="col-sm-3 control-label">备注:</label>
+                              <div class="col-sm-9">
+                            <textarea name="content" class="form-control" style="height:100px;max-height: 100px;" cols="60" rows="8"></textarea>
+                          </div>
+                            </div>
+                      </div>
+                          <div class="modal-footer">
+                        <input type="submit" value="提交" class="btn btn-sm btn-primary" />
+                        <button type="button" class="btn btn-sm btn-white" data-dismiss="modal">返回</button>
+                      </div>
+                        </form>
+                  </div>
+                    </div>
+              </div>
+                        <div class="tab-pane active" id="ta-4" > 
+                              <!--个人信息-->
+                              <div class="col-sm-6">
+                            <dl class="dl-horizontal">
+                                  <dt>客户名称：</dt>
+                                  <dd>{$user.realname}</dd>
+                                  <dt>跟进人：</dt>
+                                  <dd>{$user.host_realname}</dd>
+                                  {if @$user.guids && count($user.guids)>1}
+                                  <dt>多跟进人：</dt>
+                                  <dd>
+                                        {foreach name="user.guids" item="v"}
+                                        <span style="border:1px solid #ccc;margin-right:5px; border-radius: 3px;" class="checked_uid_{$v.guid}">
+                                            {$v.realname}
+                                        </span>
+                                        {/foreach}
+                                  </dd>
+                                        {/if} 
+                                  <dt>浏览次数：</dt>
+                                  <dd>{$user.clicknum}</dd>
+                                  {if @$user.type.title}
+                                  <dt>客户类型：</dt>
+                                  <dd>{$user.type.title}</dd>
+                                  {/if} 
+                                  {if @$user.rank}
+                                  <dt>客户等级：</dt>
+                                  <dd>{$user.rank}</dd>
+                                  {/if} 
+                                  {if @$user.birthday!='0000-00-00'}
+                                  <dt>生日：</dt>
+                                  <dd>{if @$user.birthdaytype=='1'}公历生日{/if}{if @$user.birthdaytype=='2'}农历生日{/if}{$user.birthday}</dd>
+                                  {/if}
+                                  {if @$user.address}
+                                  <dt>客户地址：</dt>
+                                  <dd>{$user.areaname}{$user.address}</dd>
+                                  {/if}
+                                  {if @$user.summary}
+                                  <dt>客户介绍：</dt>
+                                  <dd>{$user.summary}</dd>
+                                  {/if}
+                                </dl>
+                          </div>
+                              <div class="col-sm-6" id="cluster_info">
+                            <dl class="dl-horizontal">
+                                  {if @$user.phone}
+                                  <dt>电话：</dt>
+                                  <dd>{$user.phone}</dd>
+                                  {/if}
+                                  <dt>联系人：</dt>
+                                  <dd>{$user.contact}</dd>
+                                  {if @$user.mobile}
+                                  <dt>联系人手机：</dt>
+                                  <dd >{$user.mobile}</dd>
+                                  {/if}
+                                  {if @$user.lastvisit}
+                                  <dt>更新时间：</dt>
+                                  <dd>{$user.lastvisit|date="Y-m-d",###}</dd>
+                                  {/if}
+                                </dl>
+                          </div>
+                              {if @$user.x}
+                              <div class="col-sm-12">
+                            <dl class="dl-horizontal">
+                                  <dt>位置：</dt>
+                                  <dd>
+                                <div id="allmap2" style="width:70%;height:300px"></div>
+                              </dd>
+                                </dl>
+                          </div>
+                              {/if} 
+                              <!--个人信息--> 
+                            </div>
+                        <div class="tab-pane " id="ta-5" > 
+                              <!--修改-->
+                              <div class="row">
+                            <div class="col-sm-12">
+                                  <div class="ibox float-e-margins">
+                                <div class="ibox-title">
+                                      <h5>编辑客户的详细信息<small></small></h5>
+                                    </div>
+                                <div class="ibox-content">
+                                    <form class="form-horizontal" enctype="multipart/form-data" method="post" action="/admin/user/detail" onSubmit="return formAct2(this,'','正在修改客户信息，请稍后！');">
+                                    <input type="hidden" name="action" value="edit" />
+                                    <input type="hidden" name="uid" value="{$user.uid}" />
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">跟进人:</label>
+                                        <div class="col-sm-4">
+                                            <select class="form-control" name="guid">
+                                                <option value="0" {if @$user.guid==false}selected{/if}>请选择跟进人</option>
+                                                {foreach name="$members" item="member"}
+                                                <option value="{$member.uid}" {if @$user.guid == $member.uid}selected{/if}>{$member.realname}</option>
+                                                {/foreach}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                          <label class="col-sm-2 control-label">多人跟进:</label>
+                                          <div class="col-sm-6">
+                                        <p class="form-control head_man_realnames" style="overflow: hidden;width: 70%;padding:5px;margin:0px;vertical-align: middle;display: inline-block;"> {if @$user.guids}
+                                              {foreach name="user.guids" item="v"} <span style="border:1px solid #ccc;margin-right:5px; border-radius: 3px;" class="checked_uid_{$v.guid}">{$v.realname}
+                                          <input type="hidden" name="guids[]" value="{$v.guid}" />
+                                          <input type="hidden" name="guidname[]" value="{$v.guidname}" />
+                                          </span> {/foreach}
+                                              {/if} 
+                                        </p>
+                                        <a href="javascript:void(0);" class='btn btn-warning' style="width: 5%;margin: 0px;" onClick="$('.head_man_realnames').children().remove();">x</a> <a class="btn btn-primary btn-open-modal" style="width: 23%;margin: 0px;" data-id="#gmup" data-request="showLA('/admin/user/detail','showGMStructure',{action:'showgmstruct',uid:{$user.uid}});">选择跟进人</a> </div>
+                                        </div>
+                                    <div class="form-group">
+                                          <label class="col-sm-2 control-label">客户名称:</label>
+                                          <div class="col-sm-2">
+                                        <input type="text" class="form-control" name="realname" value="{$user.realname}" />
+                                      </div>
+                                          <div class="col-sm-2">
+                                        <select class="form-control" name="tpid">
+                                             <option value="0" >选择客户类型</option>  
+                          {foreach key="tpid" item="tp" name="types"}
+
+                                              <option value="{$tp.id}" {if @$user.tpid == $tp.id}selected{/if}>{$tp.title}</option>
+
+                          {/foreach} </select>
+                                      </div>
+                                        </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">门头照:</label>
+                                        <div class="col-sm-4">
+                                            {if $user.mtz && $user.mtzimg}
+                                            <input type="hidden" id="mtzid" class="form-control" name="mtz" value="{$user.mtz}" />
+                                            <input type="file" style="width:100%;" id="uploadmtzimg" class="form-control" name="mtzimg" accept="image/gif,image/jpeg,image/png" />
+                                            <img src="{$user.mtzimg}" class="form-control" id="mtzimg"  style="width:150px;height:150px;" />
+                                            <span>
+                                                <a href="javascript:void(0);" id="mtzDeleteBtn" class="btn btn-warning" style="margin: 0px;" onclick="$('#mtzid').val(0);$('#mtzimg').hide();$('#mtzDeleteBtn').hide();$('#mtzCancelBtn').show();">删除</a>
+                                                <a href="javascript:void(0);" id="mtzCancelBtn" class="btn btn-primary" style="margin: 0px;display:none;" onclick="$('#mtzid').val({$user.mtz});$('#mtzimg').show();$('#mtzDeleteBtn').show();$('#mtzCancelBtn').hide();">撤销</a>
+                                            </span>
+                                            {else}
+                                            <input type="file" class="form-control" name="mtzimg" accept="image/gif,image/jpeg,image/png" />
+                                            {/if}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">客户等级:</label>
+                                        <div class="col-sm-4">
+                                            <select class="form-control" name="rankid">
+                                                <option value="0" >选择客户等级</option>
+                                                {foreach key="rankid" item="rank" name="Ranks"}
+                                                <option value="{$rank.id}" {if @$user.rankid == $rank.id}selected{/if}>{$rank.rank_name}</option>{/foreach}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                          <label class="col-sm-2 control-label">拜访路线:</label>
+                                          <div class="col-sm-4">
+                                        <select class="form-control" name="visitid">
+                                              <option value="0">无路线</option>               
+                          {foreach name="Visits" item="visit"}
+                          <option value="{$visit.id}" {if @$user.visitid == $visit.id}selected{/if}>{$visit.title}</option>
+                          {/foreach}</select>
+                                      </div>
+                                        </div>
+                                    <div class="form-group">
+                                          <label class="col-sm-2 control-label">客户联系人:</label>
+                                          <div class="col-sm-4">
+                                        <input type="text" class="form-control" name="contact" value="{$user.contact}"/>
+                                      </div>
+                                        </div>
+                                    {if $user.trust || $user.is_check_mobile}
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">联系人手机:</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" name="mobile" value="{$user.mobile}" />
+                                        </div>
+                                    </div>
+                                    {/if}
+                                    <div class="form-group">
+                                          <label class="col-sm-2 control-label">联系人QQ:</label>
+                                          <div class="col-sm-4">
+                                        <input type="text" class="form-control" name="qq" value="{$user.qq}" />
+                                      </div>
+                                        </div>
+                                    <div class="form-group">
+                                          <label class="col-sm-2 control-label">联系人Email:</label>
+                                          <div class="col-sm-4">
+                                        <input type="text" class="form-control" name="email" value="{$user.email}"/>
+                                      </div>
+                                        </div>
+                                    <div class="form-group">
+                                          <label class="col-sm-2 control-label">详细地址:</label>
+                                          <div class="col-sm-4">
+                                          <div id="addressForm"></div>
+                                        <input type="text" class="form-control" name="address" value="{$user.address}"/>
+                                      </div>
+                                        </div>
+                                    <div class="form-group">
+                                          <label class="col-sm-2 control-label">公司电话:</label>
+                                          <div class="col-sm-4">
+                                        <input type="text" class="form-control" name="phone" value="{$user.phone}"/>
+                                      </div>
+                                        </div>
+                                    <div class="form-group">
+                                          <label class="col-sm-2 control-label">传真:</label>
+                                          <div class="col-sm-4">
+                                        <input type="text" class="form-control" name="fax" value="{$user.fax}"/>
+                                      </div>
+                                        </div>
+                                    <div class="form-group">
+                                          <label class="col-sm-2 control-label">客户网址:</label>
+                                          <div class="col-sm-4">
+                                        <input type="text" class="form-control" name="url" value="{$user.url}" />
+                                      </div>
+                                        </div>
+                                    <div class="form-group">
+                                          <label class="col-sm-2 control-label">性别:</label>
+                                          <div class="col-sm-4">
+                                        <div class="radio i-checks">
+                                              <label>
+                                              <div class="iradio_square-green" style="position: relative;">
+                                            <input type="radio" style="position: absolute; opacity: 0;" name="gender" value="1" {if @$user.gender == '1'}checked{/if} >
+                                            <ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins></div>
+                                              <i></i> 男
+                                              </label>
+                                              <label>
+                                              <div class="iradio_square-green" style="position: relative;">
+                                            <input type="radio" style="position: absolute; opacity: 0;" name="gender" value="2" {if @$user.gender == '2'}checked{/if} >
+                                            <ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins></div>
+                                              <i></i> 女
+                                              </label>
+                                            </div>
+                                      </div>
+                                        </div>
+                                    <div class="form-group">
+                                          <label class="col-sm-2 control-label">生日:</label>
+                                          <div class="col-sm-6">
+                                        <div class="col-sm-4 m-l-n">
+                                              <select class="form-control" name="birthdaytype">
+                                            <option value="1" {if @$user.birthdaytype == '1'}selected{/if}>公历生日</option>
+                                            <option value="2" {if @$user.birthdaytype == '2'}selected{/if}>农历生日</option>
+                                          </select>
+                                            </div>
+                                        <div class="col-sm-4 m-l-n">
+                                              <input type="text" class="form-control laydate-input" data-type="date" readonly="readonly" style="cursor:pointer;background:#ccc;" name="birthday" value="{if condition='$user.birthdaytype eq 1'}{if ($user.birthday !== '0000-00-00') && ($user.birthday !== '1000-01-01')}{$user.birthday}{else}{:date('Y-m-d')}{/if}{elseif condition='$user.birthdaytype eq 2'}{if ($user.birthday !== '0000-00-00') && ($user.birthday !== '1000-01-01')}{$user.birthday}{else}{:date('Y-m-d')}{/if}{/if}">
+                                            </div>
+                                      </div>
+                                        </div>
+                                    <div class="form-group">
+                                          <label class="col-sm-2 control-label">客户介绍：</label>
+                                          <div class="col-sm-4">
+                                        <textarea name="summary" class="form-control" cols="60" rows="8">{$user.summary}</textarea>
+                                      </div>
+                                        </div>
+                                    <div class="form-group">
+                                          <label class="col-sm-2 control-label"></label>
+                                          <div class="col-sm-4"> 说明：点击地图获取地图坐标，或者使用<a href="http://api.map.baidu.com/lbsapi/getpoint/" target="_blank" style="color: red;text-decoration: underline;">百度坐标拾取工具</a>获取坐标后复制到地图坐标框 </div>
+                                        </div>
+                                    <div class="form-group">
+                                          <label class="col-sm-2 control-label">地图坐标：</label>
+                                          <div class="col-sm-4">
+                                        <input type="text" class="form-control" id="xy" name="xy" value="{if @$user.y}{$user.y},{$user.x}{/if}"/>
+                                      </div>
+                                        </div>
+                                    <div class="form-group">
+                                          <label class="col-sm-2 control-label">位置：</label>
+                                          <div class="col-sm-8">
+                                        <div id="allmap" style="width:100%;height:300px"></div>
+                                      </div>
+                                        </div>
+                                    {if @$user.trust == 1}
+                                        <div class="form-group">
+                                          <label class="col-sm-2 control-label">认证状态:</label>
+                                          <div class="col-sm-4">
+                                        <div class="radio i-checks">
+                                              <label>
+                                              <div class="iradio_square-green" style="position: relative;">
+                                            <input type="radio" style="position: absolute; opacity: 0;" name="trust" value="1" {if @$user.trust == 1}checked{/if} >
+                                            <ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins></div>
+                                              <i></i> 已认证
+                                              </label>
+                                              <label>
+                                              <div class="iradio_square-green" style="position: relative;">
+                                            <input type="radio" style="position: absolute; opacity: 0;" name="trust" value="0" {if @$user.trust == 0}checked{/if} >
+                                            <ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins></div>
+                                              <i></i> 未认证
+                                              </label>
+                                            </div>
+                                      </div>
+                                        </div>
+                                    {/if}
+                                         <div class="form-group">
+                                          <label class="col-sm-2 control-label">客户状态:</label>
+                                          <div class="col-sm-4">
+                                        <div class="radio i-checks">
+                                              <label>
+                                              <div class="iradio_square-green" style="position: relative;">
+                                            <input type="radio" style="position: absolute; opacity: 0;" name="status" value="1" {if @$user.status == 1}checked{/if} >
+                                            <ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins></div>
+                                              <i></i> 有效
+                                              </label>
+                                              <label>
+                                              <div class="iradio_square-green" style="position: relative;">
+                                            <input type="radio" style="position: absolute; opacity: 0;" name="status" value="0" {if @$user.status == 0}checked{/if} >
+                                            <ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins></div>
+                                              <i></i> 无效
+                                              </label>
+                                            </div>
+                                      </div>
+                                        </div>
+                                    <div class="hr-line-dashed"></div>
+                                    <div class="form-group">
+                                          <div class="col-sm-4 col-sm-offset-2">
+                                        <input type="submit" name="editusersubmit" value="保存" class="btn btn-primary" />
+                                      </div>
+                                        </div>
+                                  </form>
+                                    </div>
+                              </div>
+                                </div>
+                                <script type="text/template" id="addressSelect">
+                                    <select style="width: 30%;" class="input-sm address address_{{=ljk.level}}" data-level="{{=ljk.level}}" name="areas[{{=ljk.level}}]" onchange="createAddressForm2('{{=ljk.id}}',{{=ljk.level + 1}});">
+                                        <option value="">请选择</option>
+                                        {{for(var i = 0; i < ljk.data.length; i++){}}
+                                        <option value="{{=ljk.data[i].code}}:{{=ljk.data[i].alias}}" {{?ljk.selectedCode && (ljk.selectedCode==ljk.data[i].code)}}selected="selected"{{?}}>{{=ljk.data[i].code_name}}</option>
+                                        {{?}}
+                                    </select>
+                                </script>
+                          </div>
+                              <!--修改--> 
+                            </div>
+                        <div class="tab-pane " id="userOrdersearchList" > 
+                              <!--订单信息--> 
+
+                              <!--订单信息--> 
+                            </div>
+                        <div class="tab-pane " id="userChsearchList" > 
+                              <!--出货信息--> 
+
+                              <!--出货信息--> 
+                            </div>
+                      </div>
+                        </div>
+                  </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+    {include file="/user/act/editpost"}
+        <script type="text/template" id="showGMStructure">
+            {{?ljk}}
+            <dl>
+            {{for(var i=0;i<ljk.length;i++){}}
+                {{?ljk[i].c===1}}
+                <dd style="margin:5px 0px 0px 0px;cursor:pointer;" data-id="{{=ljk[i].id}}" class="gmdept">
+                    <i class="fa fa-folder-o" style="margin-left:{{=ljk[i].l}}px;">&nbsp;&nbsp;{{=ljk[i].name}}</i>{{?ljk[i].gmmember.length}}<i class="fa fa-male" style="margin-left:5px;"></i>{{?}}
+                    {{?ljk[i].gmmember.length > 0}}
+                        <ul style="list-style-type:none;margin:0px;margin-left:{{=ljk[i].x}}px;padding:0px;display:none;" class="gmmember gmmembers_{{=ljk[i].id}}">
+                            {{for(var j=0;j<ljk[i].gmmember.length;j++){}}
+                                <li onclick="setHeadMan(this);" style="cursor:pointer;margin:0px;padding:0px;"><input type="checkbox" readonly="readonly" style="cursor:pointer;background:#ccc;height:30px;line-height:30px;" value="{{=ljk[i].gmmember[j].uid}}" data-t="{{=ljk[i].gmmember[j].realname}}" />{{=ljk[i].gmmember[j].realname}}</li>
+                            {{}}}
+                        </ul>
+                    {{?}}
+                </dd>
+                {{??}}
+                <dd style="margin:5px 0px 0px 0px;cursor:pointer;" data-id="{{=ljk[i].id}}" class="gmdept">
+                    <i class="fa fa-file-o" style="margin-left:{{=ljk[i].l}}px;">&nbsp;&nbsp;{{=ljk[i].name}}</i>{{?ljk[i].gmmember.length}}<i class="fa fa-male" style="margin-left:5px;"></i>{{?}}
+                    {{?ljk[i].gmmember.length > 0}}
+                        <ul style="list-style-type:none;margin:0px;margin-left:{{=ljk[i].x}}px;padding:0px;display:none;" class="gmmember gmmembers_{{=ljk[i].id}}">
+                            {{for(var j=0;j<ljk[i].gmmember.length;j++){}}
+                                <li onclick="setHeadMan(this);" style="cursor:pointer;margin:0px;padding:0px;"><input type="checkbox" readonly="readonly" style="cursor:pointer;background:#ccc;height:30px;line-height:30px;" value="{{=ljk[i].gmmember[j].uid}}" data-t="{{=ljk[i].gmmember[j].realname}}" />{{=ljk[i].gmmember[j].realname}}</li>
+                            {{}}}
+                        </ul>
+                    {{?}}
+                </dd>
+                {{?}}
+            {{}}}
+            </dl>
+            {{?}}
+            <script type="text/javascript">
+                $('.gmdept').on('click',function (event){
+                    var id = '.gmmembers_' + $(this).data('id');
+                    $(id).on('click',function (event){
+                        event.stopPropagation();
+                    });
+                    if($(id).css('display') === 'none'){
+                        $(id).show();
+                    }else{
+                        $(id).hide();
+                    }
+                });
+                function setHeadMan(l){
+                    $(l).children('input[type=checkbox]').each(function (){
+                        var t = $(this).data('t');
+                        var uid = $(this).val();
+                        if(this.checked){
+                            this.checked=false;
+                            $('.head_man_realnames').find('.checked_uid_' + uid).remove();
+                        }
+                        else{
+                            this.checked=true;
+                            if($('.head_man_realnames').find('.checked_uid_' + uid).length === 0){
+                                $('.head_man_realnames').append('<span style="border:1px solid #ccc;margin-right:5px; padding: 3px;border-radius: 3px;" class="checked_uid_'+ uid +'">' + t + '<input type="hidden" name="guids[]" value="' + uid + '" /><input type="hidden" name="guidname[]" value="'+ t +'" /></span>');
+                            }
+                        }
+                    });
+                }
+            </script> 
+        </script>
+        {if $admin_user_mcc}
+        <script type="text/template" id="mccModal">
+            <div class="modal inmodal in" style="display: block;overflow-y: scroll;">
+                <div class="modal-dialog" style="width:60%;">
+                    <div class="modal-content animated fadeIn">
+                        <div class="modal-header">
+                            <button type="button" class="close" onclick="$('#modalBackdropBox').html('');$('#modalBackdropBox').hide();"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title">会员卡充值</h4>
+                        </div>
+                        <form method="post" id="umSearchForm" action="/admin/user/mcc" class="form-horizontal" enctype="multipart/form-data" onsubmit="return false;">
+                            <input type="hidden" name="action" value="mcc" />
+                            <input type="hidden" name="uid" value="{$user.uid}" />
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">会员信息：</label>
+                                        <div class="col-sm-8">
+                                            <span class="form-control" style="background:#ccc;cursor:not-allowed;">{$user.realname}{if $user.mobile}({$user.mobile}){/if}</span>
+                                        </div>
+                                    </div>
+                                    <div id="mcardList" style="width:100%;">
+                                        <div style="width:100%;position:relative;border:1px dashed #000;margin:5px 0px;">
+                                            <div class="form-group" style="margin-bottom:0px;">
+                                                <label class="col-sm-2 control-label">卡号：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" placeholder="请在此输入会员卡号" class="form-control" name="mcard[0][sn]" value=""  />
+                                                </div>
+                                                <div class="col-sm-1" style="text-align:left;padding-left:0px;"><span style="color:red;height:34px;line-height:34px;">*</span></div>
+                                            </div>
+                                            <div class="form-group" style="margin-bottom:0px;">
+                                                <label class="col-sm-2 control-label">密码：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" placeholder="请在此输入会员卡密码！" class="form-control" name="mcard[0][pwd]" value=""/>
+                                                </div>
+                                                <div class="col-sm-1" style="text-align:left;padding-left:0px;"><span style="color:red;height:34px;line-height:34px;">*</span></div>
+                                            </div>
+                                            <a href="javascript:void(0);" class="btn btn-sm btn-white" style="position:absolute;right:20px;top:25%;color:red;" onclick="$(this.parentNode).remove();">移除</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-warning btn-sm" onclick="$('#modalBackdropBox').html('');$('#modalBackdropBox').hide();">关闭</button>
+                                <a href="javascript:void(0);" class="btn btn-success btn-sm add_one_mcard">添加一张</a>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="formAct2(this.form,'','正在进行会员卡充值操作，请稍后！');">充值</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <script type="text/javascript">
+            $(function (){
+                var i = 1;
+                var template = doT.template($('#mcardTpl').html());
+                var $mcardList = $('#mcardList');
+                $('.add_one_mcard').off().click(function (){
+                    var thtml = template({index:i});
+                    $mcardList.append(thtml);
+                    i++;
+                });
+            });
+            </script>
+        </script>
+        <script type="text/template" id="mcardTpl">
+            <div style="width:100%;position:relative;border:1px dashed #000;margin:5px 0px;">
+                <div class="form-group" style="margin-bottom:0px;">
+                    <label class="col-sm-2 control-label">卡号：</label>
+                    <div class="col-sm-8">
+                        <input type="text" placeholder="请在此输入会员卡号" class="form-control" name="mcard[{{=ljk.index}}][sn]" value=""  />
+                    </div>
+                    <div class="col-sm-1" style="text-align:left;padding-left:0px;"><span style="color:red;height:34px;line-height:34px;">*</span></div>
+                </div>
+                <div class="form-group" style="margin-bottom:0px;">
+                    <label class="col-sm-2 control-label">密码：</label>
+                    <div class="col-sm-8">
+                        <input type="text" placeholder="请在此输入会员卡密码！" class="form-control" name="mcard[{{=ljk.index}}][pwd]" value=""/>
+                    </div>
+                    <div class="col-sm-1" style="text-align:left;padding-left:0px;"><span style="color:red;height:34px;line-height:34px;">*</span></div>
+                </div>
+                <a href="javascript:void(0);" class="btn btn-sm btn-white" style="position:absolute;right:20px;top:25%;color:red;" onclick="$(this.parentNode).remove();">移除</a>
+            </div>
+        </script>
+        {/if}
+        <div class="modal inmodal in" id="gmup">
+      <div class="modal-dialog">
+            <div class="modal-content animated fadeIn">
+          <div class="modal-header">
+                <button type="button" class="modal-close close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">选择跟进人</h4>
+              </div>
+          <div class="modal-body" style="margin: 0px;padding: 0px;">
+                <div class="showGMStructure" style="padding: 0px 10px;width: 100%;overflow-y:scroll;height: 280px;background:rgba(255,255,255,0.9);"></div>
+              </div>
+          <div class="modal-footer">
+                <button type="button" class="modal-close btn btn-warning">关闭</button>
+                <button type="button" class="modal-close btn btn-primary">确定</button>
+              </div>
+        </div>
+          </div>
+    </div>
+    {include file="common/footerjs"} 
+    <script type="text/javascript">
+        {if $user.areaids}
+        createAddressForm2('addressForm',1,'{$user.areaids}');
+        {else}
+        createAddressForm2('addressForm');
+        {/if}
+        (function (){
+            {if @$user.x}
+            var t = '{$user.realname}';
+            var map = new BMap.Map("allmap");
+            map.centerAndZoom(new BMap.Point({$user.y}, {$user.x}), 14);
+            addMarker({$user.x}, {$user.y},map,t);
+            map.panBy(305,165);
+            {else/}
+            var map = new BMap.Map("allmap");
+            map.centerAndZoom(new BMap.Point({$ginfo.y}, {$ginfo.x}), 12);                   // 初始化地图,设置城市和地图级别。
+            map.panBy(305,165);
+            {/if}
+            map.enableScrollWheelZoom();                            //启用滚轮放大缩小
+            map.addEventListener("click", function(e){
+            map.clearOverlays();
+            var t = '{$user.realname}';
+            addMarker(e.point.lat,e.point.lng,map,t)
+            document.getElementById("xy").value=e.point.lng+','+e.point.lat;  
+             // document.getElementById("x").value=e.point.lat;   
+             // document.getElementById("y").value=e.point.lng; 
+            });  
+        })();                        //启用滚轮放大缩小
+        (function (){
+            {if @$user.x}
+            var map = new BMap.Map("allmap2");
+            var t = '{$user.realname}';
+            map.centerAndZoom(new BMap.Point({$user.y}, {$user.x}), 14);
+            addMarker({$user.x}, {$user.y},map,t);
+            {else/}
+            var map = new BMap.Map("allmap2");
+            map.centerAndZoom("重庆",12);          // 初始化地图,设置城市和地图级别。
+            {/if}
+            map.enableScrollWheelZoom();
+        })();
+        function addMarker(x,y,obj,text){
+           //marker.hide();
+           var map = obj;
+           var marker = new BMap.Marker(new BMap.Point(y, x));  // 创建标注
+           map.addOverlay(marker);              // 将标注添加到地图中
+           var label = new BMap.Label('<span style="background:#fff;display:inline-block;border:1px solid #f00;">' + text+ '</span>',{offset:new BMap.Size(20,-10)});
+            label.setStyle({
+                        border:"0",
+                        cursor:"pointer"
+            });
+               marker.setLabel(label);
+                //创建信息窗口
+                var infoWindow1 = new BMap.InfoWindow(text);
+                marker.addEventListener("click", function(){this.openInfoWindow(infoWindow1);});
+                marker.enableDragging();    //可拖拽
+        }
+        </script> 
+    <script type="text/javascript">
+            $(function(){
+               // setNation('{$user.nation}', '{$user.province}', '{$user.city}');
+            })
+            function changeHomeNation()
+            {
+                setHomeProvince($("#nation").val());
+            }
+            function changeHomeProvince()
+            {
+                setHomeCity($("#nation").val(), $("#province").val());
+            }
+            function setNation(nationVal, provinceVal, cityVal)
+            {
+                var nation = $("#nation");
+                nation.get(0).options.length = 0;
+                $.getJSON(iwbRoot+"admin/user/getnation/", function(json){
+                    if(json!=null){
+                        $.each(json, function(i, n){
+                            var option = new Option(n, i);
+                            if (i == nationVal) {
+                                option.selected = true;
+                            }
+                            nation.get(0).options.add(option);
+                        });
+                        setHomeProvince(nation.val(), provinceVal, cityVal);
+                    }
+                });
+            }
+            function setHomeProvince(nationVal, provinceVal, cityVal)
+            {
+                var province = $("#province");
+                var city = $("#city");
+                province.get(0).options.length = 0;
+                city.get(0).options.length = 0;
+                $.getJSON(iwbRoot+"admin/user/getprovince/nation/"+nationVal, function(json){
+                    if(json!=null){
+                        $.each(json, function(i, n){
+                            var option = new Option(n, i);
+                            if (i == provinceVal) {
+                                option.selected = true;
+                            }
+                            province.get(0).options.add(option);
+                        });
+                        if(province.val())
+                            province.show();
+                        else
+                            province.hide();
+                        setHomeCity(nationVal, province.val(), cityVal);
+                    }else{
+                        province.hide();
+                        city.hide();
+                    }
+                });
+            }
+            function setHomeCity(nationVal, provinceVal, cityVal)
+            {
+                var city = $("#city");
+                city.get(0).options.length = 0;
+                provinceVal = provinceVal == null ? '' : provinceVal;
+                $.getJSON(iwbRoot+"admin/user/getcity/nation/"+nationVal+"/province/"+provinceVal, function(json){
+                    if(json!=null){
+                        $.each(json, function(i, n){
+                            var option = new Option(n, i);
+                            if (i == cityVal) {
+                                option.selected = true;
+                            }
+                            city.get(0).options.add(option);
+                        });
+                        if(city.val())
+                            city.show();
+                        else
+                            city.hide();
+                    }else{
+                        city.hide();
+                    }
+                });
+            }
+        </script>
+</body>
+</html>

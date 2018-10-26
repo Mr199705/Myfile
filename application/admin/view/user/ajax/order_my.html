@@ -1,0 +1,38 @@
+<p>说明：客户订单指我的客户产生的订单。</p>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>订单号</th> 
+                <th>订单金额</th>
+                <th>订货客户</th>
+                <th>联系电话</th>
+                <th>订单状态</th>
+                <th>订单时间</th>
+                <th>来源</th>
+            </tr>
+        </thead>
+        <tbody>
+            {if $orders}
+            {foreach($orders as $k=>$order)}
+            <tr>
+                <td>
+                    <span class="i-checks">{$pageInfo.currentPage * $pageInfo.listRows - $pageInfo.listRows + $k + 1}</span>
+                </td>
+                <td><a href="/admin/order/detail/oid/{$order.oid}" onclick="return c(this);" data-index="_order_detail_oid_{$order.oid}"><span style="display: none;">订单:</span>{$order.number}</a></td>
+                <td>{$order.total}</td>
+                <td>{$order.host.realname}</td>
+                <td>{$order.host.mobile}</td>
+                <td>{$order.status_desc}</td>
+                <td>{$order.adate|date="Y-m-d H:i:s",###}</td>
+                <td>{$order.ly}</td>
+            </tr>
+            {/foreach}
+            {else}
+            <tr><th colspan="8" style="color:red;text-align: center;">未找到符合条件的订单</th></tr>
+            {/if}
+        </tbody>
+    </table>
+</div>
+{include file="common/page"}

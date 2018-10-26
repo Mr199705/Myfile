@@ -1,0 +1,28 @@
+<script type="text/javascript">
+    function closeTip(){
+        $('#tipBox').hide();
+        $('#tipBackdrop').hide();
+    }
+</script>
+<div class="modal inmodal fade in" id="tipBox" style="display: none;z-index: 99999 !important;">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header" style="margin:0px; padding:10px;">
+                <button id="tip_close" style="display: none;" onclick="closeTip();" type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">x</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">提示信息</h4>
+            </div>
+            <div class="modal-body" id="tip_msg" style="text-align: center;"></div>
+            <div class="modal-footer">
+                <a class="btn btn-sm btn-white" href="{$Think.server.HTTP_REFERER}" id="tip_back" style="display: none;"></a>
+                <a class="btn btn-sm btn-primary" href="javascript:void(0);" id="tip_detail" style="display: none;"></a>
+                <a class="btn btn-sm btn-primary" href="javascript:void(0);" id="tip_continue" style="display: none;"></a>
+                <button id="tip_close_btn" style="display: none;" onclick="closeTip();" type="button" class="btn-sm btn-primary" data-dismiss="modal">
+                    <span aria-hidden="true">关闭</span><span class="sr-only">Close</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-backdrop fade in" style="display: none;z-index: 99990 !important;" id="tipBackdrop"></div>

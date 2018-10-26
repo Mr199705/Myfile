@@ -1,0 +1,405 @@
+<!--拜访记录-->
+<script type="text/html" id="tpl_user_visit_record">
+<div class="page">
+    <!--顶部--->
+    <div class="ljk_top">
+        <a class="top_left js_item" data-id="genjinkehu">
+            <i class="fa fa-angle-left fa-2x"></i>
+        </a>
+        <a class="gotoaddvisit top_right" data-id="addgj" href="javascript:;">
+            <i class="fa fa-plus  db_xinxi"></i>
+        </a>
+        <p class="weui-flex__item top_center">拜访记录</p>
+    </div>
+<!--底部--->
+<div class="ljk_neirong">
+    <div class="weui-media-box weui-media-box_small-appmsg">
+        <div class="weui-cells">
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label for="" class="weui-label">
+                    <i class="fa fa-clock-o " style="color: cornflowerblue;"></i>开始时间</label></div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="date" id="timefrom1" value="" onchange="searchBF();" />
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label for="" class="weui-label">
+                    <i class="fa fa-clock-o " style="color: cornflowerblue;"></i>结束时间</label></div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="date" id="timeto1" value="" onchange="searchBF();"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div  class="listuser_visit_record_list_contents"></div>
+</div>
+<div style="width:100%; height:57px;"></div>
+</div>
+<script type="text/javascript">
+    $('.gotoaddvisit').off().on('click',function (){
+            var id = $(this).attr('data-id');
+            $("#uploadimgs").remove();
+            if($('.user_addvisit').length != 0){
+                showLA('/m/user/addvisit/','user_addvisit',{action:'show'});
+            }
+            window.pageManager.go(id);
+    });
+    function searchBF(){
+        var from = $('#timefrom1').val();
+        var to = $('#timeto1').val();
+        var uid = $('#uid').html();
+        $('.listuser_visit_record_list_contents').html('<div class="listcontent listuser_visit_record_list"><div id="cd-timeline" class="cd-container user_visit_record_list"></div></div>');
+        showLL('/m/user/record','user_visit_record_list',{action:'visit',from:from,to:to,uid:uid,limit:10,p:1});
+    }
+    $(function(){
+        dianji();
+        goSys('{$m_index_home.url_name}');
+        $("#{$m_user_index.url_name}").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+        var uid = $('#uid').html();
+        $('#timefrom1').val('');
+        $('#timeto1').val('');
+        $('.listuser_visit_record_list_contents').html('<div class="listcontent listuser_visit_record_list"><div id="cd-timeline" class="cd-container user_visit_record_list"></div></div>');
+        showLL('/m/user/record','user_visit_record_list',{action:'visit',uid:uid,limit:10,p:1});
+    });
+</script>
+</script>
+{include file="home/user/visit_record"}
+<!--拜访记录-->
+<!--库存记录-->
+<script type="text/html" id="tpl_user_stock_record">
+<div class="page">
+    <!--顶部--->
+    <div class="ljk_top">
+        <a class="top_left js_item" data-id="genjinkehu">
+            <i class="fa fa-angle-left fa-2x"></i>
+        </a>
+        <a class="gotoaddstock top_right" data-id="shangbaokucun" href="javascript:;">
+            <i class="fa fa-plus  db_xinxi" style="  font-size: 1.5em;margin-top: 5px;"></i>
+        </a>
+        <p class="weui-flex__item top_center">库存信息</p>
+    </div>
+  <!---顶部-->
+  <!---顶部-->
+  <!--底部--->
+<!--底部--->
+<div class="ljk_neirong">
+<div class="weui-panel__bd">
+    <div class="weui-media-box weui-media-box_small-appmsg">
+        <div class="weui-cells">
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label for="" class="weui-label">
+                    <i class="fa fa-clock-o " style="color: cornflowerblue;"></i>开始时间</label></div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="date" id="timefrom2" value="" onchange="searchKC();" />
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label for="" class="weui-label">
+                    <i class="fa fa-clock-o " style="color: cornflowerblue;"></i>结束时间</label></div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="date" id="timeto2" value="" onchange="searchKC();" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="listuser_stock_record_list_contents">
+    </div>
+</div>
+<div style="width:100%; height:57px;"></div>
+</div>
+<script type="text/javascript">
+    $('.gotoaddstock').off().on('click',function (){
+        var id = $(this).attr('data-id');
+        $("#uploadimgs").remove();
+        if($('.user_addstock').length != 0){
+            showLA('/m/user/addstock/','user_addstock',{action:'show'});
+        }
+        window.pageManager.go(id);
+    });
+    function searchKC(){
+        var from = $('#timefrom2').val();
+        var to = $('#timeto2').val();
+        var uid = $('#uid').html();
+        $('.listuser_stock_record_list_contents').html('<div class="listcontent listuser_stock_record_list"><div id="cd-timeline" class="cd-container user_stock_record_list"></div></div>');
+        showLL('/m/user/record','user_stock_record_list',{action:'stock',from:from,to:to,uid:uid,limit:10,p:1});
+    }
+    $(function(){
+        dianji();
+        goSys('{$m_index_home.url_name}');
+        $("#{$m_user_index.url_name}").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+        var uid = $('#uid').html();
+        $('#timefrom2').val('');
+        $('#timeto2').val('');
+        $('.listuser_stock_record_list_contents').html('<div class="listcontent listuser_stock_record_list"><div id="cd-timeline" class="cd-container user_stock_record_list"></div></div>');
+        showLL('/m/user/record','user_stock_record_list',{action:'stock',uid:uid,limit:10,p:1});
+    });
+</script>
+</script>
+{include file="home/user/stock_record"}
+<!--库存记录-->
+<!--回收记录-->
+<script type="text/html" id="tpl_user_hs_record">
+<div class="page">
+    <!--顶部--->
+    <div class="ljk_top">
+        <a class="top_left js_item" data-id="genjinkehu">
+            <i class="fa fa-angle-left fa-2x"></i>
+        </a>
+        <a class="gotoaddhs top_right" data-id="huishou" href="javascript:;">
+            <i class="fa fa-plus  db_xinxi" style="  font-size: 1.5em;margin-top: 5px;"></i>
+        </a>
+        <p class="weui-flex__item top_center">回收信息</p>
+    </div>
+  <!---顶部-->
+  <!---顶部-->
+  <!--底部--->
+<!--底部--->
+<div class="ljk_neirong">
+<div class="weui-panel__bd">
+    <div class="weui-media-box weui-media-box_small-appmsg">
+        <div class="weui-cells">
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label for="" class="weui-label">
+                    <i class="fa fa-clock-o " style="color: cornflowerblue;"></i>开始时间</label></div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="date" id="timefrom3" value="" onchange="searchHS();" />
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label for="" class="weui-label">
+                    <i class="fa fa-clock-o " style="color: cornflowerblue;"></i>结束时间</label></div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="date" id="timeto3" value="" onchange="searchHS();" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="listuser_hs_record_list_contents"></div>
+</div>
+<div style="width:100%; height:57px;"></div>
+</div>
+<script type="text/javascript">
+    $('.gotoaddhs').off().on('click',function (){
+        var id = $(this).attr('data-id');
+        $("#uploadimgs").remove();
+        if($('.addhs').length != 0){
+            showLA('/m/user/addhs','addhs',{action:'show'});
+        }
+        window.pageManager.go(id);
+    });
+    function searchHS(){
+        var from = $('#timefrom3').val();
+        var to = $('#timeto3').val();
+        var uid = $('#uid').html();
+        $('.listuser_hs_record_list_contents').html('<div class="listcontent listuser_hs_record_list"><div id="cd-timeline" class="cd-container user_hs_record_list"></div></div>');
+        showLL('/m/user/record','user_hs_record_list',{action:'hs',from:from,to:to,uid:uid,limit:10,p:1});
+    }
+    $(function(){
+        dianji();
+        $("#m_user_index").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+        goSys('m_index_home');
+
+        var uid = $('#uid').html();
+        //进来先清空设置的时间区间值
+        $('#timefrom3').val('');
+        $('#timeto3').val('');
+        $('.listuser_hs_record_list_contents').html('<div class="listcontent listuser_hs_record_list"><div id="cd-timeline" class="cd-container user_hs_record_list"></div></div>');
+        showLL('/m/user/record','user_hs_record_list',{action:'hs',uid:uid,limit:10,p:1});
+    });
+</script>
+</script>
+{include file="home/user/hs_record"}
+<!--回收记录-->
+<!--出货统计-->
+<script type="text/html" id="tpl_user_ch_record">
+<div class="page">
+    <!--顶部--->
+    <div style="position:absolute;" class="ljk_top">
+        <a class="top_left js_item" data-id="genjinkehu">
+            <i class="fa fa-angle-left fa-2x"></i>
+        </a>
+    <a class="top_right" href="javascript:;" style="padding-top: 12px;" onclick="location.reload();">
+        <i class="fa fa-refresh" style="font-size:1.3em;"></i>
+    </a>
+        <p class="weui-flex__item top_center">出货信息</p>
+    </div>
+  <!---顶部-->
+  <!---顶部-->
+  <!--底部--->
+<!--底部--->
+    <div style="overflow:hidden;overflow-y:none;" class="ljk_neirong">
+        <div  class="weui-panel__bd">
+            <div style="height:26%;" class="weui-media-box weui-media-box_small-appmsg">
+                <div class="weui-cells">
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd">
+                            <label for="" class="weui-label">
+                            <i class="fa fa-clock-o " style="color: cornflowerblue;"></i>开始时间</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="date" id="timefrom5" value="" onchange="searchCH();" />
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd">
+                            <label for="" class="weui-label">
+                            <i class="fa fa-clock-o " style="color: cornflowerblue;"></i>结束时间</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="date" id="timeto5" value="" onchange="searchCH();" />
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-cells">
+                    <div class="weui-cell" >
+                        <div class="weui-cell__hd">
+                            <label for="" class="weui-label ">
+                            <i class="fa fa-th-large " style="color:cornflowerblue;"></i>商品名称</label>
+                        </div>
+                        <div class="weui-search-bar__box">
+                            <input type="text" class="weui-search-bar__input" id="goodsname"  style="height:30px;" onclick="goosClick(this)" oninput="getGoods(this.value,'ch');">
+                            <a href="javascript:" class="weui-icon-clear" id="goodsmsg" onclick="delName(this);" style=" margin-top:5px;display:none;"></a>
+                        </div>
+                    </div>
+                    <div id="ch_goodsListContainer" class="Commodity_search" style="display:none;">
+                        <ul id="ch_goodsList"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="listuser_ch_record_list_contents"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function(){
+        dianji();
+        $("#m_user_index").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+        goSys('m_index_home');
+        var uid = $("#uid").val();
+
+        initChGoodsTpl(uid);
+        //进来先清空设置的时间区间值
+        $('#timefrom5').val('');
+        $('#timeto5').val('');
+        // $('.listuser_ch_record_list_contents').html('<div class="listcontent listuser_ch_record_list"><div id="cd-timeline" class="cd-container user_ch_record_list"></div></div>');
+        // showLL('/m/user/record','user_ch_record_list',{action:'ch',uid:uid,limit:10,p:1});
+    });
+    var num=1;
+    function goosClick(obj) {
+        if(num==1){
+            $("#ch_goodsListContainer").show().css('opacity',0.98);
+            num=2;
+        }else{
+            $("#ch_goodsListContainer").hide();
+            num=1;
+        }
+    };
+    function getGoods(t,action){
+        var id=$('#user_ch_record').data('id')?$('#user_ch_record').data('id'):'user_ch_record';
+        var kw=$('#goodsname').val();
+        var from = $('#timefrom5').val();
+        var to = $('#timeto5').val();
+        var uid=Number($('#uid').val());
+        var list = id + '_list';
+
+        if($('.list' + list + '_contents').length !== 0){
+            $('.list' + list + '_contents').html('<div class="listcontent list'+ list +'"><div id="cd-timeline" class="cd-container ' + list + '"></div></div>');
+            if($('#goodsname').val().length!=0){
+                $('#goodsmsg').show();
+                $('#cd-timeline').children().remove();
+                $('.dropload-down').remove();
+                showLL('/m/user/record',list,{action:action,keywords:kw,uid:uid,from:from,to:to,limit:10,p:1});
+            }else{
+                $('#goodsmsg').hide();
+                showLL('/m/user/record',list,{action:action,keywords:kw,uid:uid,from:from,to:to,limit:10,p:1});
+            }
+        }
+        window.pageManager.go(id);
+    }
+    function delName() {
+        var uid=Number($('#uid').val());
+        var from = $('#timefrom5').val();
+        var to = $('#timeto5').val();
+        $('#goodsname').val('');
+        $('#goodsname').attr('value','');
+        $('#goodsmsg').show();
+        $('#cd-timeline').children().remove();
+        $('.dropload-down').remove();
+        $('#ch_goodsListContainer').hide();
+        showLL('/m/user/record','user_ch_record_list',{action:'ch',uid:uid,keywords:'',from:from,to:to,limit:10,p:1});
+        $('#goodsmsg').hide();
+    }
+    function getGoods2(t){
+    $('#ch_goodsList').children().remove();
+    $('#goodsid').val('');
+    if(t===''){
+        $('#ch_goodsListContainer').hide();
+        search();
+        return false;
+    }
+    $.ajax({
+        type:'post',
+        url:'/m/user/record',
+        data:{'keywords':t,action:'chgoods'},
+        success:function (data){
+            if(data.length > 0){
+                for(var item in data){
+                    var _li = '<li onclick="searchWithGoodsId(' + data[item].goods_id + ',\'' + data[item].goods_name + '\');" style="cursor:pointer;font-size:14px; line-height: 32px; border: 1px solid #666;">' + data[item].goods_name + '</li>';
+                    $('#ch_goodsList').append(_li);
+                }
+                $('#ch_goodsListContainer').show();
+                $('#ch_goodsListContainer').css('opacity',0.98);
+            }else{
+                $('#ch_goodsListContainer').hide();
+            }
+        }
+    });
+}
+    function searchWithGoodsId(goodsid,goods_name){
+        $('#ch_goodsListContainer').hide();
+        $('#goodsname').val(goods_name);
+        $('#goodsid').val(goodsid );
+        searchCH();
+    }
+    function searchWithGoodsId2(uid,goods_name){
+        $('#ch_goodsListContainer').hide();
+        $('#goodsname').val(goods_name);
+        $('#goodsname').attr('value',goods_name);
+        $('#goodsid').attr('value',uid);
+        searchCH();
+    }
+    function searchCH(){
+        var uid =$('#uid').html()?$('#uid').html():$('#cd-timeline').data('uid');
+        var goodsname = $("#goodsname").val();
+        var from = $('#timefrom5').val();
+        var to = $('#timeto5').val();
+        $('.listuser_ch_record_list_contents').html('<div class="listcontent listuser_ch_record_list"><div id="cd-timeline" class="cd-container user_ch_record_list"></div></div>');
+        if($('#goodsname').val().length!=0){
+            $('#goodsmsg').show();
+            $('#cd-timeline').children().remove();
+            $('.dropload-down').remove();
+            showLL('/m/user/record','user_ch_record_list',{action:'ch',uid:uid,keywords:goodsname,from:from,to:to,limit:10,p:1});
+        }else{
+            $('#goodsmsg').hide();
+            showLL('/m/user/record','user_ch_record_list',{action:'ch',uid:uid,keywords:goodsname,from:from,to:to,limit:10,p:1});
+        }
+        $('#goodsmsg').click(function () {
+            $('#goodsname').val('');
+            $('#goodsname').attr('value','');
+            if($('#cd-timeline').children().length!=0) {
+                $('#goodsmsg').show();
+                $('#cd-timeline').children().remove();
+                $('.dropload-down').remove();
+                showLL('/m/user/record','user_ch_record_list',{action:'ch',uid:uid,keywords:'',from:from,to:to,limit:10,p:1});
+                $('#goodsmsg').hide();
+            }
+        });
+    }
+</script>
+</script>
+{include file="home/user/ch_record"}
+<!--出货统计-->

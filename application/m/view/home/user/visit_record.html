@@ -1,0 +1,42 @@
+<script type="text/template" charset="utf-8" id='user_visit_record_list'>
+    {{if(ljk){}}
+    {{for(var i=0;i<ljk.length;i++){}}
+    <div class="cd-timeline-block" style="background: #fff; margin: 10px; padding: 10px;">
+        <div class="cd-timeline-content">
+            <span style="display:inline-block;width: 30%;text-align: left; color:seagreen;">{{=ljk[i].realname}}</span>
+            <span style="display:inline-block;width:60%;">{{=ljk[i].adate}}</span>
+            <p style="border-top:1px solid #EBE8E8;word-break: break-all;">
+			{{?ljk[i].xm_title }}
+			<div style="border:1px solid #ccc;margin-top:5px;display: inline-block;padding:1px;border-radius: 3px;">{{=ljk[i].xm_title}}</div>   
+			{{?}}
+            {{=ljk[i].content}}
+            </p>
+             {{if(!!ljk[i].imgsurl &&ljk[i].imgsurl.length!==0){}}
+            <div class="weui-uploader">
+                <div class="weui-uploader__bd">
+                    <ul class="weui-uploader__files">                   
+                    {{for(var j=0; j<ljk[i].imgsurl.length; j++){}}
+                    {{if(ljk[i].imgsurl[j]!=''){}}
+                    <li class="weui-uploader__file weui-uploader__imglist" style="background-image:url({{=ljk[i].imgsurl[j]}})"></li>
+                    {{}}}
+                    {{}}}                   
+                    </ul>
+                </div>
+            </div>
+			 {{}}}
+			 {{if(ljk[i].lbs){}}
+			 <i class="fa fa-location-arrow weui-tabbar__icon" style="color: coral;width: 1.2em;height: 1.2em;font-size: 1em;"></i><a href="javascript:;"  style="color:gray;font-size:12px;">{{=ljk[i].lbs.address}}{{if(ljk[i].juli){}}   (距离客户:{{=ljk[i].juli}}){{}}}</a>
+			 {{}}}
+        </div>
+    </div>
+    {{}}}
+    {{}else{}}
+    {{}}}
+    <script type="text/javascript">
+        $('.weui-uploader__imglist').each(function (){
+            $(this).on('click',function(){
+                imgShow(this);
+            });
+        });
+    </script>
+</script>

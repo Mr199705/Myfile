@@ -1,0 +1,42 @@
+<div class="table-responsive">
+    <form action="{$initData.requestUrl}" class="form-horizontal" method="post" enctype="multipart/form-data" onsubmit="return DelForm(this);">
+        <input type="hidden" name="action" value="delsta">
+        <table class="table table-striped dindan">
+            <thead>
+            <tr>
+                <th>删除</th>
+                <th>显示顺序</th>
+                <th>名称</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            {if $visits}
+            <tbody>
+            {foreach name="visits" item="sta"}
+            <tr>
+                <td style="width:20px; ">
+                    <div class="icheckbox_square-green" style="position: relative;" id="{$sta.id}" onmouseover="hovers(id)" onmouseout="outs(id)" onclick="checks(id)" >
+                        <input class="i-checks" type="checkbox" name="delete[]" value="{$sta.id}" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                </td>
+                <td style="width:72px;"><input type="text" class="form-control" name="displayorder[{$sta.id}]" value="{$sta.displayorder}"></td>
+                <td >{$sta.title}</td>
+                <td><a class="btn-sm btn btn-success" href="javascript:void(0);" data-toggle="modal" data-target="#myModal2" onclick="setEditForm('{$sta.id}','{$sta.title}','{$sta.displayorder}');">编辑</a></td>
+            </tr>
+            {/foreach}
+            </tbody>
+            <tfoot>
+            <tr>
+
+                <td><a class="btn btn-sm btn-success" onclick="checkA(this,'{$initData.sign}List','delete[]');" href="javascript:void(0);">√</a></td>
+                <td colspan="3"><input type="submit" class="btn btn-sm btn-primary" name="noticesubmit" value="提交"></td>
+            </tr>
+            </tfoot>
+            {else/}
+            <tr>
+                <td colspan="4" style="text-align: center;color: #f00;">您还没有添加！</td>
+            </tr>
+            {/if}
+        </table>
+    </form>
+</div>
+{include file="common/page"}

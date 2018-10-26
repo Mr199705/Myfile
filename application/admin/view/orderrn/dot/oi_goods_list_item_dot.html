@@ -1,0 +1,45 @@
+<script type="text/x-dot-template" id="dotGoodsItem">
+    {{ for(var item in ljk) { }}
+        <li class="col-sm-12" style="margin:5px 0px;padding:10px 0px;{{? item%2==1 }}background:#eee;{{??}}{{?}}" >
+            <div class="col-sm-2">
+                <p><img style="width:60px;height:60px;" src="__GOODSIMG__{{=ljk[item]['goodsImg'] }}"></p>
+                <p style="font-size: 15px;">{{=ljk[item]['goodsName'] }}</p>
+            </div>
+            {{? ljk[item]['skuList'].length > 0 }}
+            <table class="table table-striped table-bordered" style="width: 80%;">
+                <tbody>
+                    {{ for(var sitem in ljk[item]['skuList'] ) { }}
+                    <tr id="skuItem_{{=ljk[item]['skuList'][sitem]['id'] }}" data-id="{{=ljk[item]['skuList'][sitem]['id'] }}">
+                            <td class="col-sm-2">
+                                {{=ljk[item]['skuList'][sitem]['attrs_value'] }}
+                            </td>
+                            <td class="col-sm-2">
+                                <input type="number" id="price_{{=ljk[item]['skuList'][sitem]['id'] }}" value="{{=ljk[item]['skuList'][sitem]['unitList'][0]['price'] }}" class="form-control">
+                            </td>
+                            <td class="col-sm-1">
+                                <select class="form-control" style="padding-left: 0px;" id="unitid_{{=ljk[item]['skuList'][sitem]['id'] }}" onchange="setPrice(this);">
+                                    {{ for(var citem in ljk[item]['skuList'][sitem]['unitList'] ) { }}
+                                    <option value="{{=ljk[item]['skuList'][sitem]['unitList'][citem]['id'] }}" data-price="{{=ljk[item]['skuList'][sitem]['unitList'][citem]['price'] }}">{{=ljk[item]['skuList'][sitem]['unitList'][citem]['uname'] }}</option>
+                                    {{ } }}
+                                </select>
+                            </td>
+                            <td class="col-sm-2">
+                                <input type="number" id="num_{{=ljk[item]['skuList'][sitem]['id'] }}" value="1" class="form-control">
+                            </td>
+                            <td class="col-sm-1">
+                                <select class="form-control" style="padding-left: 0px;" onchange="setXstype(this);" id="xstype_{{=ljk[item]['skuList'][sitem]['id'] }}">
+                                    <option value="1">销售</option>
+                                    <option value="2">赠品</option>
+                                </select>
+                            </td>
+                            <td class="col-sm-2">
+                                <button class="btn-sm btn btn-success " onclick="ordergoodsadd( {{=ljk[item]['skuList'][sitem]['id'] }}, {{=ljk[item]['id'] }}, {$orderInfo.user_info.uid}, {$orderInfo.oid});" href="javascript:void(0);" style="width: 82px;">添加</button>
+                            </td>
+                    </tr>
+                    {{ } }}
+                </tbody>
+            </table>
+            {{?}}
+        </li>
+    {{ } }}
+    </script>

@@ -1,0 +1,43 @@
+<script type="text/template" charset="utf-8" id='userlists'>
+{{if( ljk && ljk.length>0 ){ }}
+{{for(var i=0; i<ljk.length; i++){ }}
+    <div class="weui-cells opacity">
+        <a class="weui-cell weui-cell_access js_item" data-id="uploader" href="javascript:;" style="padding: 13px 10px 0px 10px;">
+        <div class="weui-cell__bd  sy_kh">
+            <p>{{=ljk[i].realname}}</p>
+        </div>
+        <div style="color: dodgerblue;" >
+            {{=ljk[i].realname}}
+        </div>
+        </a>
+        <div class="weui-form-preview__bd" style="padding: 0px 16px 10px 16px;margin-top: 0px;">
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">联系电话：</label>
+            <span class="weui-form-preview__value">{{=ljk[i].mobile}}</span>
+        </div>
+        <div class="weui-form-preview__item"><label class="weui-form-preview__label">积分：</label>
+            <span class="weui-form-preview__value">0</span>
+        </div>
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">认证状态：</label>
+            <span class="weui-form-preview__value">未认证</span>
+        </div>
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">来自：</label>
+            <span class="weui-form-preview__value">白酒招商</span>
+        </div>
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">客户地址：</label>
+            <span class="weui-form-preview__value">{{=ljk[i].address}}</span>
+        </div>
+    </div>
+    <div class="weui-form-preview__ft">
+        <a class="weui-form-preview__btn js_item" href="javascript:;" data-id="baobiao" onClick="showbaobiaotpl(this,{{=ljk[i].uid}});">报表</a>
+        <a class="weui-form-preview__btn weui-form-preview__btn_primary js_item" onClick="ShowOrderTpllist(this,'xiadingdan','{{=ljk[i].uid}}');">下订单</a>
+        <a class="weui-form-preview__btn js_item" href="javascript:;" data-id="genjinkehu" onClick="showLA('/m/user/detail/',tpl,{uid:uid},method)showbaifangtpl(this,  {{=ljk[i].uid}});">拜访</a>
+    </div>
+</div>
+{{ } }}
+{{ }else{ }}
+{{ } }}
+</script>

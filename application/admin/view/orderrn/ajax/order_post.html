@@ -1,0 +1,46 @@
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>                                              
+                <th>操作记录</th>
+                <th>订单状态</th>
+                <th>付款状态</th>
+                <th>操作者</th>
+                <th>更新时间</th>
+            </tr>
+        </thead>
+        <tbody id="postslist">
+            {volist name="$orderInfo.post" id="pvo"}
+            <tr> 
+                <td style="max-width: 400px;">{$pvo.content}</td>
+                <td>
+                    {if $pvo.confirm eq 0}
+                    未确认
+                    {elseif $pvo.confirm eq 1}
+                    <font color="green">已确认</font>
+                    {elseif $pvo.confirm eq -1}
+                    <font color="red">无效订单</font>
+                    {else/}
+                    未知订单状态
+                    {/if}
+                </td>
+                <td>
+                    {if $pvo.pay eq 0}
+                    未付款
+                    {elseif $pvo.pay eq 1}
+                    <font color="green">已付款</font>
+                    {else/}
+                    未知支付状态
+                    {/if}
+                </td>
+                <td>{$pvo.guids}</td>
+                <td>{:date( 'Y-m-d H:i:s', $pvo.adate );}</td>
+            </tr>
+            {/volist}
+            <script>
+                $('#postnum').html({:$pageInfo.total;});
+            </script>
+        </tbody>
+    </table>
+</div>
+{include file="common/page"}

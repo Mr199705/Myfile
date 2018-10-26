@@ -1,0 +1,65 @@
+<script type="text/html" id="order_add_goods_cat">
+    {{if(ljk){}}
+    <div style="height:380px;" class="page__bd add_goods_cat type1">
+        <ul>
+            <li id="addOrderBuHuo2"  class="end_dt" data-click="getAddGoodsList({cid:'',type:0},false);">所有商品</li>
+            <li id="addOrderGoodsBuHuo"data-click="getAddGoodsList({cid:'',type:1},false);">补货</li>
+        </ul>
+        {{for(var j=0;j<ljk.length;j++){}}
+        <dl>
+            <dt data-click="getAddGoodsList({cid:'{{=ljk[j].p.id}}',type:0},false);">{{=ljk[j].p.title}}</dt>
+            <dd class="type1_dd" data-click="getAddGoodsList({cid:'{{=ljk[j].p.id}}',type:0},false);">全部</dd>
+            {{for(var i=0;i<ljk[j].c.length;i++){}}
+            <dd class="type1_dd" data-click="getAddGoodsList({cid:'{{=ljk[j].c[i].id}}',type:0},false);">{{=ljk[j].c[i].title}}</dd>
+            {{}}}
+        </dl>
+        {{}}}
+    </div>
+    {{}}}
+    <script type="text/javascript">
+        var alldl=$('.add_goods_cat').children('dl');
+        var alldd = $(alldl).children('dd');
+        var alldt = $(alldl).children('dt');
+        $('#addOrderBuHuo2').on('click',function (){
+            $('.end_dt').removeClass('end_dt');
+            $('.type1 dd').hide();
+            $(this).addClass('end_dt');
+            isRequest(this);
+        });
+        $('#addOrderGoodsBuHuo').on('click',function (){
+            $('.end_dt').removeClass('end_dt');
+            $('.type1 dd').hide();
+            $(this).addClass('end_dt');
+            isRequest(this);
+        });
+        $(alldd).each(function (){
+            $(this).on('click',function (){
+                $(this).addClass('end_dt');
+                $(this).siblings('dd').removeClass('end_dt');
+                isRequest(this);
+            });
+        });
+        $(alldt).on('click',function (){
+            var dl = $(this).parent();
+            var dd = dl.children('dd'); 
+            $('#addOrderBuHuo2').removeClass('end_dt');
+            $('#addOrderGoodsBuHuo').removeClass('end_dt');
+            $(alldd).hide();
+            $(alldd).removeClass('end_dt');
+            if($(this).hasClass('end_dt')){
+                $('#addOrderBuHuo2').addClass('end_dt');
+                getAddGoodsList({cid:'',type:0},false);
+                $(this).removeClass('end_dt');
+                $(dd).hide();
+            }else{
+                $(alldt).removeClass('end_dt');
+                $(dd[0]).addClass('end_dt');
+                isRequest(this);
+                $(this).addClass('end_dt');
+                $(dd).each(function (){
+                    $(this).show();
+                });
+            }
+        });
+    </script>
+</script>

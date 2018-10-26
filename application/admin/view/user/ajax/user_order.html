@@ -1,0 +1,43 @@
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            {if $orderlist}
+            <tr>
+                <th colspan="7"></th>
+                <th style="color:red;">总金额：¥{$totalMoney}</th>
+            </tr>
+            {/if}
+            <tr>
+                <th>#</th>
+                <th>订单号</th> 
+                <th>订货客户</th>
+                <th>联系电话</th>
+                <th>订单状态</th>
+                <th>金额</th>
+                <th>配送商</th>
+                <th>订单时间</th>
+            </tr>
+        </thead>
+        <tbody id="orderList">
+            {if $orderlist}
+            {foreach name="orderlist" item="order"}
+            <tr>
+                <td>
+                    <span class="i-checks">{$key+1}</span>
+                </td>
+                <td><a href="/admin/order/detail/oid/{$order.oid}" onclick="return c(this);" data-index="order_detail_oid_{$order.oid}"><span style="display: none;">订单:</span>{$order.number}</a></td>
+                 <td>{$order.host.realname}</td>
+                <td>{$order.host.mobile}</td>
+                <td>{if $order.confirm==-1}无效订单{/if}{if $order.confirm==0} 未确认{/if}{if $order.confirm==1} 已确认{/if}{if $order.pay==1} 已付款{/if}{if $order.pay==1} 已付款{/if} {if $order.trade==1} 已结束{/if}</td>
+                <td>¥{$order.total}</td>
+                <td>{if @$order.distributor}{$order.distributor}{else/}无{/if}</td>
+                <td>{$order.adate|date="Y-m-d",###}</td>
+            </tr>
+            {/foreach}
+            {else/}
+            <tr><td colspan="8" style="color:red;text-align: center;">该时间段无订单信息，您可以重新设置时间段再查询！</td></tr>
+            {/if}
+        </tbody>
+    </table>
+</div>
+{include file="common/page"}

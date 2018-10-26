@@ -1,0 +1,99 @@
+<div class="modal inmodal in" id="editStorage">
+    <div class="modal-dialog">
+        <div class="modal-content animated fadeIn">
+            <div class="modal-header" style="padding: 18px 15px;">
+                <button type="button" class="modal-close close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">编辑仓库</h4>
+             </div>
+            <div class="modal-body">
+                <p style="text-indent: 24px;"></p>
+                <form class="form-horizontal" method="post" action="/admin/storage/editstorage" onsubmit="return false">
+                    <div id="editStorageForm"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="modal-close btn btn-white">关闭</button>
+                        <input type="submit" name="submit" value="提交" class="btn btn-sm btn-success" onclick="return editStorage(this.form,'update','正在编辑仓库信息，请稍候！');" />
+                    </div>
+                </form>
+                <script type="text/template" id="editStorageFormTemplate">
+                    {{?ljk}}
+                    <input type="hidden" name="id" value="{{=ljk.id}}" />
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color:red;">*</span>仓库名称：</label>
+                        <div class="col-sm-6 driverlist">
+                            <input autocomplete="off" type="text" class="form-control" name="name" value="{{=ljk.name}}" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color:red;">*</span>仓库编号：</label>
+                        <div class="col-sm-6 driverlist">
+                            <input autocomplete="off" type="text" class="form-control" name="location_no" value="{{=ljk.location_no}}" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color:red;">*</span>管理员：</label>
+                        <div class="col-sm-6">
+                            <select name="guid" class="form-control">
+                                <option value="">请选择</option>
+                                {foreach name="gms" item="gm"}
+                                <option {{?ljk.guid=={$gm.uid}}}selected="selected"{{?}} value="{$gm.uid}">{$gm.realname}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color:red;">*</span>仓库地址：</label>
+                        <div class="col-sm-6 driverlist">
+                            <div class="weui-cell__bd" name="areaname" id="addressForm"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"></label>
+                        <div class="col-sm-6 driverlist">
+                            <input autocomplete="off" type="text" class="form-control" name="address" value="{{=ljk.address}}" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">仓库固话：</label>
+                        <div class="col-sm-6 driverlist">
+                            <input autocomplete="off" type="text" class="form-control" name="phone" value="{{=ljk.phone}}" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">排序：</label>
+                        <div class="col-sm-6 driverlist">
+                            <input type="number" class="form-control" name="sort" value="0" value="{{=ljk.sort}}" />
+                        </div>
+                    </div>
+                    {{??}}
+                    {{
+                        closeWarning();
+                        tip = {
+                            tip_msg:{sign:true,content:'<p style="color:red;">非法操作！</p>'}
+                        };
+                        setTip(tip);
+                        setTimeout(function (){
+                            closeTip();
+                        },1000);
+                        return false;
+                    }}
+                    {{?}}
+                    <script>
+                        $(function(){
+                            var areaids='{{ if(ljk && ljk!=null){}}{{? ljk.areaids}}{{=ljk.areaids}}{{??}} 0{{?}}{{}else{}}0{{}}}';
+                            createAddressForm('addressForm', 1, areaids );
+                        });
+                    </script>
+                </script>
+                <script type="text/template" id="addressSelect">
+                    <select style="width: 30%;" class="address address_{{=ljk.level}}" data-level="{{=ljk.level}}" name="areas[{{=ljk.level}}]" onchange="createAddressForm('{{=ljk.id}}',{{=ljk.level + 1}});">
+                        <option value="">请选择</option>
+                        {{for(var i = 0; i < ljk.data.length; i++){}}
+                        <option value="{{=ljk.data[i].code}}:{{=ljk.data[i].code_name}}" {{?ljk.selectedCode && (ljk.selectedCode==ljk.data[i].code)}}selected="selected"{{?}}>{{=ljk.data[i].code_name}}
+                        </option>
+                        {{?}}
+                    </select>
+                </script>
+            </div>
+        </div>
+    </div>
+</div>

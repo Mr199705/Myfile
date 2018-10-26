@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+        <title>提示信息</title>
+        <style type="text/css">
+            *{
+                padding: 0px;
+                margin: 0px;
+            }
+        </style>
+    </head>
+    <body ontouchstart>
+        <div id="container" style="position: fixed;width: 100%;height: 100%;background:rgba(0,0,0,0.5);">
+            <div class="page" style="position: absolute;left:calc(10% - 0px);top:calc(50% - 60px);width: 80%;border-radius: 10px 10px 10px 10px;background: #fff;">
+                <!--内容-->
+                <h3 style="height: 30px;line-height: 30px;text-align: center;background:darkgreen;color:white;">提示信息</h3>
+                <!--内容-->
+                <p style="line-height: 30px;padding:20px;text-align: center;{if $err.code==0}color:darkgreen;{else}color:red;{/if}">{$err.msg}</p>
+            </div>
+        </div>
+    </body>
+</html>

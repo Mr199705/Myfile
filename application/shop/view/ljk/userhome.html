@@ -1,0 +1,341 @@
+{include file="common/top" /}
+<title>会员中心</title>
+<script type="text/javascript">
+    $(document).ready(function(){
+        var attr = parseInt($(".member_m_pic_1").height());
+        var attr3 = parseInt($(".member_m_z_1").height());
+        var h = attr - attr3;
+        var clientWidth=document.body.clientWidth;
+        $(".member_mp_t_img img").css("width",clientWidth*0.3);
+        $(".member_mp_t_img img").css("height",clientWidth*0.3);
+        handleUserPic();
+    });
+    function handleUserPic(){
+        var th = $(".member_m_pic").outerHeight(true);
+        if(th<60){
+            setTimeout("handleUserPic",500);
+        }else{
+            $(".member_m_pic .img-circle").css("height",th*0.9);
+            $(".member_m_pic .img-circle").css("width",th*0.9);
+        }
+    }
+    {if($groupShop.fxstatus == 1 && ($groupShop.fxcheck == 1 && $userinfo.is_fx != 2))}
+    function applyFx(fm){
+        if(typeof fm==='undefined'){
+            var data = {
+                realname:'{$userinfo.realname}',
+                nickname:'{$userinfo.nickname}',
+                address:'{$userinfo.address}',
+                mobile:'{$userinfo.mobile}',
+                contact:'{$userinfo.contact}'
+            };
+            showContentModal(data,'applyFXForm','applyFXFormTpl');
+        }else{
+            var tipData = {};
+            if(fm.realname.value.trim().length === 0){
+                closeModal('tipModal');
+                tipData.msg = '名称必须填写！';
+                $(fm.realname).focus();
+                showTip(tipData);
+                setTimeout(function (){closeModal('tipModal');},1000);
+            }else if(fm.contact.value.trim().length === 0){
+                closeModal('tipModal');
+                tipData.msg = '联系人必须填写！';
+                $(fm.contact).focus();
+                showTip(tipData);
+                setTimeout(function (){closeModal('tipModal');},1000);
+            }else if(fm.mobile.value.trim().length === 0){
+                closeModal('tipModal');
+                tipData.msg = '电话必须填写！';
+                $(fm.mobile).focus();
+                showTip(tipData);
+                setTimeout(function (){closeModal('tipModal');},1000);
+            }else if(!fm.mobile.value.trim().match(/^1[3456789]\d{9}$/)){
+                closeModal('tipModal');
+                tipData.msg = '电话格式不正确！';
+                $(fm.mobile).focus();
+                showTip(tipData);
+                setTimeout(function (){closeModal('tipModal');},1000);
+            }else if(!fm.address.value.trim()){
+                closeModal('tipModal');
+                tipData.msg = '地址必须填写！';
+                $(fm.address).focus();
+                showTip(tipData);
+                setTimeout(function (){closeModal('tipModal');},1000);
+            }else if(!fm.verifycode.value.trim()){
+                closeModal('tipModal');
+                tipData.msg = '验证码必须填写！';
+                $(fm.verifycode).focus();
+                showTip(tipData);
+                setTimeout(function (){closeModal('tipModal');},1000);
+            }else{
+                //提交信息
+                var data = $(fm).serializeArray();
+                var url = $(fm).attr('action');
+                $.ajax({
+                    type:'post',
+                    dataType:'json',
+                    url:url,
+                    data:data,
+                    beforeSend:function (){
+                        tipData.msg = '正在提交申请数据，请稍后！';
+                        closeModal('tipModal');
+                        showTip(tipData);
+                    },
+                    success:function (res){
+                        if(res.code === 0){
+                            tipData.msg = res.msg;
+                            closeModal('tipModal');
+                            showTip(tipData);
+                            setTimeout(function (){window.location.reload();},2000);
+                        }else if(res.code === -1){
+                            tipData.msg = res.msg;
+                            closeModal('tipModal');
+                            showTip(tipData);
+                            setTimeout(function (){closeModal('tipModal');},2000);
+                        }else if(res.code === -3){
+                            tipData.msg = res.msg;
+                            closeModal('tipModal');
+                            showTip(tipData);
+                            setTimeout(function (){
+                                closeModal('tipModal');
+                                window.location.reload();
+                            },2000);
+                        }
+                    }
+                });
+            }
+        }
+    }
+    {/if}
+    var countdown=60;
+    function sendsms(obj){
+        mobile=$("#setmobilesendsms").val();
+        console.log(111111111111);
+        var dh=/^1[3456789]\d{9}$/;
+        if( !dh.test(mobile) ){
+            showTip({msg:'请输入正确的手机号码'});
+            return false;
+        }
+        settime(obj);
+        $.ajax({
+            type: "POST", //用POST方式传输
+            dataType: "JSON", //数据格式:JSON
+            url: '/shop/login/sendsms', //目标地址
+            data: "codetype=3&mobile=" + mobile,
+            success: function (msg){ }
+        });
+    }	 
+    function settime(obj) {   
+        if (countdown == 0) {   
+            obj.removeAttribute("disabled");      
+            obj.value="获取验证码";   
+            countdown = 60;   
+            return;  
+        }else {   
+            obj.setAttribute("disabled", true);   
+            obj.value="重新发送(" + countdown + ")";   
+            countdown--;   
+        }   
+        setTimeout(function(){settime(obj)},1000);   
+    }
+</script>
+<style type="text/css">
+    .my-modal{
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background: rgba(102,102,102,0.5);
+        z-index: 10;
+        display: none;
+    }
+</style>
+</head>
+    <body>
+        {include file="common/tip" /} 
+        {if ($groupShop.fxstatus == 1 && ($groupShop.fxcheck == 1 && $userinfo.is_fx != 2))}
+        <div class="my-modal" id="applyFXForm" onClick="closeModal();"></div>
+        <script type="text/template" id="applyFXFormTpl">
+            <form action="/shop/user/applyfx" method="post" onsubmit="return false;" style="display:flex;display:-webkit-flex;align-items:center;flex-direction:row;background:#fff;height:calc(80% - 27px);margin-top:calc(10% + 15px);overflow-y: scroll;">
+                <div style="width:100%;display:flex;display:-webkit-flex;flex-direction:column;padding:10px 20px;background:#fff;">
+                    <h3 style="text-align:center;border-bottom: 1px solid #000;">分销申请</h3>
+                    <div style="display:flex;width:100%;display:-webkit-flex;align-items:center;flex-direction:row;margin:10px 0px;">
+                        <div style="width:20%;height: 34px;line-height: 34px;text-align: right;"><span style="color:red;">*</span>名称：</div>
+                        <div style="width:80%;height: 34px;line-height: 34px;"><input type="text" style="width:100%;height: 34px;" name="realname" value="{{=ljk.realname}}"></div>
+                    </div>
+                    <div style="display:flex;width:100%;display:-webkit-flex;align-items:center;flex-direction:row;margin:10px 0px;">
+                        <div style="width:20%;height: 34px;line-height: 34px;text-align: right;"><span style="color:red;">*</span>联系人：</div>
+                        <div style="width:80%;height: 34px;line-height: 34px;"><input type="text" style="width:100%;height: 34px;" name="contact" value="{{=ljk.contact}}"></div>
+                    </div>
+                    <div style="display:flex;width:100%;display:-webkit-flex;align-items:center;flex-direction:row;margin:10px 0px;">
+                        <div style="width:20%;height: 34px;line-height: 34px;text-align: right;"><span style="color:red;">*</span>地址：</div>
+                        <div style="width:80%;height: 34px;line-height: 34px;"><input type="text" style="width:100%;height: 34px;" name="address" value="{{=ljk.address}}"></div>
+                    </div>
+                    <div style="display:flex;width:100%;display:-webkit-flex;align-items:center;flex-direction:row;margin:10px 0px;">
+                        <div style="width:20%;height: 34px;line-height: 34px;text-align: right;"><span style="color:red;">*</span>手机：</div>
+                        <div style="width:50%;height: 34px;line-height: 34px;"><input type="text" style="width:100%;height: 34px;" id="setmobilesendsms" name="mobile" value="{{=ljk.mobile}}"></div>
+                        <div style="width:30%;height: 34px;line-height: 34px;">
+                            <input style="width:100%;color:red;border:1px solid #000;background:#efe;height: 32px;line-height: 32px;text-align:center;display:inline-block;" type="button" name="yanzhen" value="获取验证码" onclick="sendsms(this);" />
+                        </div>
+                    </div>
+                    <div style="display:flex;width:100%;display:-webkit-flex;align-items:center;flex-direction:row;margin:10px 0px;">
+                        <div style="width:20%;height: 34px;line-height: 34px;text-align: right;"><span style="color:red;">*</span>验证码：</div>
+                        <div style="width:80%;height: 34px;line-height: 34px;"><input type="text" style="width:100%;height: 34px;" name="verifycode" value=""></div>
+                    </div>
+                    <!--div style="display:flex;width:100%;display:-webkit-flex;align-items:center;flex-direction:row;margin:10px 0px;">
+                        <div style="width:20%;height: 34px;line-height: 34px;text-align: right;"><span style="color:red;">*</span>邀请码：</div>
+                        <div style="width:80%;height: 34px;line-height: 34px;"><input type="text" style="width:100%;height: 34px;" name="yqcode" value=""></div>
+                    </div-->
+                    <div style="display:flex;width:100%;display:-webkit-flex;justify-content: center;flex-direction:row;margin:10px 0px;">
+                        <button onclick="closeModal('applyFXForm');" class="btn btn-danger btn-sm" style="padding:5px 20px;margin: 0px 10px;">关闭</button>
+                        <button onclick="applyFx(this.form);" class="btn btn-success btn-sm" style="padding:5px 20px;margin: 0px 10px;">提交</button>
+                    </div>
+                </div>
+            </form>
+        </script>
+        {/if}
+        <div class="maincontainer" style="padding-bottom:50px">
+            <div class="container" id="container" style="max-width:768px;margin:0 auto;">
+                <div class="row">
+                    <div class="member_top member_top_1">
+                        <div class="member_top_bg"><img  src="__IMGS__/member_bg.png"></div>
+                        <div class="member_m_pic member_m_pic_1"> <img class="img-circle" src="{$userinfo.icon}"> </div>
+                        <div  class="member_m_z member_m_z_1">
+                            <div class="member_m_x" style="width:200px">{if $userinfo.nickname}{$userinfo.nickname}{else}{$userinfo.realname}{/if}<br>
+                            {$userinfo.mobile} <a href="/shop/user/checkPhone">{if $userinfo.is_check_mobile}修改{else}未认证{/if}</a></div>
+                        </div>
+                        <div class="member_m_r"></div>
+                    </div>
+                  <div class="member_mp_img" data-toggle="modal" data-target="#myModalmin" data-title="我的名片" data-tpl="mp"><img src="__IMGS__/member_mp_img.png"></div>
+                    <div class="list-group mb10">
+                        <a href="/shop/order/index" class="list-group-item tip">
+                            <div class="list_group_img"> <img src="__IMGS__/d.png"></div>
+                            我的订单<span class="gary pull-right">查看全部</span> 
+                        </a>
+                        <div class="list-group-item p0 clearfix">
+                            <div class="col-xs-4 p0"> <a class="order_tab_link" href="/shop/order/index"> <em class="order_img"> <img src="__IMGS__/f.png"></em>待付款 </a> </div>
+                            <div class="col-xs-4 p0"> <a class="order_tab_link" href="/shop/order/index"> <em class="order_img"> <img src="__IMGS__/order_bg_2.png"></em>待发货 </a> </div>
+                            <div class="col-xs-4 p0"> <a class="order_tab_link" href="/shop/order/index"> <em class="order_img"> <img src="__IMGS__/order_bg_1.png"></em>待收货 </a> </div>
+                            <div class="col-xs-4 p0"> <a class="order_tab_link" href="/shop/order/index"> <em class="order_img"> <img src="__IMGS__/order_bg.png"></em>已完成 </a> </div>
+                        </div>
+                    </div>
+                    <div class="list-group mb10"> <a href="/shop/user/money" class="list-group-item tip">
+                        <div class="list_group_img"> <img src="__IMGS__/m.png"></div>
+                        我的钱包 <span class="gary pull-right">资金管理</span> </a>
+                        <div class="list-group-item p0 clearfix">
+                            <div class="col-3 p0"> <a class="order_tab_link" href="/shop/user/money"> <em class="order_img f16 black" style=" width: inherit;">{$userinfo.user_money+$userinfo.frozen_money|sprintf='%.2f',###}</em>总金额 </a> </div>
+                            <div class="col-3 p0"> <a class="order_tab_link" href="/shop/user/money"> <em class="order_img f16 black" style=" width: inherit;">{$userinfo.user_money}</em>可用金额 </a> </div>
+                            <div class="col-3 p0"> <a class="order_tab_link" href="/shop/user/money"> <em class="order_img f16 black" style=" width: inherit;">{$userinfo.frozen_money}</em>冻结金额 </a> </div>
+                        </div>
+                    </div>
+                    {if $groupShop.fxstatus == 1}
+                    <div class="list-group mb10 member_list_group clearfix"> 
+                        {if ($groupShop.fxcheck == 1 && $userinfo.is_fx == 2)}
+                        <a href="/shop/distribution/mkList" class="list-group-item col-xs-4">
+                            <div class="m_img"><img src="__IMGS__/fx.png"></div>
+                            <p class="m_name">推荐商品</p>
+                        </a>
+                        <a href="/shop/distribution/sublist" class="list-group-item col-xs-4">
+                            <div class="m_img"><img src="__IMGS__/sub.png"></div>
+                            <p class="m_name">我的朋友</p>
+                        </a> 
+                        <a href="#" class="list-group-item col-xs-4" data-toggle="modal" data-target="#myModalmin" >
+                            <div class="m_img"><img src="__IMGS__/s.png"></div>
+                            <p class="m_name">推广码</p>
+                        </a>
+                        
+                        {elseif $groupShop.fxcheck == 0}
+                        <a href="/shop/distribution/mkList" class="list-group-item col-xs-4">
+                            <div class="m_img"><img src="__IMGS__/fx.png"></div>
+                            <p class="m_name">推荐商品</p>
+                        </a>
+                        <a href="/shop/distribution/sublist" class="list-group-item col-xs-4">
+                            <div class="m_img"><img src="__IMGS__/sub.png"></div>
+                            <p class="m_name">我的朋友</p>
+                        </a> 
+                        <a href="#" class="list-group-item col-xs-4" data-toggle="modal" data-target="#myModalmin" >
+                            <div class="m_img"><img src="__IMGS__/s.png"></div>
+                            <p class="m_name">推广码</p>
+                        </a>
+                        {/if}
+                    </div>
+                        {/if}
+                    <div class="list-group mb10"> 
+                         {if $groupShop.fxcheck == 1 && $groupShop.fxstatus == 1}
+                         {if $userinfo.is_fx == 0}
+                        <a href="javascript:void(0);" onClick="applyFx();" class="list-group-item tip">
+                            <div class="list_group_img"><img src="__IMGS__/fx.jpg"></div>
+                            申请分销
+                        </a>
+                        {elseif $userinfo.is_fx == 1}
+                        <a href="javascript:void(0);" class="list-group-item tip">
+                            <div class="list_group_img"><img src="__IMGS__/fx.jpg"></div>
+                            申请分销(<span style="color:red;">审核中</span>)
+                        </a>
+                        {elseif $userinfo.is_fx == 3}
+                        <a href="javascript:void(0);" onClick="applyFx();" class="list-group-item tip">
+                            <div class="list_group_img"><img src="__IMGS__/fx.jpg"></div>
+                            重新申请(<span style="color:darkorange;">未通过</span>)
+                        </a>
+                        {elseif $userinfo.is_fx == 4}
+                        <a href="javascript:void(0);" onClick="applyFx();" class="list-group-item tip">
+                            <div class="list_group_img"><img src="__IMGS__/fx.jpg"></div>
+                            重新申请(<span style="color:#666;">已禁用</span>)
+                        </a>
+                         {/if}
+                         {/if}
+                        {if $groupShop.hyk == 1}
+                        <a href="/shop/user/card" class="list-group-item tip">
+                            <div class="list_group_img"><img src="__IMGS__/vip.png"></div>
+                            会员卡账户
+                        {/if}
+                        <a href="/shop/user/integral" class="list-group-item tip">
+                            <div class="list_group_img"><img src="__IMGS__/j.png"></div>
+                            积分 
+                        </a> 
+                         <a href="/shop/address/index" class="list-group-item tip">
+                            <div class="list_group_img"><img src="__IMGS__/g.png"></div>
+                            收货地址 
+                        </a> 
+                        <a  href="/shop/user/info" class="list-group-item tip">
+                            <div class="list_group_img"><img src="__IMGS__/x.png"></div>
+                            修改信息
+                        </a> 
+                    </div>
+                    <div class="list-group mb10">
+                        <a  href="/shop/user/manager" class="list-group-item tip">
+                            <div class="list_group_img"><img src="__IMGS__/k.png"></div>
+                            客户经理 
+                        </a> 
+                    </div>
+                </div>
+                {if $groupShop.fxstatus == 1}
+                {if ($groupShop.fxcheck == 1 && $userinfo.is_fx == 2) || $groupShop.fxcheck == 0}
+                <div style="display: none;" class="modal fade" id="myModalmin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form class="form-horizontal" role="form" data-method="formAjax">
+                                <div class="modal-header member_tc_top">
+                                    <button type="button" class="close member_tc_xx" data-dismiss="modal" aria-hidden="true">×</button>
+                                    <h4 class="modal-title" id="myModalLabel">&nbsp;&nbsp;</h4>
+                                </div>
+                                <div style="overflow:hidden;width: 100%;padding-top: 20px;">
+                                    <div style="">
+                                        <div class="member_mp_t_img" > <img src="{$userinfo.icon}"> </div>
+                                        <div class="member_mp_t_m">{$userinfo.realname}</div>
+                                        <div class="member_mp_t_m_m"> <img src="http://pan.baidu.com/share/qrcode?w=170&h=170&url={$userinfo.tgurl}"></div>
+                                        <div class="member_mp_t_tit">用微信扫一扫二维码，推广拿佣金</div>
+                                    </div>
+                                </div>
+                                <div style="height:60px;"></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {/if}
+                {/if}
+            </div>
+            {include file="common/footer_nav" /} 
+        </div>
+    </body>
+</html>

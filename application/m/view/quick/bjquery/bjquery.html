@@ -1,0 +1,152 @@
+<!--下订单-->
+<script type="text/html" id="tpl_bjquery">
+<div class="page slideIn bjquery">
+<!--顶部--->
+    <div class="ljk_top" >
+        <a class="top_left" href="javascript:;" style="padding-top: 12px;" data-click="bjquery(false,false);" onclick="isRequest(this);">
+            <i class="fa fa-refresh" style="font-size:1.3em;"></i>
+        </a>
+        <a class=" top_right js_item" data-id=""  id="showIOSActionSheet" href="javascript:;">
+            <i class="fa fa-list fa-2x db_xinxi"></i>
+        </a>
+        <p class="weui-flex__item top_center" >报价查询</p>
+    </div>
+    <div class="user_rank_list"></div>
+    <div class="ljk_neirong">
+        <div class="order_add_search_form"></div>
+        <div class="goods_shousuo order_goodscat"></div>
+        <div class="goods_list_content"></div>
+        <div>
+            <div class="weui-mask" id="iosMaskOrdergoodslist" style="display: none"></div>
+            <div class="weui-actionsheet" id="iosActionsheetOrdergoodslist" style="right: 0px;width: 80%;left: 20%;height: 100%;">
+                <div class="weui-actionsheet__menu"></div>
+            </div>
+        </div>
+        <!--属性加载操作-->
+        <div>
+            <!--多属性弹窗加载-->
+            <div class="weui-actionsheet" id="iosActionsheet_1" style="right: 0px;width: 80%;left: 20%;height: 100%;">
+                <div class="ljk_top">
+                    <a class="top_left" href="javascript:;" style="padding-top: 12px;" data-click="bjsquery(false,false);" onclick="isRequest(this);">
+                        <i class="fa fa-refresh" style="font-size:1.3em;"></i>
+                    </a>
+                    <a class="top_right js_item" id="close" data-id="" href="javascript:;">
+                        <i class="fa fa-angle-right fa-2x" style="height:26px;"></i>
+                    </a>
+                    <p class="weui-flex__item top_center" id="getgoodsname" style="font-size: 14px;">商品标题</p>
+                </div>
+                <div class="ljk_neirong" id="goodsdetailclose" style="overflow-y: auto;">
+                    <div class="goodsdetail_list_content"></div>
+                </div>
+            </div>
+            <!--多属性弹窗加载-->
+        </div>
+        <!--属性加载操作-->
+    </div>
+    <div style="width:100%; height:57px;"></div>
+</div>
+<script type="text/javascript">
+    $(function (){
+        //初始化搜索输入框
+        //初始化分类信息栏
+        dianji();
+        goSys('m_index_index');
+        var searchFm = doT.template($('#ordergoodsSearchFm').html());
+        $('.order_add_search_form').html(searchFm());
+        showLA('/m/quick/bjquery/','order_goodscat',{action:'bjcat'});
+        showLA('/m/quick/bjquery/','user_rank_list',{action:'ranklist'});
+        bjquery({rankid:'all',cid:'',t:''},false);
+    });
+    $(function(){
+        var $iosMaskOrdergoodslist = $('#iosMaskOrdergoodslist');
+        $iosMaskOrdergoodslist.on('click', hideActionSheet);
+        $('#close').on('click', hideActionSheet);
+    });
+    function hideActionSheet() {
+        var $iosMaskOrdergoodslist = $('#iosMaskOrdergoodslist');
+        var $iosActionsheetOrdergoodslist = $('#iosActionsheet_1');
+        $iosActionsheetOrdergoodslist.removeClass('weui-actionsheet_toggle');
+        $iosMaskOrdergoodslist.fadeOut(200);
+    }
+</script>
+</script>
+{include file="quick/bjquery/goods_cat"}
+{include file="quick/bjquery/rank_list"}
+{include file="quick/bjquery/goods_search"}
+<!--下订单--> 
+<!--操作日志-->
+<script type="text/template" id="goodsList">
+    <div class="weui-panel__bd">
+        {{if( ljk && ljk.length>0 ){ }}
+        {{for(var i=0; i<ljk.length; i++){ }}
+
+            {{? ljk[i].bj_sku>0 }}
+
+            <a href ="javascript:;" id="data_{{=ljk[i].info.id}}"  class="weui-media-box weui-media-box_appmsg" data-click="getRankId({{=ljk[i].info.id}});" onclick="isRequest(this);" style="padding:8px;color:#030303;">
+        <div style="width:100%;">
+            <div style="width:4em; height:3.5em; float:left; margin-right: 5px; margin-bottom: 5px;"><img class="weui-media-box__thumb" src="{{=ljk[i].info.goods_img}}" alt=""></div>
+            <div style=" float:left; width:70%;margin-bottom: 5px; ">
+            <span id="id_{{=ljk[i].info.id}}" class="weui-media-box__ti">{{=ljk[i].info.goods_name}}</span>
+            <p class="weui-media-box__desc" style="font-size:12px;">
+                <span>查看详情>></span>
+            </p>
+        </div>
+        </div>
+        </a>
+
+            {{??}}
+
+            <a href ="javascript:;"  class="weui-media-box weui-media-box_appmsg" style="padding:8px;color:#838B8B">
+            <div style="width:100%;">
+            <div style="width:4em; height:3.5em; float:left; margin-right: 5px; margin-bottom: 5px;"><img class="weui-media-box__thumb" src="{{=ljk[i].info.goods_img}}" alt=""></div>
+            <div style=" float:left; width:70%;margin-bottom: 5px; ">
+            <span id="id_{{=ljk[i].info.id}}"  class="weui-media-box__ti">{{=ljk[i].info.goods_name}}</span>
+            {{for(var j=0; j<ljk[i].bj.length; j++){}}
+            <p class="weui-media-box__desc" style="font-size:12px;">
+                <span>{{=ljk[i].bj[j].rankname}}</span>
+                ¥<span style="color:red;">{{=ljk[i].bj[j].tuanprice}}</span>元/{{=ljk[i].bj[j].unit}}
+            </p>
+
+                {{}}}
+        </div>
+        </div>
+        </a>{{?}}
+        {{}}}
+        {{}else{}}
+        <div style="width: 100%;height: 15em; text-align: center;  margin-top: 10em;   color: #ddd;">
+            <i class="fa fa-file-text-o fa-5x" aria-hidden="true"></i>
+            <p>未找到符合条件的商品！</p><br>
+        </div>
+        {{}}}
+    </div>
+</script>
+<script type="text/template" id="goodsdetailList">
+    <div class="weui-panel__bd">
+        {{if(ljk && ljk.length>0 ){ }}
+        {{for(var i=0; i<ljk.length; i++){ }}
+        <a href="javascript:;"  class="weui-media-box weui-media-box_appmsg" style="padding:8px;" >
+            <div style="width:100%;">
+                <div style="font-size:14px;float:left; width:100%;">
+                    <span class="weui-media-box__ti">{{=ljk[i].attrs_value}}</span>
+                    {{if(ljk[i].skuprice.length>0){ }}
+                    {{for(var j=0; j<ljk[i].skuprice.length; j++){ }}
+                    <p class="weui-media-box__desc" style="font-size:12px;">
+                        <span>{{? ljk[i].skuprice[j].rank.id>0 }}{{=ljk[i].skuprice[j].rank.rank_name}}{{?? ljk[i].skuprice[j].rank.id===0}}{{=ljk[i].skuprice[j].rank.rank_name}}{{??}} 默认价格{{?}}</span>
+                        ¥<span style="color:red;">{{=ljk[i].skuprice[j].tuanprice}}</span>元/{{=ljk[i].skuprice[j].unit.uname}}
+                    </p>
+                    {{}}}
+                    {{}else{}}
+                        <p>未找到符合条件的商品！</p>
+                    {{}}}
+                </div>
+            </div>
+        </a>
+        {{}}}
+        {{}else{}}
+        <div style="width: 100%;height: 5em; text-align: center;   color: #ddd;">
+            <i class="fa fa-file-text-o fa-5x" aria-hidden="true"></i>
+            <p>未找到符合条件的商品！</p><br>
+        </div>
+        {{}}}
+    </div>
+</script>

@@ -1,0 +1,93 @@
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="width:15%;">小组名称</th>
+                <th style="width:10%;">申请人</th>
+                <th style="width:35%;">变动内容</th>
+                <th style="width:15%;">申请时间</th>
+                <th style="width:10%;">状态</th>
+                <th style="width:10%;">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {if condition="$pageInfo.t neq 0"}
+            {volist name="$disData" id="vo" }
+            <tr>
+                <td>{$vo.title}</td>
+                <td>{$vo.grealname}</td>
+                <td>
+                    {if count($vo.cleader)}
+                    <div style="border-bottom: 1px dashed #ccc;margin:5px 0px;padding:5px 0px;">
+                        <span style="color:red;">组长变动：</span>
+                        {if $vo.cleader.old}
+                        <label class="label label-warning">{$vo.cleader.old.t_name}</label>->{/if}{if $vo.cleader.new}<label class="label label-success">{$vo.cleader.new.t_name}</label>
+                        {/if}
+                    </div>
+                    {/if}
+                    {if count($vo.ccar)}
+                    <div style="border-bottom: 1px dashed #ccc;margin:5px 0px;padding:5px 0px;">
+                        {if $vo.ccar.old && $vo.ccar.new}
+                        <span style="color:red;">车辆变动：</span>
+                        <label class="label label-warning">{$vo.ccar.old.cartype}{$vo.ccar.old.carnum}</label>-><label class="label label-success">{$vo.ccar.new.cartype}{$vo.ccar.new.carnum}</label>
+                        {elseif $vo.ccar.old}
+                        <span style="color:red;">移除车辆：</span>
+                        <label class="label label-warning">{$vo.ccar.old.cartype}{$vo.ccar.old.carnum}</label>
+                        {elseif $vo.ccar.new}
+                        <span style="color:red;">设置车辆：</span>
+                        <label class="label label-success">{$vo.ccar.new.cartype}{$vo.ccar.new.carnum}</label>
+                        {/if}
+                    </div>
+                    {/if}
+                    {if count($vo.adds)}
+                    <div style="border-bottom: 1px dashed #ccc;line-height: 26px;margin:5px 0px;padding:5px 0px;">
+                        <span style="color:red;">成员添加：</span>
+                        {volist name="$vo.adds" id="gl" }
+                        {if $gl.type eq 0 }
+                        <label style="margin-top:5px;" class="label label-success" {if $gl.leader eq 1}style="border: 2px solid orange;"{/if}>{$gl.t_name }</label>
+                        {else/}
+                        <label style="margin-top:5px;" class="label label-info">{$gl.t_name }</label>
+                        {/if}
+                        {/volist}
+                    </div>
+                    {/if}
+                    {if count($vo.dels)}
+                    <div style="border-bottom: 1px dashed #ccc;line-height: 26px;margin:5px 0px;padding:5px 0px;">
+                        <span style="color:red;">成员移除：</span>
+                        {volist name="$vo.dels" id="gl2" }
+                        {if $gl2.type eq 0 }
+                        <label style="margin-top:5px;" class="label label-success" {if $gl2.leader eq 1}style="border: 2px solid orange;"{/if}>{$gl2.t_name }</label>
+                        {else/}
+                        <label style="margin-top:5px;" class="label label-info">{$gl2.t_name }</label>
+                        {/if}
+                        {/volist}
+                    </div>
+                    {/if}
+                </td>
+                <td>{:date( 'Y-m-d H:i:s', $vo.ctime); }</td>
+                <td>
+                    {if condition="$vo.status eq 0"}
+                    <font color="blue">待审核</font>
+                    {elseif condition="$vo.status eq 1"}
+                    <font color="green">申请通过</font>
+                    {elseif condition="$vo.status eq 2"}
+                    <font color="red">否决</font>
+                    {else/}
+                    未知
+                    {/if}
+                </td>
+                <td>
+                    {if condition="$vo.status eq 0"}
+                    <button class="btn btn-success btn-sm" onclick="return ajaxAct2('','您真的要 “通过” 对“{$vo.dginfo.title}”的人员变动申请吗？','正在提交，请稍后！', {action: 'audit_success', id: {$vo.id } });">通过</button>
+                    <button class="btn btn-warning btn-sm" onclick="return ajaxAct2('','您真的要 “否决” 对“{$vo.dginfo.title}”的人员变动吗？','正在提交，请稍后！', {action: 'audit_vote', id: {$vo.id } });">否决</button>
+                    {/if}
+                </td>
+            </tr>
+            {/volist}
+            {else/}
+            <tr><td colspan="6" style="text-align: center;color:red;">没有找到符合条件的记录！</td></tr>
+            {/if}
+        </tbody>
+    </table>
+</div>
+{include file="common/page"}

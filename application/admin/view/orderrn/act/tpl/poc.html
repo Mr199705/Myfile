@@ -1,0 +1,174 @@
+<script type="text/template" id="poctpl">
+    {{?ljk && ljk.cartList.length}}
+    <div class="modal-body" style="position:relative;height:413px;padding:0px;">
+        <div class="container" style="width:100%;height:calc(100%);background:#eee;position: absolute;overflow-y:scroll;">
+            <div class="row">
+                <div style="display:flex;margin:5px 0px;flex-direction:row;width:100%;align-items:center;background:#fff;padding:0px 10px;">
+                    <div style="width:80px;text-align:center;">
+                        <span>收货地址</span>
+                        <a class="btn btn-xs btn-success" class="f14" data-addrid="0" href="javascript:void(0);" onclick="uafm(this);">新增</a>
+                    </div>
+                    <div style="width:calc(100% - 80px);display:flex;flex-direction:column;border-left:1px solid #ccc;">
+                        <div style="margin:2px 0px;background:#999;display:flex;flex-direction:row;align-items:center;padding:5px 0px;color:#fff;border:1px solid #ccc;border-left:none;">
+                            <div style="width:5%;text-align:center;"></div>
+                            <div style="width:25%;text-align:center;">收货人</div>
+                            <div style="width:30%;text-align:center;">地址</div>
+                            <div style="width:20%;text-align:center;">电话</div>
+                            <div style="width:20%;text-align:center;">操作</div>
+                        </div>
+                        {{addrs = ljk.addrs;}}
+                        {{?ljk.addrs}}
+                        {{
+                            var xid = false;
+                            var yid = false;
+                            for(var x in ljk.addrs){
+                                if(ljk.addrs[x].isdefault === 1){
+                                    xid = x;
+                                }else{
+                                    yid = x;
+                                }
+                            }
+                            if(xid === false){
+                                xid = yid;
+                            }
+                            addrId = xid;
+                        }}
+                        <div style="margin:2px 0px;display:flex;flex-direction:row;align-items:center;cursor:pointer;padding:5px 0px;background:#fff;color:red;border:1px solid #ccc;border-left:none;" id="selectAddr">
+                            <div style="width:5%;text-align:center;"></div>
+                            <div style="width:25%;text-align:center;">{{=ljk.addrs[addrId].consignee}}</div>
+                            <div style="width:30%;text-align:center;">{{=ljk.addrs[addrId].areaname}}{{=ljk.addrs[addrId].address}}</div>
+                            <div style="width:20%;text-align:center;">{{=ljk.addrs[addrId].mobile}}</div>
+                            <div style="width:20%;text-align:center;">
+                                <a href="javascript:void(0);" class="btn btn-xs btn-success" onclick="choseAddr(this);">更换</a>
+                                <a href="javascript:void(0);" class="btn btn-xs btn-warning" data-addrid='{{=ljk.addrs[addrId].id}}' onclick="uafm(this);">修改</a>
+                            </div>
+                        </div>
+                        {{??}}
+                        <div style="margin:2px 0px;display:flex;flex-direction:row;align-items:center;cursor:pointer;padding:5px 0px;background:#fff;" id="selectAddr"></div>
+                        {{?}}
+                        <div id="addrList" style="display:none;">
+                            <div style="width:100%;display:column;" id="addrs"></div>
+                        </div>
+                    </div>
+                    {{ 
+                        setTimeout(function (){loadTpl(undefined,['addrs']);},30);
+                    }}
+                </div>
+                <div style="display:flex;margin:5px 0px;flex-direction:row;width:100%;align-items:center;background:#fff;padding:0px 10px;">
+                    <div style="width:80px;text-align:center;">
+                        <span>订单商品</span>
+                    </div>
+                    <div style="width:calc(100% - 80px);display:flex;flex-direction:column;border-left:1px solid #ccc;">
+                        <div style="width:100%;display: flex;display: -webkit-flex;align-items: center;flex-direction: row;flex-wrap: nowrap;">
+                            <div style="width: calc(100% - 50px);height:50px;overflow-x: scroll;overflow-y: hidden;white-space: nowrap;">
+                                {{for(var cart in ljk.cartList){}}
+                                <span style="display: inline-block;height:50px;width:50px;border-radius: 5px;margin:0px 3px;">
+                                    <img src="{{=ljk.cartList[cart].goodsThumb}}" style="height:50px;width:50px;border-radius: 5px;margin:0px 2px;" />
+                                 </span>
+                                {{}}}
+                            </div>
+                            <div style="width:50px;text-align: right;">
+                                <a class="btn btn-sm btn-info" href="javascript:void(0);" onclick="showDetail(this);">详情</a>
+                            </div>
+                        </div>
+                        <div id="goodsList" style="display:none;">
+                            <div style="display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;border:1px solid #ccc;border-left:0px;border-top:0px;padding:5px 0px;background:#999;color:#fff;">
+                                <div style="width:60px;text-align:center;">缩略图</div>
+                                <div style="width:calc(25% - 15px);text-align:center;">商品名称</div>
+                                <div style="width:calc(25% - 15px);text-align:center;">属性</div>
+                                <div style="width:calc(15% - 9px);text-align:center;">单价</div>
+                                <div style="width:calc(15% - 9px);text-align:center;">数量</div>
+                                <div style="width:calc(10% - 6px);text-align:center;">类型</div>
+                                <div style="width:calc(10% - 6px);text-align:center;">小计</div>
+                            </div>
+                            {{for(var item in ljk.cartList){}}
+                            {{ 
+                                var subTotal = ljk.cartList[item].goods_price * ljk.cartList[item].goods_number;    
+                            }}
+                            <div style="display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;border:1px solid #ccc;border-left:0px;border-top:0px;padding:5px 0px;">
+                                <div style="width:60px;text-align:center;">
+                                    <img src="{{=ljk.cartList[item].goodsThumb}}" style="width: 50px;height: 50px;" />
+                                </div>
+                                <div style="width:calc(25% - 15px);text-align:center;">{{=ljk.cartList[item].goods_name}}</div>
+                                <div style="width:calc(25% - 15px);text-align:center;">{{?ljk.cartList[item].avs}}{{=ljk.cartList[item].avs}}{{??}}{{?}}</div>
+                                <div style="width:calc(15% - 9px);text-align:center;">¥{{=ljk.cartList[item].goods_price}} / {{=ljk.cartList[item].unit}}</div>
+                                <div style="width:calc(15% - 9px);text-align:center;">{{=parseInt(ljk.cartList[item].goods_number)}}{{=ljk.cartList[item].unit}}</div>
+                                <div style="width:calc(10% - 6px);text-align:center;">           
+                                    {{?ljk.cartList[item].type===1}}
+                                    <span style="color:darkgreen;">销售</span>
+                                    {{??}}
+                                    <span style="color:red;">赠送</span>
+                                    {{?}}
+                                </div>
+                                <div style="width:calc(10% - 6px);text-align:center;">
+                                    {{?ljk.cartList[item].type===1}}
+                                    ¥<span style="color:red;">{{=subTotal.toFixed(2)}}</span>
+                                    {{??}}
+                                    ¥<span style="text-decoration:line-through;color:#ccc;">{{=subTotal.toFixed(2)}}</span>
+                                    {{?}}
+                                </div>
+                            </div>
+                            {{}}}
+                        </div>
+                    </div>
+                </div>
+                <div style="display:flex;margin:5px 0px;flex-direction:row;width:100%;align-items:center;background:#fff;padding:0px 10px;">
+                    <div style="width:80px;text-align:center;">
+                        <span>支付方式</span>
+                    </div>
+                    <div style="width:calc(100% - 80px);display:flex;flex-direction:column;border-left:1px solid #ccc;">
+                        <select class="form-control" id="orderPaytype">
+                            {{?ljk.umu >= ljk.amount}}
+                            <option value="4">会员卡账户</option>
+                            {{??}}
+                            <option value="0" selected="selected">货到付款</option>
+                            <option value="7">其他方式</option>
+                            {{?}}
+                        </select>
+                    </div>
+                </div>
+                <div style="display:flex;margin:5px 0px;flex-direction:row;width:100%;align-items:center;background:#fff;padding:0px 10px;">
+                    <div style="width:80px;text-align:center;">
+                        <span>配送时间</span>
+                    </div>
+                    <div style="width:calc(100% - 80px);display:flex;flex-direction:row;flex-wrap:nowrap;border-left:1px solid #ccc;">
+                        <select class="form-control" id="orderPdate" style="width:50%;">
+                            <option value="0" checked="checked">不预定</option>
+                            {{for(var w = 0,wl = ljk.week.length; w < wl; w++){}}
+                            <option value="{{=ljk.week[w].w}}">{{=ljk.week[w].v}}</option>
+                            {{}}}
+                        </select>
+                        <select class="form-control" id="orderPtime" style="width:50%;">
+                            <option value="0">全天</option>
+                            <option value="1">上午</option>
+                            <option value="2">下午</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display:flex;margin:5px 0px;flex-direction:row;width:100%;align-items:center;background:#fff;padding:0px 10px;">
+                    <div style="width:80px;text-align:center;">
+                        <span>订单备注</span>
+                    </div>
+                    <div style="width:calc(100% - 80px);display:flex;flex-direction:column;border-left:1px solid #ccc;">
+                        <textarea class="form-control" placeholder="请输入备注" style="width:100%;max-width: 100%;min-width: 100%;height:60px;max-height:60px;min-height: 60px;" id="orderContent"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fixed-foot white-bg" style="padding:0px 10px;">
+        <div class="fixed_inner order-add-act">
+            <div class="pay-point">
+                <div class="icheck pull-left f12" style="width:280px;">
+                    共<span class="orange f14" id="cart_num">{{=ljk.cartList.length}}</span>件商品 总金额：<em class="orange f14">¥<span style="color:red;">{{=ljk.amount.toFixed(2)}}</span></em>
+                </div>
+            </div>
+            <div class="buy-btn-fix" style="width:calc(100% - 280px);">
+                <a href="javascript:;" class="btn btn-lg btn-primary btn-success" style="width: 100%;" onclick="addOrder();">提交订单</a>
+            </div>
+        </div>
+    </div>
+    {{??}}
+    <p style="text-align:center;height:200px;line-height:200px;color:red;">购物车为空！</p>
+    {{?}}
+</script>

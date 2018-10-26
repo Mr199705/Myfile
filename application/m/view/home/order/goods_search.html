@@ -1,0 +1,69 @@
+<script type="text/template" charset="utf-8" id="add_order_search_goods_form">
+<div class="weui-media-box weui-media-box_small-appmsg" style="width: 100%; z-index:2;">
+    <div class="weui-cells">
+        <div class="weui-search-bar weui-search-bar_focusing" id="addOrderGoodsSearchBar">
+        <div id='addOrderGoodsSearchBox' style="display:none"></div>
+            <form class="weui-search-bar__form">
+                <div class="weui-search-bar__box"> <i class="weui-icon-search" style=" margin-top:5px;"></i>
+                    <input type="search" class="weui-search-bar__input" id="addOrderGoodsSearchInput" placeholder="请输入商品名称或商品货号" required  style="height:30px;" />
+                    <a href="javascript:" class="weui-icon-clear" id="addOrderGoodsSearchClear" style=" margin-top:5px;"></a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var lock = false,
+    $searchBar = $('#addOrderGoodsSearchBar'),
+    $searchInput = $('#addOrderGoodsSearchInput'),
+    $searchClear = $('#addOrderGoodsSearchClear');
+    function searchAddOrderGoods(t){
+        var s=$('#addOrderGoodsSearchBox').html();
+        if(t!=' '&& s!=t){
+            $('#addOrderGoodsSearchBox').html(t);
+            getAddOrderGoodsList({t:t},false);
+        }
+    }
+    function hideSearchAddOrderGoodsResult(){
+        $searchInput.val('');
+    }
+    function cancelSearchAddOrderGoodsResult(){
+        $searchBar.removeClass('weui-search-bar_focusing');
+    }
+    $searchInput.on('blur', function () {
+        if(!this.value.length) cancelSearchAddOrderGoodsResult();
+    }).on(
+        {
+            compositionstart:function(){
+                lock = true;
+            },
+            compositionend:function(){
+                lock = false;
+            },
+            input:function(){
+                var that = this;
+                if(typeof t !== 'undefined'){
+                    clearTimeout(t);
+                }
+                t = setTimeout(function (){
+                    if(!lock){
+                        if(that.value.length){
+                            searchAddOrderGoods(that.value);
+                        }else{
+                            hideSearchAddOrderGoodsResult();
+                            $searchInput.focus();
+                            searchAddOrderGoods(that.value);
+                            clearTimeout(t);
+                        }
+                    }
+                },200);
+            }
+        }
+    );
+    $searchClear.on('click', function(){
+        hideSearchAddOrderGoodsResult();
+        $searchInput.focus();
+        searchAddOrderGoods('');
+    });    
+</script>
+</script>

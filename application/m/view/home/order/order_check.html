@@ -1,0 +1,323 @@
+<!--地址选择-->
+<script type="text/html" id="tpl_ordercheckdata">
+      {{if( ljk ){}}
+        <form method="post" name="ordereditForm" id="ordereditForm"  onsubmit="return false;">
+        <!--内容--->
+        <div class="weui-form-preview" id="order_address" data-addrtype="ordercheck">
+            {{?ljk.om!=null}}
+            <div class="weui-cells" style="color:#838B8B;">
+                <a class="weui-cell weui-cell_access addressadd1" href="javascript:;" data-id="address" data-uid="{{=ljk.om.uid}}" data-type="1" data-addrtype="addr">
+                    <div id="address_order_select" class="weui-cell__bd">
+                        <div class="weui-cell__bd">
+                            <label class="weui-form-preview__label" >收货人&emsp;：</label>
+                            <span style="word-break:normal; width:auto; display:block; white-space:pre-wrap;word-wrap : break-word ;overflow: hidden ;">{{?ljk.om.realname}}{{=ljk.om.realname}} {{??}} {{?}}</span>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <label class="weui-form-preview__label" >电&emsp;&emsp;话：</label>
+                            <span style="word-break:normal; width:auto; display:block; white-space:pre-wrap;word-wrap : break-word ;overflow: hidden ;">{{?ljk.om.phone}}{{=ljk.om.phone}} {{??}} {{?}}</span>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <label class="weui-form-preview__label">收货地址：</label>
+                            <span class="weui-form-preview__value" style="word-break:normal; width:auto; display:block; white-space:pre-wrap;word-wrap : break-word ;overflow: hidden ;" data-value="{{=ljk.om.areaids}}">{{?ljk.om.address}}{{=ljk.om.address}}{{??}}无默认地址{{?}}</span>
+                        </div>
+                    </div>
+                    <div class="weui-cell__ft"></div>
+                </a>
+            </div>
+            {{??}} {{?}}
+        </div>
+        <div class="weui-cell weui-cell_select">
+            <div class="weui-cell__hd">
+                <label class="weui-cells__title">配送日期：</label>
+            </div>
+            <div class="weui-cell__bd">
+                <input type="text" class="weui-input" autocomplete="off" style="width:50%;height:44px;float: left;color:#838B8B;" placeholder="请选择日期" name="psdate1" id="psdate1">
+                <select class="weui-select" style="width:35%;float: left;color:#838B8B;" name="pstime1" id="pstime1" value="{{=ljk.order.dtype}}" onchange="changept1(this)">
+                    <option value="0">全天</option>
+                    <option value="1">上午</option>
+                    <option value="2">下午</option>
+                </select>
+            </div>
+        </div>
+        <div class="weui-cell weui-cell_select">
+            <div class="weui-cell__hd">
+                <label class="weui-cells__title">配送方式：</label>
+            </div>
+            <div  class="weui-cell__bd">
+                <select class="weui-select" style="width:70%;color:#838B8B;" name="pstype1" id="pstype1" onchange="changepstype1(this)">
+                    <option value="0">物流配送</option>
+                    <option value="1">上门自提</option>
+                </select>
+            </div>
+            <input type="hidden" id="freight_config" name="freight_config"  data-min="{{=ljk.fc.min}}" data-ltfee="{{=ljk.fc.ltfee}}" value="">
+        </div>
+        <div class="weui-cell weui-cell_select">
+            <div class="weui-cell__hd">
+                <label class="weui-cells__title">修正金额：</label>
+            </div>
+            <div  class="" style="width: 70%;">
+                <input type="number" id="money1"  name="money1" class="weui-input" placeholder="0.00" value="{{? ljk.order.correct!=0}}{{= ljk.order.correct}}{{??}}{{?}}" required onblur="editValue(this)" oninput="if(value.length>10)value=value.slice(0,10);">
+            </div>
+        </div>
+        <div class="weui-cell weui-cell_select">
+            <div class="weui-cell__hd">
+                <label class="weui-cells__title">修正备注：</label>
+            </div>
+            <div  class="" style="width: 70%;">
+                <textarea name="moneydesc1" placeholder="不填按默认备注"  class="weui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="weui-cell weui-cell_select">
+            <div class="weui-cell__hd">
+                <label class="weui-cells__title">备&emsp;&emsp;注：</label>
+            </div>
+            <div  class="" style="width: 70%;">
+                <textarea class="weui-textarea" placeholder="订单备注" name="desc" rows="2" maxlength="200" oninput="l(this);">{{= ljk.order.content}}</textarea>
+            </div>
+        </div>
+        <div id="fc_desc1" style="display: none;color:red;" data-min="{{= ljk.fc.min}}" data-ltfee="{{= ljk.fc.ltfee}}" class="weui-cells__title">{{? ljk.fc.desc}}邮费：{{=ljk.fc.ltfee}}（{{= ljk.fc.desc}}）{{?}}</div>
+        <div class="weui-panel__bd">
+            <div class="weui-panel__hd " style=" padding: 11px;" id="dhxx1">
+                <h4 class="weui-media-box__title" style="width: 50%; float: left; color:#000000;">商品信息</h4>
+                <div class="Commodity_hiding">
+                    <i class="fa fa-eye" aria-hidden="true" id="eye1"></i>
+                    <i class="fa fa-eye-slash" aria-hidden="true" id="eye-slash1" style="display:none;"></i>
+                </div>
+            </div>
+            <div class="weui-panel__bd dinhuo22" id="order_list" style=" padding:0px;">
+                {{for(var i=0; i< ljk.ogs.length; i++){ }}
+                <div id="goods_{{=ljk.ogs[i].id}}" style="width:100%; padding:5px; background:#FFFFFF;  border-bottom:1px solid #dddddd;">
+                    <a class="weui-media-box weui-media-box_appmsg" href="javascript:;" style="padding:1px; line-height:27px;">
+                        <div class="weui-media-box__hd" style="width: 60px;height: 60px;">
+                            {{? ljk.ogs[i].goodsThumb}}
+                            <img class="weui-media-box__thumb" src="{{=ljk.ogs[i].goodsThumb}}" alt="">
+                            {{?}}
+                        </div>
+                        <div class="weui-media-box__bd">
+                            <div style="width:80%;float: left;">
+                                <p style="font-weight: initial; ">{{=ljk.ogs[i].goods_name}}</p>
+                                {{? ljk.ogs[i].sku!=null}}<p class="weui-media-box__desc" style="font-size:12px" >属性：<span style="color:#;">{{=ljk.ogs[i].sku.attrs_value}}</span></p>{{??}}{{?}}
+                                <p class="weui-media-box__desc" style="font-size:12px"> {{=ljk.ogs[i].type}} &nbsp;&nbsp;{{=ljk.ogs[i].goods_price}}*<span style="color:#FF0000;">{{=parseFloat(ljk.ogs[i].goods_number)}}</span>({{=ljk.ogs[i].unit}})=<span style="color:#FF0000;">{{=ljk.ogs[i].amount}}</span> 元</p>
+                                {{? ljk.ogs[i].desc }}
+                                <p class="weui-media-box__desc" style="font-size:12px">
+                                    备注：{{=ljk.ogs[i].desc}}
+                                </p>
+                                {{?}}
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {{}}}
+                <div style="width:auto;">
+                    <div class="weui-form-preview__ft">
+                        <a class="weui-form-preview__btn" style=" color:#000000;" href="javascript:;">商品数量：
+                            <strong style="color:#0C9C01; font-size:16px;"  id="orderNum1" >{{= ljk.order.ordercount}}</strong></a>
+                        <a class="weui-form-preview__btn" style=" color:#000000;"  href="javascript:;">商品金额：￥
+                            <strong style="color:#FF0000; font-size:16px;" id="totalPrice1">{{=ljk.order.total}}</strong></a>
+                    </div>
+                </div>
+            </div>
+            <div class="weui-cell">
+                <button  type="submit" onclick="return orderedit(this.ordereditForm)"  class="weui-btn weui-btn_primary">编辑完成</button>
+            </div>
+        </div>
+        </form>
+      {{}}}
+    <script type="text/javascript">
+        $(function () {
+            $('.addressadd1').on('click', function(){
+                $('.layui-laydate').hide();
+                var id = $(this).data('id');
+                window.pageManager.go(id);
+                var uid =$(this).data('uid');
+                ShowaddressTpllistbyID('address','address',uid);
+            });
+            laydate.render({
+                elem: '#psdate1'
+                ,min: 0
+            });
+            var pd='{{? ljk.order.pd}}{{=ljk.order.pd}}{{?}}';
+            $('#psdate1').val(pd);
+            var pt='{{=ljk.order.pt}}';
+            var dtype='{{=ljk.order.dtype}}';
+            $("#pstime1 option").each(function(){
+                if($(this).val() == pt){
+                    $(this).attr('selected','selected');
+                }
+            });
+            $("#pstype1 option").each(function(){
+                if($(this).val() == dtype){
+                    $(this).attr('selected','selected');
+                }
+            });
+            var total=Number('{{? ljk.order.total}}{{=ljk.order.total}}{{?}}');
+            var min=Number('{{? ljk.fc.min}}{{=ljk.fc.min}}{{?}}');
+            if(dtype==0){
+                if(total<min){
+                    $('#fc_desc1').show();
+                }else{
+                    $('#fc_desc1').hide();
+                }
+            }else{
+                $('#fc_desc1').hide();
+            }
+            $("#dhxx1").on('click',function(){
+                if($(".dinhuo22").css("display")=="none"){
+                    $(".dinhuo22").show();
+                    $('#eye1').show();
+                    $('#eye-slash1').hide();
+                }else{
+                    $(".dinhuo22").hide();
+                    $('#eye1').hide();
+                    $('#eye-slash1').show();
+                }
+            });
+        });
+        function editValue(obj) {
+            var ss=changeTwoDecimal_f($(obj).val());
+            $(obj).val(ss);
+        }
+        function changept1() {
+            var pstime1=this.ordereditForm.pstime1.value;
+            $("#pstime1 option[value='"+pstime1+"']").attr("selected", "selected");
+            $("#pstime1 option[value='"+pstime1+"']").siblings().removeAttr("selected", "selected");
+        }
+
+        function changepstype1(obj) {
+            var dtype=this.ordereditForm.pstype1.value;
+            var total=Number('{{= ljk.order.total}}');
+            var min=Number($('#fc_desc1').data('min'));
+            $("#pstype1 option[value='"+dtype+"']").attr("selected", "selected");
+            $("#pstype1 option[value='"+dtype+"']").siblings().removeAttr("selected", "selected");
+            if(dtype==0){
+                if(total<min){
+                    $('#fc_desc1').show();
+                }else{
+                    $('#fc_desc1').hide();
+                }
+            }else{
+                $('#fc_desc1').hide();
+            }
+        }
+        function orderedit(form) {
+            form=this.ordereditForm;
+            var oid='{{? ljk.order.oid}}{{=ljk.order.oid}}{{??}}0{{?}}';
+            var uid='{{? ljk.order.uid}}{{=ljk.order.uid}}{{??}}0{{?}}';
+            var $address_order_select=$("#address_order_select");
+            var name=$address_order_select.find('span').eq(0).text();
+            var phone=$address_order_select.find('span').eq(1).text();
+            var areas=$address_order_select.find('span').eq(2).text();
+            var areaids=$address_order_select.find('span').eq(2).data('value');
+            var psdate1=form.psdate1.value;
+            var pstime1=form.pstime1.value;
+            var pstype1=form.pstype1.value;
+            var money1=form.money1.value;
+            var moneydesc1=form.moneydesc1.value;
+            var desc=form.desc.value;
+            var $viewhtml=$('.ordercheck');
+            var msg='';
+            if(psdate1==''){
+                msg='请选择配送日期';
+                iosDialog2Msg(msg,$viewhtml);
+                return false;
+            }
+            $.ajax({
+                type : "POST",
+                url : "/m/order/adjust",
+                dataType: 'json',
+                data: {
+                    action:'doadjustorder',
+                    oid:oid,
+                    uid:uid,
+                    name:name,
+                    phone:phone,
+                    areas:areas,
+                    areaids:areaids,
+                    pdate:psdate1,
+                    ptime:pstime1,
+                    dtype:pstype1,
+                    correct:money1,
+                    correct_reason:moneydesc1,
+                    content:desc
+                },
+                beforeSend:function (){
+                    var tip = {
+                        type:1,
+                        title:'提示信息',
+                        content:'正在编辑订单，请等待！'
+                    };
+                    setTips(tip);
+                },
+                success : function(res){
+                    var tpl='ordercheck';
+                    if( 1 == res.code){
+                        var tip = {
+                            type:1,
+                            title:'提示信息',
+                            content:res.msg,
+                            btn:1,
+                            btnm:1,
+                            btnmc:'返回详情',
+                            btnma:'onclick="Getbackorderdetail()"'
+                        };
+                        setTips(tip);
+                        var template = doT.template($('#' + tpl).html());
+                        var _html = template(tpl);
+                        $('.' + tpl).html(_html);
+                    }else if(res.code == -1){
+                        var tip = {
+                            type:1,
+                            title:'提示信息',
+                            content:res.msg
+                        };
+                        var template = doT.template($('#tpldialogs').html());
+                        var t_html = template(tip);
+                        t_html = t_html.replace('id="dialogs"','');
+                        $('.' + tpl).html(t_html);
+                        return false;
+                    }
+                }
+            });
+        }
+        function Getbackorderdetail() {
+            var oid='{{? ljk.order.oid}}{{=ljk.order.oid}}{{??}}0{{?}}';
+            ShowOrderViewTpl(this,'orderdetail',oid);
+            window.pageManager.go('dingdanxiangqing');
+        }
+</script>
+</script>
+<script type="text/html" id="tpl_ordercheck">
+    <div class="page">
+    <!---顶部-->
+    <div class="ljk_top">
+    <a class="top_left js_itemorderdetail" data-id="dingdanxiangqing" href="javascript:;">
+    <i class="fa fa-angle-left fa-2x"></i>
+    </a>
+    <a class="top_right" href="javascript:;" style="padding-top: 12px;" onclick="location.reload();">
+    <i class="fa fa-refresh" style="font-size:1.3em;"></i>
+    </a>
+    <p class="weui-flex__item top_center">订单调整</p>
+    </div>
+    <!---顶部-->
+    <!--底部--->
+    <!--内容-->
+    <div class="ljk_neirong" style="position: relative;margin:0px;top:49px;width: 100%;height: calc(100% - 50px);">
+        <div class="listcontent listsordercheck" style="padding-bottom: 0px;">
+            <div class="listordercheck"> </div>
+        </div>
+    </div>
+    <!--内容-->
+    </div>
+    <script type="text/javascript">
+    $(function(){
+        orderdianji();
+        var urlstr = "/m/order/adjust";
+        var uid = $('#uid').html();
+        var oid =$('#oid').html();
+        if(!oid) oid=0;
+        ShowTplDataList(urlstr,'ordercheck',{uid:uid,oid:oid,action:'adjustorderinfo'});
+        $("#m_user_index").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+        goSys('m_index_home');
+    });
+</script>
+</script>

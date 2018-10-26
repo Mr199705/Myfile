@@ -1,0 +1,128 @@
+    {include file="common/header"}
+    <script type="text/javascript">
+        var selectedBjs = {};
+        var ruleRoadLiItemId = 0;
+        function ruleRoadAdd(btn, form ){
+            var liItem = '<li style="border: 1px solid #eee;padding: 3px 5px;" class="form-inline"><input type="hidden" name="uindex[]" value="'+ruleRoadLiItemId+'"><input type="number" class="form-control" style="width: 25%;margin-right: 4px;" name="umin['+ruleRoadLiItemId+']" value="'+form.addmin.value+'"><input type="number" class="form-control" style="width: 25%;margin-right: 4px;" name="umax['+ruleRoadLiItemId+']" value="'+form.addmax.value+'"><input type="text" class="form-control" style="width: 28%;" name="utotal['+ruleRoadLiItemId+']" value="'+form.addtotal.value+'"><a onclick="$(this).parent().remove();"> x</a></li>';
+            $('#roadContainer').append( liItem );
+            form.addmin.value = form.addmax.value;
+            form.addmax.value = parseInt(form.addmax.value) + 5;
+            ruleRoadLiItemId++;
+        }
+        function ruleDlgGoodsExist(bjid){
+            var bjep = $('#baojiaList').find('input[name="baojia_id[]"][value='+bjid+']').parent();
+            return ( bjep.length > 0 ) ? bjep : null;
+        }
+        function ruleDlgGoodsAdd(bjid,bjname){
+            var newLabel = '<span style="display: inline-block;margin-top:3px;"><label class="label label-info">'+bjname+'</label><input type="hidden" name="baojia_id[]" value="'+bjid+'"> <a onclick="$(this).parent().remove();selectBaojiaListRefresh();">X</a></span>';
+            $('#baojiaList').append(newLabel);
+        }
+        //  baojia加载
+        var goodsGetLoad = false;
+        var goodsPage = 1;
+        function getGoods(pageAdd = false){
+            if( goodsPage === false && pageAdd === true ){ return false; }
+            if( goodsGetLoad ){ return false; }
+            goodsGetLoad = true;
+            var tpl = 'ruleDialogGoodsTpl';
+            if(pageAdd === false){
+                $('.' + tpl).html('');
+                goodsPage = 1;
+            }else{
+                goodsPage++;
+            }
+            $.ajax({
+                type : "POST",
+                url : '/admin/dispatch/rule',
+                dataType: 'json',
+                data: { action:'goods', 'word': $('#selectBaojiaSearchKeywords').val(), page: goodsPage},
+                success : function(res){
+                    if( res.code === 1 ){
+                        var template = doT.template( $('#' + tpl ).html() );
+                        $('.' + tpl).append( template( res.data ));
+                        if( res.pageInfo.currentPage >= res.pageInfo.lastPage){ 
+                            goodsPage = false;
+                        }
+                    }
+                    goodsGetLoad = false;
+                },
+                error:function (res){
+                    console.log(res);
+                }
+            });
+        }
+        function toashShow(msg){
+            var tip = {
+                tip_backdrop:true,
+                tip_msg:{
+                    sign:true,
+                    content: msg
+                }
+            };
+            setTip(tip);
+        }
+    </script>
+    <!-- 编辑框 dot动态 -->
+    <style type="text/css">
+        #selectBaojiaList{
+            width: 100%;
+        }
+        #selectBaojiaList a{
+            margin: 3px 5px; 
+            padding: 3px 10px;
+            border: 1px solid #337ab7;
+            display: inline-block;
+            border-radius: 3px;
+            color: #337ab7;
+        }
+        #selectBaojiaList .bjSelect{
+            border: 1px solid #1a7bb9;
+            background: #1a7bb9;
+            color: white;
+        }
+    </style>
+    
+</head>
+<body>
+    {include file="common/warning" /}
+    {include file="common/tips" /}
+    <div class="modal-backdrop" style="display: none;background: rgba(0,0,0,0.5);z-index: 99990 !important;" id="modalBackdropBox"></div>
+    <div id="wrapper">
+        <div  class="gray-bg dashbard-1">
+            <!--头部-->
+            <div class="row wrapper border-bottom white-bg page-heading" style="padding-bottom:0">
+                <div class="col-sm-7">
+                    <h2>规则管理</h2>
+                </div>
+                <div class="col-sm-5">
+                    <br>
+                    <a class="btn btn-success btn-sm" data-id="ruleDialog" onclick="return loadModal(this,{action:'add'});">新建规则</a>
+                    <a class="btn btn-primary btn-sm" href="javascript:location.reload();">刷新</a>
+                </div>
+            </div>
+            <!--头部 end-->
+            <div class="wrapper wrapper-content animated fadeInRight">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-content">
+                            	<form method="post" id='{$initData.sign}SearchForm' action="{$initData.requestUrl}" onSubmit="return false;">
+                                    <input type="hidden" name="action" value="showlist" />
+                                    {include file="/dispatch/search/rule_search"}
+                                </form>
+                                <div id="countInfo"></div>
+                                <div id="{$initData.sign}List"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {include file="dispatch/model/rule_dlg_htm"}
+    {include file="common/footerjs"}
+    <script type="text/javascript">
+        getList({sign:'{$initData.sign}'});
+    </script>
+</body>
+</html>

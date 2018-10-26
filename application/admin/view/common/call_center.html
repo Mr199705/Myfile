@@ -1,0 +1,208 @@
+<script type="text/javascript" src="__COMMON__/js/qnvfunc.js"></script>
+<script type="text/javascript" src="__COMMON__/js/qnviccub.js"></script>
+<SCRIPT LANGUAGE="JavaScript" FOR="qnviccub" EVENT="OnQnvEvent(chID,type,handle,result,param,szdata,szdataex)">
+	T_GetEvent(chID,type,handle,result,szdata)
+</SCRIPT>
+<script type='text/javascript'>  
+
+function AppendStatus(szStatus)
+{  
+	qnviccub.QNV_Tool(QNV_TOOL_WRITELOG,0,szStatus,NULL,NULL,0);//写本地日志到控件注册目录的userlog目录下
+	var szHint = $("#StatusArea").val()+ szStatus +"\r\n";
+	 $("#StatusArea").val(szHint);
+	//  $("#StatusArea").scrollTop($("#StatusArea").scrollHeight());
+}
+function AppendStatusEx(uID,szStatus)
+{
+	uID=uID+1;
+	AppendStatus("通道"+uID+":"+szStatus);
+}
+
+function  T_GetEvent(uID,uEventType,uHandle,uResult,szdata)
+{
+	//var vValueArray=qnviccub.QNV_Event(0,2,0,"","",1024);
+	var vValue=" type="+uEventType+" Handle="+uHandle+" Result="+uResult+" szdata="+szdata;
+	switch(uEventType)
+	{
+	case BriEvent_PhoneHook:// 本地电话机摘机事件
+		AppendStatusEx(uID,"本地电话机摘机"+vValue);
+	break;	
+	case BriEvent_PhoneDial:// 只有在本地话机摘机，没有调用软摘机时，检测到DTMF拨号
+		AppendStatusEx(uID,"本地话机拨号"+vValue);
+	break;	
+	case BriEvent_PhoneHang:// 本地电话机挂机事件
+	    getsms(1);
+		AppendStatusEx(uID,"本地电话机挂机"+vValue);
+	break;
+	case BriEvent_CallIn:// 外线通道来电响铃事件
+		AppendStatusEx(uID,"外线通道来电响铃事件"+vValue);
+	break;
+	case BriEvent_GetCallID://得到来电号码
+	    getuserinfo(szdata);
+		AppendStatusEx(uID,"得到来电号码"+vValue);
+	break;
+	case BriEvent_StopCallIn:// 对方停止呼叫(产生一个未接电话)
+	    getsms(0);//挂机短信提醒
+		AppendStatusEx(uID,"对方停止呼叫(产生一个未接电话)"+vValue);
+	break;
+	case BriEvent_DialEnd:// 调用开始拨号后，全部号码拨号结束
+		AppendStatusEx(uID,"调用开始拨号后，全部号码拨号结束"+vValue);
+	break;
+	case BriEvent_PlayFileEnd:// 播放文件结束事件
+		AppendStatusEx(uID,"播放文件结束事件"+vValue);
+	break;
+	case BriEvent_PlayMultiFileEnd:// 多文件连播结束事件
+		AppendStatusEx(uID,"多文件连播结束事件"+vValue);
+	break;
+	case BriEvent_PlayStringEnd://播放字符结束
+		AppendStatusEx(uID,"播放字符结束"+vValue);
+	break
+	case BriEvent_RepeatPlayFile:// 播放文件结束准备重复播放
+		AppendStatusEx(uID,"播放文件结束准备重复播放"+vValue);
+	break;
+	case BriEvent_SendCallIDEnd:// 给本地设备发送震铃信号时发送号码结束
+		AppendStatusEx(uID,"给本地设备发送震铃信号时发送号码结束"+vValue);
+	break;
+	case BriEvent_RingTimeOut://给本地设备发送震铃信号时超时
+		AppendStatusEx(uID,"给本地设备发送震铃信号时超时"+vValue);
+	break;	
+	case BriEvent_Ringing://正在内线震铃
+		AppendStatusEx(uID,"正在内线震铃"+vValue);
+	break;
+	case BriEvent_Silence:// 通话时检测到一定时间的静音.默认为5秒
+		AppendStatusEx(uID,"通话时检测到一定时间的静音"+vValue);
+	break;
+	case BriEvent_GetDTMFChar:// 线路接通时收到DTMF码事件
+		AppendStatusEx(uID,"线路接通时收到DTMF码事件"+vValue);
+	break;
+	case BriEvent_RemoteHook:// 拨号后,被叫方摘机事件
+		AppendStatusEx(uID,"拨号后,被叫方摘机事件"+vValue);
+	break;
+	case BriEvent_RemoteHang://对方挂机事件
+	    getsms(1);//挂机短信提醒
+		AppendStatusEx(uID,"对方挂机事件"+vValue);
+	break;
+	case BriEvent_Busy:// 检测到忙音事件,表示PSTN线路已经被断开
+		AppendStatusEx(uID,"检测到忙音事件,表示PSTN线路已经被断开"+vValue);
+	break;
+	case BriEvent_DialTone:// 本地摘机后检测到拨号音
+		AppendStatusEx(uID,"本地摘机后检测到拨号音"+vValue);
+	break;
+	case BriEvent_RingBack:// 电话机拨号结束呼出事件。
+		AppendStatusEx(uID,"电话机拨号结束呼出事件"+vValue);
+	break;
+	case BriEvent_MicIn:// MIC插入状态
+		AppendStatusEx(uID,"MIC插入状态"+vValue);
+	break;
+	case BriEvent_MicOut:// MIC拔出状态
+		AppendStatusEx(uID,"MIC拔出状态"+vValue);
+	break;
+	case BriEvent_FlashEnd:// 拍插簧(Flash)完成事件，拍插簧完成后可以检测拨号音后进行二次拨号
+		AppendStatusEx(uID,"拍插簧(Flash)完成事件，拍插簧完成后可以检测拨号音后进行二次拨号"+vValue);
+	break;
+	case BriEvent_RefuseEnd:// 拒接完成
+		AppendStatusEx(uID,"拒接完成"+vValue);
+	break;
+	case BriEvent_SpeechResult:// 语音识别完成 
+		AppendStatusEx(uID,"语音识别完成"+vValue);
+	break;
+	case BriEvent_FaxRecvFinished:// 接收传真完成
+		AppendStatusEx(uID,"接收传真完成"+vValue);
+	break;
+	case BriEvent_FaxRecvFailed:// 接收传真失败
+		AppendStatusEx(uID,"接收传真失败"+vValue);
+	break;
+	case BriEvent_FaxSendFinished:// 发送传真完成
+		AppendStatusEx(uID,"发送传真完成"+vValue);
+	break;
+	case BriEvent_FaxSendFailed:// 发送传真失败
+		AppendStatusEx(uID,"发送传真失败"+vValue);
+	break;
+	case BriEvent_OpenSoundFailed:// 启动声卡失败
+		AppendStatusEx(uID,"启动声卡失败"+vValue);
+	break;
+	case BriEvent_UploadSuccess://远程上传成功
+		AppendStatusEx(uID,"远程上传成功"+vValue);
+	break;
+	case BriEvent_UploadFailed://远程上传失败
+		AppendStatusEx(uID,"远程上传失败"+vValue);
+	break;
+	case BriEvent_EnableHook:// 应用层调用软摘机/软挂机成功事件
+		AppendStatusEx(uID,"应用层调用软摘机/软挂机成功事件"+vValue);
+	break;
+	case BriEvent_EnablePlay:// 喇叭被打开或者/关闭
+		AppendStatusEx(uID,"喇叭被打开或者/关闭"+vValue);
+	break;
+	case BriEvent_EnableMic:// MIC被打开或者关闭
+		AppendStatusEx(uID,"MIC被打开或者关闭"+vValue);
+	break;
+	case BriEvent_EnableSpk:// 耳机被打开或者关闭
+		AppendStatusEx(uID,"耳机被打开或者关闭"+vValue);
+	break;
+	case BriEvent_EnableRing:// 电话机跟电话线(PSTN)断开/接通
+		AppendStatusEx(uID,"电话机跟电话线(PSTN)断开/接通"+vValue);
+	break;
+	case BriEvent_DoRecSource:// 修改录音源
+		AppendStatusEx(uID,"修改录音源"+vValue);
+	break;
+	case BriEvent_DoStartDial:// 开始软件拨号
+		AppendStatusEx(uID,"开始软件拨号"+vValue);
+	break;
+	case BriEvent_RecvedFSK:// 接收到FSK信号，包括通话中FSK/来电号码的FSK
+		AppendStatusEx(uID,"接收到FSK信号，包括通话中FSK/来电号码的FSK"+vValue);
+	break;
+	case BriEvent_DevErr://设备错误
+		AppendStatusEx(uID,"设备错误"+vValue);
+	break;
+	default:
+		if(uEventType < BriEvent_EndID)
+			AppendStatusEx(uID,"忽略其它事件发生:ID=" + uEventType+ vValue);	
+	break;
+	}
+	
+}
+ 
+  </script>
+<script type="text/javascript">                                                                                                                                                                      
+    function getsms(tt) {
+        $.ajax({
+            url: "/admin/call/home",
+            type: "POST", 
+            data: { t: tt,action:'gjdx'},
+            dataType:"json",
+            success: function (data) {         
+            },
+            error: function (res) {
+            }
+        });
+    }
+    //mobile = '15699998888';
+   // getuserinfo();
+    function getuserinfo(mobile) {
+        $.ajax({
+            type:'post',
+            url:'/admin/call/home',
+            data:{mobile:mobile,action:'getuserinfo'},
+            success:function (res){
+                if(res['code'] === 0){
+                    //新建一个
+                    var a = document.createElement('a');
+                    a.setAttribute('data-index','_user_detail_uid_' + res.data.uid);
+                    a.setAttribute('href','/admin/user/detail/uid/' + res.data.uid);
+                    if(!res.data.realname){
+                        res.data.realname = res.data.mobile; 
+                    }
+                    a.innerHTML ='<span style="display: none;">' + res.data.realname + '客户</span>详情';
+                    c(a);
+                }
+            }
+        });
+    }
+</script>
+<div style="position:absolute;top:0; z-index:-1; opacity:0">
+    <textarea id="StatusArea" rows="13" name="S1" cols="86"></textarea>
+    <object classid="clsid:F44CFA19-6B43-45EE-90A3-29AA08000510" id="qnviccub" data="DATA:application/x-oleobject;BASE64,GfpM9ENr7kWQoymqCAAFEAADAAD7FAAADhEAAA==
+" width="33" height="33"  name='qnviccub'></object>
+    <input type="button" value="检查控件是否安装" name="B0" onClick="I_CheckActiveX()">
+
+</div>

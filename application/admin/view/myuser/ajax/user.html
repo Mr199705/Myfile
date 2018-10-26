@@ -1,0 +1,106 @@
+<form method="post" action="{$initData.requestUrl}" onsubmit="return pluedit(this,'批量设置数据，将会改变所选择的项目状态信息，请谨慎操作！','正在批量修改！');">
+    <input type="hidden" name="action" value="pluupdate">
+    <div class="table-responsive">
+        <table class="table table-striped dindan">
+            <thead>
+            <tr>
+                <th style="width:5%;">选择</th>
+                <th style="width:10%;">名称</th>
+                <th style="width:20%;">联系人</th>
+                <th style="width:10%;">拜访周期</th>
+                <th style="width:10%;">订单周期</th>
+                <th style="width:10%;">注册更新时间</th>
+                <th style="width:20%;text-align: center" >客户介绍</th>
+                <th style="width:5%;">微信</th>
+                <th style="width:10%;">操作</th>
+            </tr>
+            </thead>
+            {if $user_gm}
+            <tbody>
+            {foreach name="user_gm" item="um"}
+            <tr>
+                <td>
+                    <div class="icheckbox_square-green" style="position: relative;" id="{$um.id}"onmouseover="hovers(id)" onmouseout="outs(id)" onclick="checks(id);" >
+                        <input class="i-checks" type="checkbox" name="ids[]" value="{$um.uid}" style="position: absolute; opacity: 0;">
+                        <ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins>
+                    </div>
+                </td>
+                <td><a data-index="_user_detail_uid_<!--{$um.uid}-->" href="/admin/myuser/detail/uid/{$um.uid}" onclick="return c(this);">{$um.realname}<span style="display: none;">客户详情</span></a></td>
+                <td>{notempty name="$um.contact"}{$um.contact}<br>{/notempty}
+                    {notempty name="$um.mobile"}手机：{$um.mobile}<br>{/notempty}
+                    {notempty name="$um.phone"}固话：{$um.phone}<br>{/notempty}
+                    {$um.address}
+                </td>
+                <td>
+                    {notempty name="$um.bdate"}最后拜访：{$um.bdate|date="Y/m/d H:i:s",###}{/notempty}<br>
+                    {notempty name="$um.baifang_days"}<font color="#669900">距今：{$um.baifang_days}天</font>{/notempty}
+                </td>
+                <td>{notempty name="$um.odate"}最后下单：{$um.odate|date="Y/m/d H:i:s",###}{/notempty}<br>
+                    {notempty name="$um.order_days"}<font color="#669900">距今：{$um.order_days}天</font>{/notempty}
+                </td>
+                <td>
+                    {notempty name="$um.regtime"}<font color="#669900">注册：{$um.regtime|date="Y/m/d H:i:s",###}</font>{/notempty}<br>
+                    {notempty name="$um.lastvisit"}更新：{$um.lastvisit|date="Y-m-d H:i:s",###}{/notempty}
+                </td>
+                <td style="word-break:normal;display:block; white-space:pre-wrap;word-wrap : break-word ;overflow: hidden ;">{$um.summary}</td>
+                <td>
+                    {notempty name="$um.weixin"}<font color="#006600">已绑定</font>{/notempty}
+                    {empty name="$um.weixin"}未绑定{/empty}
+                </td>
+                <td>
+                    <a class="btn  btn-success btn-sm" data-index="_user_detail_uid_<!--{$um.uid}-->" href="/admin/myuser/detail/uid/{$um.uid}" onclick="return c(this);"><span style="display: none;">{notempty name="$um.realname"}{$um.realname}客户{/notempty}</span>详情</a>
+                </td>
+            </tr>
+            {/foreach}
+            <tr>
+                <td>
+                    <a class="btn btn-sm btn-success" onclick="checkA(this,'{$initData.sign}List','ids[]');" href="javascript:void(0);">√</a>
+                </td>
+                <td colspan="10">
+                    {if $stages}
+                    <select style="width:103px;padding:5px 2px; border-color:#e5e6e7;" name="stage_id">
+                        <option value="0">{if $tag_title!='' ||$tag_title != null}{$tag_title}{else/}客户阶段{/if}</option>
+                        {foreach name="stages" item="stage"}
+                        <option value="{$stage.id}">{$stage.title}</option>
+                        {/foreach}
+                    </select>
+                    {/if}
+                    <select name="tpid" style="width:103px;padding:5px 2px; border-color:#e5e6e7;">
+                        <option value="">客户类型</option>
+                        {if $type}
+                        {foreach name="type" item="ty"}
+                        <option value="{$ty.id}">{$ty.title}</option>
+                        {/foreach}
+                        {else}
+                        {/if}
+                    </select>
+                    <select id="rankid" name="rankid" style="width:103px;padding:5px 2px; border-color:#e5e6e7;">
+                        <option value="">客户等级</option>
+                        {if $rank}
+                        {foreach name="rank" item="ra"}
+                        <option value="{$ra.id}">{$ra.rank_name}</option>
+                        {/foreach}
+                        {else}
+                        {/if}
+                    </select>
+                    <select id="trust" name="trust" style="width:103px;padding:5px 2px; border-color:#e5e6e7;">
+                        <option value="">认证状态</option>
+                        <option value="1">认证</option>
+                        <option value="0">取消认证</option>
+                    </select>
+                    <select id="status" name="status" style="width:103px;padding:5px 2px; border-color:#e5e6e7;">
+                        <option value="">客户状态</option>
+                        <option value="1">有效</option>
+                        <option value="0">无效</option>
+                    </select>
+                    <input type="submit" class="btn btn-sm btn-success" value="批量修改">
+                </td>
+            </tr>
+            {else}
+            <tr><td colspan="10" style="text-align:center;color:red;">没有找到符合条件的记录！</td></tr>
+            {/if}
+            </tbody>
+        </table>
+    </div>
+</form>
+{include file="common/page"}

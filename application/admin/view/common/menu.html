@@ -1,0 +1,46 @@
+{if $admin_index_index}
+<nav class="navbar-default navbar-static-side" role="navigation" style=" position:fixed;">
+<div class="slimScrollDiv" style="position: relative; width: auto; height: 100%;">
+<div class="sidebar-collapse" style="width: auto; height: 100%;">
+    <ul class="nav" id="side-menu">
+        <li class="nav-header">
+            <div class="dropdown profile-element"> 
+            <span>
+            {if condition="$Think.session.userinfo.img"}
+                <img alt="image" class="img-circle" style="width: 60px;height: 60px;" src="{$Think.session.userinfo.img}" />
+            {else/}
+            	<img alt="image" class="img-circle" style="width: 60px;height: 60px;" src="__IMG__/default_head.jpg" />
+            {/if}
+            </span>
+                <a data-toggle="dropdown" class="dropdown-toggle" href="/{$Request.module}">
+                    <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">{$Think.session.userinfo.realname}</strong></span>  
+                    <span class="text-muted text-xs block">{$groupinfo.title}</span> </span>
+                </a>
+            </div>
+        </li>
+        {volist name="menulist" id="menu"}
+        <li>
+            {if condition="$menu.child neq []"}
+            <a href="{if !$menu.bb}/x{/if}/{$Request.module}/{$menu.url}" title="#"><i class="{$menu.icon}"></i> <span class="nav-label">{$menu.title}</span><span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                {volist name="menu.child" id="child"}
+                <li>
+                    <a class="J_menuItem" href="{if !$child.bb}/x{/if}/{$Request.module}/{$child.url}">{$child.title}</a>
+                </li>
+                {/volist}
+            </ul>
+            {else}
+            <a href="{if !$menu.bb}/x{/if}/{$Request.module}/{$menu.url}" class="J_menuItem" onclick="return false;"><i class="{$menu.icon}"></i><span class="nav-label">{$menu.title}</span></a>
+            {/if}
+        </li>
+        {/volist}
+         {if $chargeurl}
+        <li>
+            <a  href="{$chargeurl}" target="_blank"><i class="glyphicon glyphicon-cloud" aria-hidden="true"></i> <span class="nav-label">服务中心</span></a>
+        </li>
+        {/if}
+   </ul>
+</div>
+</div>
+</nav>
+{/if}

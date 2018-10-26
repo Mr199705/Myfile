@@ -1,0 +1,136 @@
+{include file="common/header"}
+</head>
+<body>
+    {include file="common/warning"}
+    {include file="common/tips"}
+    <div id="wrapper">
+        <div class="gray-bg dashbard-1">
+            <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-sm-11">
+                    <h2>客户等级</h2>
+                </div>
+            <div class="col-sm-1">
+                <a class="btn btn-success " href="#" data-toggle="modal" data-target="#myModal1">添加</a>
+                    <div class="modal inmodal" id="myModal1" tabindex="-1" role="dialog"  aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content animated fadeIn">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">
+                                        <span aria-hidden="true">&times;</span>
+                                        <span class="sr-only">Close</span>
+                                    </button>
+                                    <h4 class="modal-title">新增客户等级</h4>
+                                </div>
+                                <form action="/admin/user/addrank" method="post" enctype="multipart/form-data" class="form-horizontal" onsubmit="return false;">
+                                    <input type="hidden" name="action" value="add" />
+                                    <div class="modal-body">
+                                    <span>说明：添加客户等级，实现同一商品针对不同等级客户显示不同价格，如：A类客户、B类客户。<br><br></span>
+                                         <div class="form-group">
+                                            <label class="col-sm-3 control-label">等级名称: </label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" value="" name="rank_name" />
+                                            </div>
+                                         </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+                                        <input type="submit" name="authsubmit" value="提交" class="btn btn-primary" tabindex="3" onclick="return formAct2(this.form,'','正在新增客户等级，请稍后！');" />
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="wrapper wrapper-content animated fadeInRight">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                              	<h5>客户等级<small>实现同一商品针对不同等级客户显示不同价格，如：A类客户、B类客户。</small></h5>
+                            </div>
+                            <div class="ibox-content">			
+                                <div class="table-responsive">
+                                    {if count($ranks)}
+                                    <form name="cpform" method="post" action="/admin/user/arank" id="typelist" onsubmit="return false;">
+                                    {/if}
+                                    <table class="table table-striped dindan">
+                                        <thead>
+                                            <tr>
+                                                <th>删除</th>
+                                                <th>显示顺序</th>
+                                                <th>名称</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        {if count($ranks)}
+                                        <tbody>
+                                            {foreach name="ranks" key=gid" item="type"}
+                                            <tr>
+                                                <td style="width:20px; ">
+                                                    <input class="i-checks" type="checkbox" name="delete[]" value="{$type.id}" >			 					
+                                                </td>
+                                                <td style="width:72px;">
+                                                    <input type="hidden" class="form-control" name="displayorderx[{$type.id}]" value="{$type.displayorder}">
+                                                    <input type="text" class="form-control" name="displayorder[{$type.id}]" value="{$type.displayorder}">
+                                                </td>
+                                                <td >{$type.rank_name}</td>
+                                                <td><a class="btn-sm btn btn-success" href="javascript:void(0);" data-toggle="modal" data-target="#myModal2" onclick="setEditTypeForm('{$type.id}','{$type.rank_name}');">编辑</a></td>
+                                            </tr>
+                                            {/foreach}
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td><a class="btn btn-sm btn-success" onclick="checkA(this,'typelist','delete[]');" href="javascript:void(0);">√</a></td>
+                                                <td colspan="3"><input type="submit" class="btn btn-sm btn-primary" name="noticesubmit" value="提交" onclick="return formAct2(this.form,'批量修改后数据将无法恢复之前状态，请您核对数据后谨慎操作，您确认要批量修改数据吗？','正在进行批量操作，请稍后！');" /></td>
+                                            </tr>
+                                        </tfoot>
+                                        {else/}
+                                        <tr>
+                                            <td colspan="4" style="text-align: center;color: #f00;">您还没有添加客户等级！</td>
+                                        </tr>
+                                        {/if}
+                                    </table>
+                                    {if $ranks}</form>{/if}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--编辑员工类型-->
+            <div class="modal inmodal" id="myModal2" tabindex="-1" role="dialog"  aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content animated fadeIn">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">
+                                <span aria-hidden="true">&times;</span>
+                                <span class="sr-only">Close</span>
+                            </button>
+                            <h4 class="modal-title">编辑客户等级</h4>
+                        </div>
+                        <form action="/admin/user/editrank" class="form-horizontal" method="post" onsubmit="return false">
+                            <input type="hidden" name="id" id="memberTypeId" value="" />
+                            <input type="hidden" name="action" value="edit" />
+                            <div class="modal-body">
+                                 <div class="form-group">
+                                    <label class="col-sm-3 control-label">客户等级: </label>
+                                     <div class="col-sm-9">
+                                         <input type="text" class="form-control" name="rank_name" id="memberTypeTitle" value="" />
+                                    </div>
+                                 </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+                                <input type="submit" name="authsubmit" value="提交" class="btn btn-primary" onclick="return formAct2(this.form,'','正在修改客户等级！');" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--编辑员工类型-->
+        </div>
+    </div>
+    {include file="common/footerjs"}
+</body>
+</html>

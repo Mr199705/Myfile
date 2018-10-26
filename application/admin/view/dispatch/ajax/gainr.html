@@ -1,0 +1,39 @@
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>来源订单</th>
+                <th>小组名称</th>
+                <th>成员姓名</th>
+                <th>获取时间</th>
+                <th>最后调整</th>
+                <th>提成金额</th>
+                <th>来源详情</th>
+            </tr>
+        </thead>
+        <tbody>
+            {if count($data)}
+            {foreach name="data" item="vo"}
+            <tr>
+                <td>{$vo.number}</td>
+                <td>{$vo.dtitle}</td>
+                <td>
+                    {if $vo.type === 0}
+                    <label style="cursor:pointer;white-space:nowrap;display:inline-block;background: #1a7bb9;padding:2px;color: white;border-radius:3px;">{$vo.t_name}</label>
+                    {else}
+                    <label style="cursor:pointer;white-space:nowrap;display:inline-block;background: #23c6c8;padding:2px;color: white;border-radius:3px;">{$vo.t_name}</label>
+                    {/if}
+                </td>
+                <td>{$vo.getDt}</td>
+                <td>{$vo.mDt}</td>
+                <td>¥<span style="color:red;">{$vo.total}</span></td>
+                <td><a class="btn btn-primary btn-sm" data-id="gainDetail" href="javascript:void(0);" onclick="getGainDetail({$vo.dgoid});">调整</a></td>
+            </tr>
+            {/foreach}
+            {else}
+            <tr><td colspan="8" style="text-align: center;color:red;">没有找到符合条件的记录！</td></tr>
+            {/if}
+        </tbody>
+    </table>
+</div>
+{include file="common/page"}

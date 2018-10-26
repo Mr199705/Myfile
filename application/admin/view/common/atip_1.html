@@ -1,0 +1,53 @@
+<div class="modal-dialog modal-sm">
+    <div class="modal-content">
+        <div class="modal-header" style="margin:0px; padding:10px;">
+            <button id="tip_close" {if $close.sign}style="display: inline-block;"{else/}style="display: none;"{/if} onclick="javascript:document.getElementById('tipBox').style.display='none';document.getElementById('tipBackdrop').style.display='none';" type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">x</span><span class="sr-only">Close</span>
+            </button>
+            <h4 class="modal-title">提示信息</h4>
+        </div>
+        <div class="modal-body" id="tip_msg" style="text-align: center;">{if $message}{$message}{else/}未知操作{/if}</div>
+        <div class="modal-footer">
+            <a class="btn btn-sm btn-white" href="{if $back.url}{$back.url}{else/}{$Think.server.HTTP_REFERER}{/if}" id="tip_back" {if $back.sign}style="display: inline-block;"{else/}style="display: none;"{/if}>{if $back.content}{$back.content}{else/}返回{/if}</a>
+            <a class="btn btn-sm btn-primary" href="{if $detail.url}{$detail.url}{else/}javascript:void(0);{/if}" id="tip_detail" {if $detail.sign}style="display: inline-block;"{else/}style="display: none;"{/if}>{if $detail.content}{$detail.content}{else/}详情{/if}</a>
+            <a class="btn btn-sm btn-primary" href="{if $_continue.url}{$_continue.url}{else/}javascript:void(0);{/if}" id="tip_continue" {if $_continue.sign}style="display: inline-block;"{else/}style="display: none;"{/if}>{if $_continue.content}{$_continue.content}{else/}继续{/if}</a>
+            <a class="btn btn-sm btn-primary" href="javascript:void(0);" id="tip_close_btn" {if $close.sign}style="display: inline-block;"{else/}style="display: none;"{/if} onclick="javascript:document.getElementById('tipBox').style.display='none';document.getElementById('tipBackdrop').style.display='none';" class="close" data-dismiss="modal">{if $close.content}{$close.content}{else/}关闭{/if}</a>
+        </div>
+    </div>
+</div>
+{if $autoClose.sign}
+<script type="text/javascript">
+    var t =setTimeout(function (){
+        tipBox.style.display = 'none';
+        tipBackdrop.style.display = 'none';
+        document.body.className = 'pace-done';
+        document.body.setAttribute('style','');
+        if(document.getElementById('myModa12')){
+            document.getElementById('myModa12').style.display = 'none';
+        }else{
+            return false;
+        }
+        clearTimeout(t);
+    },{if $autoClose.time}{$autoClose.time}{else/}50{/if});
+</script>
+{/if}
+{if $jump.sign}
+<script type="text/javascript">
+    var t =setTimeout(function (){
+        window.location = '{$jump.url}';
+    },{if $jump.time}{$jump.time}{else/}50{/if});
+</script>
+{/if}
+{if $refresh.sign}
+<script type="text/javascript">
+    var t = setTimeout(function (){
+        window.location.reload();
+        clearTimeout(t);
+    },{if $refresh.time}{$refresh.time}{else/}3000{/if})
+</script>
+{/if}
+{if $nextAct.sign}
+<script type="text/javascript">
+    {$nextAct.action};
+</script>
+{/if}

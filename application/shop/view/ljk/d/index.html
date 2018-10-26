@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+        <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no">
+        <meta name="format-detection" content="telephone=no">
+        <title>{if $baojia && $baojia.goodsName}{$baojia.goodsName}{/if}{if $bjMarketing && $bjMarketing.bmtitle}-{$bjMarketing.bmtitle}{/if}</title>
+        <script type="text/javascript" src="__JS__/jquery-1.8.3.min.js"></script>
+        <script type="text/javascript" src="__JS__/d/scroll.js"></script>
+        <script type="text/javascript" src="__JS__/d/d.js?3"></script>
+        <script type="text/javascript" charset="utf-8" src="__COMMON__/js/areas.js?v=01291"></script>
+        <script type="text/javascript" src="__COMMON__/js/dot.js"></script>
+        <link rel="stylesheet" href="__CSS__/st.css">
+        <link rel="stylesheet" href="__CSS__/style.css">
+        <link rel="stylesheet" href="__CSS__/main.css">
+        <link rel="stylesheet" href="__CSS__/index.css">
+        {if is_weixin()}
+    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script type="text/javascript">
+        wx.config({
+            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            appId: '{$wxconfig.appId}', // 必填，公众号的唯一标识
+            timestamp: '{$wxconfig.timestamp}', // 必填，生成签名的时间戳
+            nonceStr: '{$wxconfig.nonceStr}', // 必填，生成签名的随机串
+            signature: '{$wxconfig.signature}',// 必填，签名，见附录1
+            jsApiList: ['chooseImage','previewImage','uploadImage','downloadImage','openLocation','getLocation','onMenuShareTimeline','onMenuShareAppMessage','onMenuShareQQ'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+        });
+    </script>
+    {/if}
+        <style type="text/css">
+		.slider img, #con img {
+			height: auto;
+			width: 100%;
+		}
+		</style>
+        </head>
+        <body>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('.list_lh li:even').addClass('lieven');
+            });
+            $(function(){
+                $("div.list_lh").myScroll({
+                    speed:40, //数值越大，速度越慢
+                    rowHeight:68 //li的高度
+                });
+            });
+        </script> 
+        {if $bjMarketing}
+        <div id="tipModal" onclick="closeModal('tipModal');" style="z-index: 9999;position: fixed; width: 100%; height: 100%;background: rgba(102,102,102,0.5);z-index: 10;display: none;"></div>
+        <script type="text/template" id="tipModalTpl">
+            <div style="border-radius:10px;position:absolute;top:calc(50% - 40px);left:20%;padding:0px 10px;width:60%;background:#fff;">
+                <h3 style="text-align:center;height:30px;line-height:40px;border-bottom:1px solid #000;">{{?ljk && ljk.msgTitle}}{{=ljk.msgTitle}}{{??}}提示信息{{?}}</h3>
+                <p style="text-align:center;height:60px;line-height:30px;">{{?ljk && ljk.msg}}{{=ljk.msg}}{{??}}{{?}}</p>
+                {{?ljk.btns}}
+                <p style="text-align:center;height:30px;line-height:30px;">
+                    {{for(var i = 0,l = ljk.btns.length; i < l; i++){}}
+                    <a href="javascript:void(0);" {{?ljk.btns[i].e && ljk.btns[i].a}}{{=ljk.btns[i].e}}="{{=ljk.btns[i].a}}"{{?}} style="background: #f00;color:white;padding: 5px 15px;">{{=ljk.btns[i].t}}</a>
+                    {{}}}
+                </p>
+                {{?}}
+            </div>
+        </script>
+        <div id="moreAddressModal" class="my-modal" onclick="closeModal();"></div>
+        <div id="addressFormModal" class="my-modal" onclick="closeModal();" style="z-index: 20;"></div>
+        <div id="container">
+          <div id="info_container">
+            <div class="slider"> {if $imgs}
+              <ul>
+                {foreach name="imgs" item="img"}
+                <li><a href="javascript:void(0);" target="_blank"><img src="{$img.imgurl}"></a></li>
+                {/foreach}
+              </ul>
+              {/if} </div>
+            <br />
+            <script type="text/javascript" src="__JS__/d/yxMobileSlider.js"></script> 
+            <script>
+                    $(".slider").yxMobileSlider({width:324,height:147,during:4000})
+                </script>
+            <div class="main">
+              <form method="post" onsubmit="return false;" action="/shop/distribution/order">
+                <input type="hidden" name="action" value="addorder" />
+                <input type="hidden" name="ordertype" value="6" />
+                {if $receiveAddress}
+                <input type="hidden" name="address_id" value="{$receiveAddress.id}" />
+                {/if}
+                {if $baojia}
+                <input type="hidden" name="baojia_id" value="{$baojia.bjid}" />
+                {/if}
+                {if $bjMarketing}
+                <input type="hidden" name="marketing_id" value="{$bjMarketing.bmid}" />
+                {/if}
+                {if $bjSku}
+                <input type="hidden" name="sku_id" value="{$bjSku.id}" />
+                {/if}
+                <div class="red_border" style="margin-bottom:30px;">
+                  <div class="center_title"><span>订单信息</span></div>
+                  <div class="line">
+                    <div class="title" style="text-align: right;"><em> * </em>产品名称：</div>
+                    <div class="info">
+                        <div class="inner"> 
+                            {if $allMkbj}
+                            <select name="product" id="product" onchange="anotherMk(this);">
+                                {foreach name="allMkbj" item="mk"}
+                                <option value="{$mk.bmid}" {if $mk.baojia_id == $baojia.bjid}selected="selected"{/if}>{$mk.goodsName}</option>
+                                {/foreach}
+                            </select>
+                            {/if} 
+                        </div>
+                    </div>
+                  </div>
+                  <div class="line">
+                    <div class="title" style="text-align: right;"><em> * </em>收货人：</div>
+                    <div class="info">
+                      <div class="inner">
+                        <input type="text" name="consignee" id="realname" placeholder="点此处填写姓名"  value="{if $receiveAddress && $receiveAddress.consignee}{$receiveAddress.consignee}{elseif $userinfo && $userInfo.realname}{$userInfo.realname}{/if}"/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="line">
+                    <div class="title" style="text-align: right;"><em> * </em>联系电话：</div>
+                    <div class="info">
+                      <div class="inner">
+                        <input type="number" name="mobile" id="mobile" placeholder="点此处填写手机号码" value="{if $receiveAddress && $receiveAddress.mobile}{$receiveAddress.mobile}{elseif $receiveAddress && $receiveAddress.tel}{$receiveAddress.tel}{elseif $userinfo && $userInfo.mobile}{$userInfo.mobile}{/if}" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="line">
+                    <div class="title" style="text-align: right;"><em>*</em>收货地址：</div>
+                    <div class="info">
+                      <div class="inner">
+                        <div id="addressForm"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="line">
+                    <div class="title" style="text-align: right;"><em>*</em>详细地址：</div>
+                    <div class="info">
+                      <div class="inner">
+                        <input type="text" name="address" value="{if $receiveAddress}{$receiveAddress.address}{/if}" />
+                      </div>
+                    </div>
+                  </div>
+                  <!--
+                            <script type="text/template" id="receiveAddressTpl">
+                                {{?ljk}}
+                                <span>{{=ljk.areaname}}{{=ljk.address}}</span>
+                                <input type="hidden" name="address_id" value="{{=ljk.id}}" />
+                                <p style="display: flex;display: -webkit-flex;flex-direction: row;justify-content: space-around;margin-top: 5px;">
+                                    <a href="javascript:void(0);" onclick="editAddress({id:'{{=ljk.id}}',areaids:'{{=ljk.areaids}}',address:'{{=ljk.address}}'});" style="background: #f00;color:white;padding: 5px 15px;">修改</a>
+                                    <a href="javascript:void(0);" onclick="moreAddress();" style="background: #f00;color:white;padding: 5px 15px;">更多</a>
+                                    <a href="javascript:void(0);" onclick="addAddress(1);" style="background: #f00;color:white;padding: 5px 15px;">新增</a>
+                                </p>
+                                {{??}}
+                                <span>当前没有收货地址，去新增！</span>
+                                <p style="display: flex;display: -webkit-flex;flex-direction: row;justify-content: space-around;margin-top: 5px;">
+                                    <a href="javascript:void(0);" onclick="addAddress(1);" style="background: #f00;color:white;padding: 5px 15px;">新增</a>
+                                </p>
+                                {{?}}
+                            </script>
+                            --> 
+                                <!--script type="text/template" id="addressFormTpl">
+                                    <form method="post" action="/shop/user/address" onsubmit="return false;" style="width:90%;padding:10px;position:absolute;left:calc(5% - 10px);top:calc(50% - 80px);background:#fff;">
+                                        <h3 style="margin:10px 0px;border-bottom:1px solid #000;">{{=ljk.title}}</h3>
+                                        {{?ljk.id}}<input type="hidden" name="id" value="{{=ljk.id}}">{{?}}
+                                        <div style="display: -webkit-flex;display: flex;flex-direction: column;">
+                                            <div style="width:90%;display:inline-block;margin:10px 0px;" id="addressForm"></div>
+                                            <p style="margin:10px 0px;">
+                                                <span>详细地址：</span>
+                                                <input type="text" value="{{?ljk.address}}{{=ljk.address}}{{?}}" />
+                                            </p>
+                                            <p style="margin:10px 0px;">
+                                                <button href="javascript:void(0);" onclick="doAddAddress(this.form);" style="background: #f00;color:white;border:none;padding: 5px 15px;">提交</button>
+                                                <a href="javascript:void(0);" onclick="closeModal('addressFormModal');" style="background: #f00;color:white;padding: 5px 15px;">关闭</a>
+                                            </p>
+                                        </div>
+                                    </form>
+                            </script--> 
+                            <script type="text/template" id="addressSelect">
+                                <select style="width: 30%;font-size:12px;" class="address address_{{=ljk.level}}" data-level="{{=ljk.level}}" name="areas[{{=ljk.level}}]" onchange="createAddressForm('{{=ljk.id}}',{{=ljk.level + 1}});">
+                                    <option value="">请选择</option>
+                                    {{for(var i = 0; i < ljk.data.length; i++){}}
+                                    <option value="{{=ljk.data[i].code}}:{{=ljk.data[i].code_name}}" {{?ljk.selectedCode && (ljk.selectedCode==ljk.data[i].code)}}selected="selected"{{?}}>{{=ljk.data[i].code_name}}</option>
+                                    {{?}}
+                                </select>
+                            </script> 
+                  <!--
+                            <script type="text/template" id="moreAddressTpl">
+                                <div style="width:100%;height:80%;">
+                                    <div style="max-height:80%;overflow-y:scroll;">
+                                        {{?ljk}}
+                                        {{for(var i = 0, l = ljk.lenght; i < l; i++){}}
+                                        <div style="display:flex;display:-webkit-flex;flex-direction:row;">
+                                            <span style="width: 70%;word-break: break-all;word-wrap: break-word;">{{=ljk[i].areaname}}{{=ljk[i].address}}</span>
+                                            <a href="javascript:void(0);" onclick="editAddress({id:'{{=ljk[i].id}}',areaids:'{{=ljk[i].areaids}}',address:'{{=ljk[i].address}}'});" style="background: #f00;color:white;padding: 5px 15px;">修改</a>
+                                            <a href="javascript:void(0);" onclick="deleteAddress('{{=ljk[i].id}}');" style="background: #f00;color:white;padding: 5px 15px;">删除</a>
+                                            <a href="javascript:void(0);" onclick="setReceiveAddress('{{=ljk[i].id}}') style="background: #f00;color:white;padding: 5px 15px;">设为收货地址</a>
+                                            {{?ljk[i].isdefault==0}}
+                                            <a href="javascript:void(0);" onclick="setDefaultAddress('{{=ljk[i].id}}');" style="background: #f00;color:white;padding: 5px 15px;">设为默认</a>
+                                            {{?}}
+                                        </div>
+                                        {{}}}
+                                        {{??}}
+                                        <p>您还未添加任何收货地址，点击添加按钮新增收货地址！</p>
+                                        {{?}}
+                                    </div>
+                                    <div style="height:20%;">
+                                        <p style="text-align:center;">              
+                                            <a href="javascript:void(0);" onclick="addAddress(0);" style="background: #f00;color:white;padding: 5px 15px;">新增</a>
+                                            <a href="javascript:void(0);" onclick="" style="background: #f00;color:white;padding: 5px 15px;">关闭</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </script>
+                            -->
+                  <!--<div class="line">
+                    <div class="title" style="text-align: right;"><em> * </em>当前库存：</div>
+                    <div class="info">
+                      <div class="inner">
+                        <input type="text" style="width: 60%;" id="storageNum" disabled="disabled" value="{if $bjSku.storage_num}{$bjSku.storage_num}{else}0{/if}">
+                        <span style="width: 35%;font-size: 16px;color:red;">{$bjSku.unit}</span> </div>
+                    </div>
+                  </div>-->
+                  <div class="line">
+                    <div class="title" style="text-align: right;"><em> * </em>领取数量：</div>
+                    <div class="info">
+                      <div class="inner">
+                        <input type="number" name="num" onblur="calcTotal(this,{if $bjMarketing.must_even}true{else}false{/if});" {if $bjMarketing.must_even}{if $bjMarketing.default_num}value="{$bjMarketing.default_num}"{else}value="2"{/if}{else}{if $bjMarketing.default_num}value="{$bjMarketing.default_num}"{else}value="1"{/if}{/if} placeholder="点此处填写数量" style="width: 60%;">
+                        <span style="width: 35%;font-size: 16px;color:red;">{$bjSku.unit}</span>
+                        <input type="hidden" name="unitid" value="{$bjSku.unitid}" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="line">
+                    <div class="title" style="text-align: right;"><em>*</em>{if $bjMarketing.fee_desc}{$bjMarketing.fee_desc}{else}快递费{/if}¥：</div>
+                    <div class="info">
+                      <div class="inner">
+                        <input type="hidden" id="price" disabled="disabled" value="{if $bjSku}{$bjSku.price}{elseif $baojia.price}{$baojia.price}{/if}" />
+                        <input type="number" id="total" value="{if $bjSku}{if $bjMarketing.must_even}{if $bjMarketing.default_num}{$bjSku.price * $bjMarketing.default_num}{else}{$bjSku.price * 2}{/if}{else}{if $bjMarketing.default_num}{$bjSku.price * $bjMarketing.default_num}{else}{$bjSku.price * 1}{/if}{/if}{elseif $bjMarketing.price}{if $bjMarketing.must_even}{if $bjMarketing.default_num}{$bjMarketing.price * $bjMarketing.default_num}{else}{$bjMarketing.price * 2}{/if}{else}{if $bjMarketing.default_num}{$bjMarketing.price * $bjMarketing.default_num}{else}{$bjMarketing.price * 1}{/if}{/if}{/if}" disabled="disabled" />
+                      </div>
+                    </div>
+                  </div>
+                  <!--<div class="line">
+                                <div class="title" style="text-align: right;"><em>*</em>{if $bjMarketing.code_desc}{$bjMarketing.code_desc}{else}领取码{/if}：</div>
+                                <div class="info">
+                                    <div class="inner">
+                                        <input type="text" name="pcode" value="{if $pcode}{$pcode}{/if}" id="code" />
+                                    </div>
+                                </div>
+                            </div>-->
+                  <div class="line" style="border-bottom: 0px; height: 40px">
+                    <div class="title" style="text-align: right;"><em> * </em>付款方式：</div>
+                    <div class="info">
+                      <div class="inner"> {if $bjMarketing.wxpay}
+                        <select class="select" name="paytype" style="width: 100%;">
+                          <option value="1" selected="selected">微信</option>
+                        </select>
+                        {else}
+                        <input type="hidden" name="paytype" value="0" />
+                        <input type="text" disabled="disabled" value="{if $bjMarketing.express_fee_desc}{$bjMarketing.express_fee_desc}{else}货到付快递费{/if}" id="code" />
+                        {/if} </div>
+                    </div>
+                  </div>
+                  {if $bjMarketing.tipmsg}
+                  <div class="line tip">{$bjMarketing.tipmsg}</div>
+                  {/if}
+                  <div class="line" style="height: 100px">
+                    <div class="title" style="text-align: right;">留言：</div>
+                    <div class="info">
+                      <div class="inner">
+                        <textarea name="content" id="comment" style="margin: 0px; width: calc(100% - 5px);max-width: calc(100% - 5px);min-width: calc(100% - 5px);min-height: 43px;max-height: 43px;"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                  <button class="sub" id="apply" onClick="return addOrder(this.form);" style="width: 100%;"><i class="fa fa-hand-o-right" style="font-size:22px;font-weight: bold"></i>提交订单<i class="fa fa-hand-o-left" style="font-size:20px"></i></button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div id="order_container">
+            <div class="main">
+              <div class="red_border" style="margin-bottom:30px;">
+                <div class="center_title"><span>发货通知</span></div>
+                <div class="line" style="height: 300px; line-height: 15px">
+                  <div id="fahuo" style="overflow:hidden; height: 100%"> 
+                    <!-- 代码开始 -->
+                    <div class="list_lh" > {if condition="$list"}
+                      <ul>
+                        {volist name="list" id="lb"}
+                        <li style="padding-left:0px; line-height:50px;">
+                          <p style="font-size:14px; color:#B7B7B7;">{$lb.titme} {$lb.name} {$lb.phong}</p>
+                          <p>{$lb.tedt}<font color="#FF0000">√</font></p>
+                        </li>
+                        {/volist}
+                      </ul>
+                      {else/}
+                      <div style="color:#f00; text-align:center;"> 你好，您目前没有发货通知！</div>
+                      {/if} </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="total_container"></div>
+          <!--<div id="expr_container">
+                <div class="main" >
+                    <div class="red_border" style="margin-bottom:30px;">
+                        <div class="center_title"><span>订单查询</span></div>
+                        <div class="line" style="border: none">下方输入下单电话号码查询</div>
+                        <form method="post" name="form_w">
+                            <div class="line">
+                                <div>
+                                    <input type="number" style="width: 70%"  value=" " name="qmobile" id="qmobile" placeholder="点此处填写手机号码">
+                                </div>
+                                <div style="width: 30%" class="info_sub" id="expsearch"  onClick="return rode(this.form_w);">查询</div>
+                            </div>
+                        </form>
+                        <div class="line" style="border: none">温馨提示：可查询订单及物流信息</div>
+                        <br>
+                        <br>
+                    </div>
+                </div>
+            </div>--> 
+          {if $bjMarketing.detail}
+          <div id="detail_container">
+            <div class="main">
+              <div class="red_border" style="margin-bottom:30px;">
+                <div class="center_title"><span>相关介绍</span></div>
+                <div class="good_info">
+                  <div class="tab_con">
+                    <div class="line" style="border: none;width: auto; height: auto; ">
+                      <div class="con" id="con" style="display:block"> {$bjMarketing.detail|htmlspecialchars_decode=###} </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/if} </div>
+        <div id="core_show_div" style="display:none;"></div>
+        <script type="text/javascript">
+            {if $receiveAddress}
+            createAddressForm('',1,'{$receiveAddress.areaids}');
+            {else}
+            createAddressForm();
+            {/if}
+			
+    wx.ready(function(){
+		wx.onMenuShareTimeline({
+			title: '{if $baojia && $baojia.goodsName}{$baojia.goodsName}{/if}{if $bjMarketing && $bjMarketing.bmtitle}-{$bjMarketing.bmtitle}{/if}', // 分享标题
+			link: '', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+			imgUrl:  "http://ll.ljk.cc{$imgs[0]['imgurl']}", // 分享图标
+			success: function () {
+			// 用户确认分享后执行的回调函数
+		},
+		cancel: function () {
+			// 用户取消分享后执行的回调函数
+			}
+		});
+		wx.onMenuShareAppMessage({
+		title: '{if $baojia && $baojia.goodsName}{$baojia.goodsName}{/if}{if $bjMarketing && $bjMarketing.bmtitle}{/if}', // 分享标题
+		desc: '{$bjMarketing.bmtitle}-好商品，放心购！', // 分享描述
+		link: '', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+		imgUrl: "http://ll.ljk.cc{$imgs[0]['imgurl']}", // 分享图标
+		type: '', // 分享类型,music、video或link，不填默认为link
+		dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+		success: function () {
+		// 用户确认分享后执行的回调函数
+		},
+		cancel: function () {
+		// 用户取消分享后执行的回调函数
+		}
+		});
+	});
+        </script> 
+        {else} 
+        <script type="text/javascript">
+            showTip({msg:'没有这个商品信息！',btn:false});
+        </script> 
+        {/if}
+</body>
+</html>

@@ -1,0 +1,36 @@
+<form method="post" action="/admin/{$_controllerName|strtolower}/{$_actionName|strtolower}search" onsubmit="return false;" id="goodsSearchForm">
+<ul id="pcatsList" style="float: left; width: 168px; height: 200px;overflow-y: scroll; border:1px solid #F0F0F0;; padding:0px; position:relative;">
+   <li style="display: inline-block;margin: 2px 10px; width: 95px;">
+        <input class="input-sm form-control" type="text" placeholder="请输入类型..." value="" style="margin: 5px 0px; width: 135px;" oninput="searchPcats(this.value);" />
+   </li>
+    {foreach name="$conditions.pcats" item="pcat}
+    <li style="display: inline-block; margin: 2px 10px; width: 95px;">
+    	<a  style="width: 95px; padding:2px 26px 2px 5px; color:#000000;" href="javascript:void(0);" onclick="getBrand('/admin/quote/getbrand/cat_id/{$pcat.cat_id}',this);">{$pcat.cat_name}</a>
+    </li>
+    {/foreach}
+</ul>
+<div id="brandsList" style="padding:0px;margin-right:30px;     margin-bottom: 13px; height: 200px;overflow-y: scroll; border:1px solid #f3f3f4;  top:50px; left:204px; background:#f3f3f4;">
+</div>
+<input type="hidden" id="showSwitch" name="i" value="1" />
+<div class="row">
+    <div class="col-sm-1" style=" padding-right:0px; width:110px;margin-right: 10px;" >
+        <div class="input-group">
+           <select class="input-sm form-control" name="type" style="width: 110px;">
+                <option value="goods_name" {if $conditions.type == 'goods_name'}selected{/if}>产品名称</option>
+                <option value="seller_note" {if $conditions.type == 'seller_note'}selected{/if}>条形码</option>
+                <option value="goods_sn" {if $conditions.type == 'goods_sn'}selected{/if}>货号</option>
+                <option value="keywords" {if $conditions.type == 'keywords'}selected{/if}>商品关键词</option>
+            </select>
+        </div>
+    </div>
+ <!--style=" padding-left:0px; margin-right:0px;"-->
+    <div class="col-sm-3"  >
+        <div class="input-group">
+            <input type="text" name="keywords" class="input-sm form-control" value="{if $conditions.keywords}{$conditions.keywords}{else/}{/if}" oninput="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" size="15" />
+            <span class="input-group-btn">
+            <button type="button" class="btn btn-sm btn-primary" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);"> 搜索</button> 
+            </span>
+        </div>
+    </div> 
+</div>
+</form>

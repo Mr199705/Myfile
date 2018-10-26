@@ -1,0 +1,41 @@
+{include file="common/header" /}
+</head>
+<body>
+    {include file="common/warning" /}
+    {include file="common/tips" /}
+    <div class="warningtips" style="width:100%;z-index: 999 !important;background-color: rgba(51,51,51,0.7);margin: 0px auto;display: none;">
+        <div class="warningtipsContent" style="width: 400px;position: absolute;padding: 0px;background: #fff;border-radius: 10px;">
+            <h3 style="text-align: center;">提示信息</h3>
+            <hr />
+            <p style="text-align: center;padding: 5px 10px;color:#f00;font-size: 0px;" class="tipsContents">{if $message}{$message}{else}对不起，您没有权限访问该页面！{/if}</p>
+            <hr />
+            <p style="text-align: center;">
+            </p>
+        </div>
+    </div>
+{include file="common/footerjs"}
+<script type="text/javascript">
+    $('.warningtips').css('height',window.innerHeight + 'px');
+    $('.warningtipsContent').css('top',window.innerHeight / 2 - 75 + 'px');
+    $('.warningtipsContent').css('left',window.innerWidth / 2 - 200 + 'px');
+    $('.warningtips').show();
+    $(function (){
+        var t = false;
+        var i = 0;
+        function jb(){
+            if(t){
+                clearTimeout(t);
+            }
+            if(i < 1){
+                i += 0.10;
+                var f = i * 10 * 2 + 'px';
+                $('.tipsContents').css('font-size',f);
+                $('.warningtips').css('opacity',i);
+                t = setTimeout(jb,20);
+            }
+        }
+        jb();
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<script type="text/javascript">
+document.getElementById('mapusercount').innerHTML = '{$userscount}';
+var BASEDATA = [
+{$basedata}
+     ]
+     
+//创建和初始化地图函数：
+function initMap(){
+    window.map = new BMap.Map("l-map");
+    map.centerAndZoom(new BMap.Point({$groupinfo.y},{$groupinfo.x}),14);
+	map.enableScrollWheelZoom();                            //启用滚轮放大缩小
+	map.addControl(new BMap.ScaleControl());                    // 添加默认比例尺控件	 
+	map.addControl(new BMap.NavigationControl());
+    window.searchClass = new SearchClass();
+    searchClass.setData(BASEDATA)
+    var dd = searchClass.search({k:"title",d:"2013",t:"more",s:"all"});//t:{single|more},s{all|!all}
+    addMarker(dd);//向地图中添加marker
+	//addzhexian();
+}
+
+
+//创建折线
+function addzhexian(){
+	var polyline = new BMap.Polyline([
+    {$zhexian}
+	], {strokeColor:"red", strokeWeight:5, strokeOpacity:0.7});
+	map.addOverlay(polyline);
+	}
+window.search = function(name_t,name_s,id_d){
+  //  var t_o = document.getElementsByName(name_t);
+  // var s_o = document.getElementsByName(name_s);
+  // var s_v,t_v,d_v = document.getElementById(id_d).value;
+    var t_o = name_t;
+    var s_o = name_s;
+    var s_v,t_v,d_v = id_d;
+
+
+    searchClass.trim(t_v) == "" && (t_v = "single");
+   // var dd = searchClass.search({k:"title",d:d_v,t:t_v,s:s_v});
+    var dd = searchClass.search({k:"title",d:d_v,t:t_o,s:s_o});
+    addMarker(dd);//向地图中添加marker
+	addzhexian();
+}
+// 编写自定义函数,创建标注
+function addm(point){
+  var marker = new BMap.Marker(point);
+  map.addOverlay(marker);
+}
+
+//创建marker
+window.addMarker = function (data){
+  //  map.clearOverlays();
+var markers = [];
+    for(var i=0;i<data.length;i++){
+        var json = data[i];
+        var p0 = json.point.split("|")[0];
+        var p1 = json.point.split("|")[1];
+        var point = new BMap.Point(p0,p1);
+        var iconImg = createIcon(json.icon);
+     //   var marker = new BMap.Marker(point,{icon:iconImg});
+        var marker = new BMap.Marker(point);
+		markers.push(marker);
+        //var iw = createInfoWindow(i);
+        var label = new BMap.Label('<a style="border:1px #f00 solid;color:#000;" class="J_menuItem" data-index="user_detail_'+ json.uid +'" href="{$Request.module}/user/detail/uid/' + json.uid + '" onclick="return c(this);">' + json.title + '<span style="display: none;">详情</span></a>',{"offset":new BMap.Size(json.icon.lb-json.icon.x+10,-20)});
+        marker.setLabel(label);
+      //  map.addOverlay(marker);
+        label.setStyle({
+                    border:'none',
+                    color:"#000",
+                    backgroundColor:0,
+                    cursor:"pointer"
+        });
+
+        (function(){
+			var _json = json;
+			//var _iw = createInfoWindow(_json);
+			var _marker = marker;
+			_marker.addEventListener("click",function(){
+				//this.openInfoWindow(_iw);
+				//document.getElementById("r-result").innerHTML = createInfo(_json);
+                                var label = new BMap.Label('<a style="border:1px #f00 solid;color:#000;" class="J_menuItem" data-index="user_detail_'+ _json.uid +'" href="{$Request.module}/user/detail/uid/' + _json.uid + '" onclick="return c(this);">' + _json.title + '<span style="display: none;">详情</span></a>',{"offset":new BMap.Size(json.icon.lb-json.icon.x+10,-20)});
+                                label.setStyle({
+                                    border:'none',
+                                    color:"#000",
+                                    backgroundColor:0,
+                                    cursor:"pointer"
+                                });
+                                _marker.setLabel(label);
+				//markerClusterer.removeMarkers(markers);
+			   });
+			   //_iw.addEventListener("open",function(){
+				//_marker.getLabel().hide();
+			   //})
+			   //_iw.addEventListener("close",function(){
+				//_marker.getLabel().show();
+			   //})
+                        //label.addEventListener("click",function(){
+			//	_marker.openInfoWindow(_iw);
+			   //})
+			//if(!!json.isOpen){
+			 //label.hide();
+			 //_marker.openInfoWindow(_iw);
+			//}
+		})()
+    }
+	var markerClusterer = new BMapLib.MarkerClusterer(map, {markers:markers});
+	markerClusterer.setMaxZoom(16);
+}
+//创建InfoWindow
+function createInfoWindow(json){
+    var iw = new BMap.InfoWindow("<b class='iw_poi_title' title='" + json.title + "'>" + json.title + "</b><div class='iw_poi_content'>"+json.content+"</div>");
+    return iw;
+}
+
+//创建文本标注
+function createLabel(point,text){
+var opts = {
+  position : point,    // 指定文本标注所在的地理位置
+  offset   : new BMap.Size(5, -30)    //设置文本偏移量
+ 
+}
+var label = new BMap.Label(text, opts);  // 创建文本标注对象
+	label.setStyle({
+		 color : "red",
+		 fontSize : "12px",
+		 height : "20px",
+		 lineHeight : "20px",
+		 fontFamily:"微软雅黑"
+	 });
+map.addOverlay(label);
+}
+//创建InfoWindow
+function createInfo(json){
+    var iw = "<b class='iw_poi_title' title='" + json.title + "'>" + json.title + "</b><div class='iw_poi_content'>"+json.content+"</div>";
+    return iw;
+}
+//创建一个Icon
+function createIcon(json){
+    var icon = new BMap.Icon("/resource/images/location.gif", new BMap.Size(json.w,json.h),{imageOffset: new BMap.Size(-json.l,-json.t),infoWindowAnchor:new BMap.Size(json.lb+5,1),offset:new BMap.Size(json.x,json.h)})
+    return icon;
+}
+
+function SearchClass(data){
+    this.datas = data;
+}
+SearchClass.prototype.search = function(rule){
+    if(this.datas == null){alert("数据不存在!");return false;}
+    if(this.trim(rule) == "" || this.trim(rule.d) == "" || this.trim(rule.k) == "" || this.trim(rule.t) == ""){alert("请指定要搜索内容!");return false;}
+    var reval = [];
+    var datas = this.datas;
+    var len = datas.length;
+    var me = this;
+    var ruleReg = new RegExp(this.trim(rule.d));
+    var hasOpen = false;
+    
+    var addData = function(data,isOpen){
+        // 第一条数据打开信息窗口
+        if(isOpen && !hasOpen){
+            hasOpen = true;
+            data.isOpen = 1;
+        }else{
+            data.isOpen = 0;
+        }
+        reval.push(data);
+    }
+    var getData = function(data,key){
+        var ks = me.trim(key).split(/\./);
+        var i = null,s = "data";
+        if(ks.length == 0){
+            return data;
+        }else{
+            for(var i = 0; i < ks.length; i++){
+                s += '["' + ks[i] + '"]';
+            }
+            return eval(s);
+        }
+    }
+    for(var cnt = 0; cnt < len; cnt++){
+        var data = datas[cnt];
+        var d = getData(data,rule.k);
+        if(rule.t == "single" && rule.d == d){
+            addData(data,true);
+        }else if(rule.t != "single" && ruleReg.test(d)){
+            addData(data,true);
+        }else if(rule.s == "all"){
+            addData(data,false);
+        }
+    }
+    return reval;
+}
+SearchClass.prototype.setData = function(data){
+    this.datas = data;
+}
+SearchClass.prototype.trim = function(str){
+ if(str == null){str = "";}else{ str = str.toString();}
+    return str.replace(/(^[\s\t\xa0\u3000]+)|([\u3000\xa0\s\t]+$)/g, "");
+}   
+initMap();//创建和初始化地图
+</script>

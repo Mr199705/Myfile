@@ -1,0 +1,49 @@
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>订单编号</th>
+                <th>配送小组</th>
+                <th>分配时间</th>
+                <th>配送状态</th>
+                {if isset($admin_order_authdpg)}
+                <th>操作</th>
+                {/if}
+            </tr>
+        </thead>
+        <tbody>
+            {if condition="$pageInfo.t neq 0"}
+            {volist name="$orders" id="vo" }
+            <tr>
+                <td>
+                    <a href="/admin/order/detail/oid/{$vo.oid}" onclick="return c(this);" data-index="_order_detail_oid_{$vo.oid}"><span style="display: none;">订单:</span>{$vo.number}</a>
+                </td>
+                <td>{$vo.dpgtitle}</td>
+                <td>{:date('Y-m-d H:i:s', $vo.adtime );}</td>
+                <td>
+                    {if $vo.dispatch == 0}
+                    未配送
+                    {elseif $vo.dispatch == 1}
+                    配送中
+                    {elseif $vo.dispatch == 2}
+                    已配送
+                    {/if}
+                </td>
+                {if isset($admin_order_authdpg)}
+                <td>
+                    {if $vo.dispatch == 0}
+                    <a href="javascript:void(0)" style="margin: 0 3px;" class="btn btn-sm btn-success" data-id="dpgsList" onclick="loadModal(this,{oid:{$vo.oid},dpgid:{$vo.dpgid}});">更改配送组</a>
+                    {else}
+                    <span style="color:red;">配送中或已配送订单无法更改</span>
+                    {/if}
+                </td>
+                {/if}
+            </tr>
+            {/volist}
+            {else/}
+            <tr><td colspan="{if isset($admin_order_authdpg)}5{else}4{/if}" style="text-align: center;color:red;">没有找到符合条件的记录！</td></tr>
+            {/if}
+        </tbody>
+    </table>
+</div>
+{include file="common/page"}

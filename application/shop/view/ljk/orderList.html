@@ -1,0 +1,58 @@
+{include file="common/top" /}
+<title>地址</title>
+<script type="text/javascript" src="__JS__/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="__JS__/doT.min.js"></script>
+</head><body>
+<div class="fanhui_cou">
+  <div class="fanhui_1"></div>
+  <div class="fanhui_ding">顶部</div>
+</div>
+<header class="header">
+  <div class="fix_nav">
+    <div style="max-width:768px;margin:0 auto;background:#FE5400;position: relative;"> <a class="nav-left back-icon" href="javascript:history.back();">返回</a>
+      <div class="tit">全部订单</div>
+    </div>
+  </div>
+</header>
+<div class="container" style="padding:0px;"></div>
+<div class="clear"></div>
+<footer class="footer">
+  <div class="foot-con">
+    <div class="foot-con_2"> <a href="index.html"> <i class="navIcon home"></i> <span class="text">首页</span> </a> <a href="category.html"> <i class="navIcon sort"></i> <span class="text">分类</span> </a> <a href="shopcart.html"> <i class="navIcon shop"></i> <span class="text">购物车</span> </a> <a href="userhome.html"> <i class="navIcon member"></i> <span class="text">我的</span> </a> </div>
+  </div>
+</footer>
+<!-- dot模版 Start -->
+<script id="templateUserOrderList" type="text/template">
+	<div class="order_item" >
+            item
+	</div>
+</script>
+<!-- dot模版 End -->
+
+<script type="text/javascript">
+	//	加载全部订单
+	window.onload = function(){
+		console.log('加载订单开始');
+		var type = 1;
+		$.ajax({
+			url: 'user/orderList_json',
+			type: 'POST',
+			data: {
+				type: type
+			},
+			success: function(res){
+				if( res.code == 10 ){
+					console.log('加载订单成功..' + res.data );
+				}else{
+					console.log('加载订单失败...' + res.error );
+				}
+			},
+			error: function(){
+				console.log('连接服务器失败');
+			}
+		});
+	};
+	//	显示单个订单信息
+</script>
+</body>
+</html>

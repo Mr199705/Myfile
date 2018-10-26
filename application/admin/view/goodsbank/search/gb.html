@@ -1,0 +1,119 @@
+<div class="modal inmodal fade in" id="warningBox" style="position: fixed;display: none; z-index: 99999 !important;">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header" style="margin:0px; padding:10px;">
+                <button style="display: block;" onclick="javascript:document.getElementById('warningBox').style.display='none';document.getElementById('warningBackdrop').style.display='none';" type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">x</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">提示信息</h4>
+            </div>
+            <div class="modal-body" id="warningMsg" style="text-align: center;font-weight: bold;"></div>
+            <div class="modal-footer">
+                <a class="btn btn-sm btn-primary" href="javascript:void(0);" id="warningContinue" style="display: inline;" onclick="nextAct();">继续</a>
+                <a class="btn btn-sm btn-white" href="javascript:void(0);" style="display: inline;" onclick="javascript:document.getElementById('warningBox').style.display='none';document.getElementById('warningBackdrop').style.display='none';">取消</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-backdrop fade in" style="display: none;z-index: 99990 !important;" id="warningBackdrop"></div>
+<script type="text/javascript">
+    function closeTip(){
+        $('#tipBox').hide();
+        $('#tipBackdrop').hide();
+    }
+</script>
+<div class="modal inmodal fade in" id="tipBox" style="display: none;z-index: 99999 !important;">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header" style="margin:0px; padding:10px;">
+                <button id="tip_close" style="display: none;" onclick="closeTip();" type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">x</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">提示信息</h4>
+            </div>
+            <div class="modal-body" id="tip_msg" style="text-align: center;"></div>
+            <div class="modal-footer">
+                <a class="btn btn-sm btn-white" href="" id="tip_back" style="display: none;"></a>
+                <a class="btn btn-sm btn-primary" href="javascript:void(0);" id="tip_detail" style="display: none;"></a>
+                <a class="btn btn-sm btn-primary" href="javascript:void(0);" id="tip_continue" style="display: none;"></a>
+                <button id="tip_close_btn" style="display: none;" onclick="closeTip();" type="button" class="btn-sm btn-primary" data-dismiss="modal">
+                    <span aria-hidden="true">关闭</span><span class="sr-only">Close</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-backdrop fade in" style="display: none;z-index: 99990 !important;" id="tipBackdrop"></div>
+
+<div class="row">
+    <div class="col-sm-1" style=" padding-right:0px; width:110px;margin-right: 10px;">
+        <div class="input-group">
+            <select class="input-sm form-control" name="is_stock" style="width: 110px;" onchange="getList({sign:'{$initData.sign}'},1);">
+                <option value="3" selected="">终端库存</option>
+                <option value="2">上报</option>
+                <option value="1">不需上报</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-1" style=" padding-right:0px; width:110px;margin-right: 10px;">
+        <div class="input-group">
+            <select class="input-sm form-control" name="sell_status" style="width: 110px;" onchange="getList({sign:'{$initData.sign}'},1);">
+                <option value="3" selected="">产品状态</option>
+                <option value="2">已下架</option>
+                <option value="1">未下架</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-1" style=" padding-right:0px; width:110px;margin-right: 10px;">
+        <div class="input-group">
+            <select class="input-sm form-control" name="type" style="width: 110px;">
+                <option value="goods_name">产品名称</option>
+                <option value="seller_note">条形码</option>
+            </select>
+        </div>
+    </div>
+    <!--style=" padding-left:0px; margin-right:0px;"-->
+    <div class="col-sm-3">
+        <div class="input-group">
+            <input type="text" name="keywords" class="input-sm form-control" placeholder="请输入关键词" value="" size="15">
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-sm btn-primary"  onclick="getList({sign:'{$initData.sign}'},1);"> 搜索</button> </span>
+        </div>
+    </div>
+    <div class="col-sm-2 m-b-xs">
+        <button type="button" class="btn btn-sm btn-primary" id="genduo">更多</button>
+    </div>
+</div>
+<div class="row" id="saixuan" style=" display:none;">
+    <div>
+        <!------一级分类-------->
+        <ul style="padding:0px; margin-bottom: 20px; border-bottom:1px solid #f3f3f4; " id="firstNav">
+            {if $categorys}
+            {foreach name="categorys" item="cate"}
+            <li style="padding:3px 5px; display: inline-block; text-align:center; margin: 10px 5px;  cursor:pointer;" class="" onclick="getClists(this,'{$cate.id}');getList({sign:'{$initData.sign}'});">
+                <!--<input type="radio" style="display: none" name="pids" value="{$cate.id}">-->
+                {$cate.title}
+            </li>
+            {/foreach}
+            {else}
+            <li style="padding:3px 5px; display: inline-block; text-align:center; margin: 10px 5px;  cursor:pointer;color:red;">没有更多记录</li>
+            {/if}
+        </ul>
+        <!--------一级分类------>
+    </div>
+    <div id="cclists" style="display: none">
+        <!------二级分类-------->
+        {if $cates}
+        {foreach name="cates" item="ca"}
+        <ul id="cclists_{$key}" style="list-style-type: none;">
+            {foreach name="ca" item="cate"}
+                <li onclick="secondary2(this);getList({sign:'{$initData.sign}'});" class="">
+                    <input type="checkbox" name="ids[]" value="{$cate.id}">{$cate.title}
+                </li>
+            {/foreach}
+        </ul>
+        {/foreach}
+        {else}
+        {/if}
+    </div>
+</div>

@@ -1,0 +1,12 @@
+<form class="form-horizontal" method="post" id="goodsSearchForm" action="/admin/order/index.html" onsubmit="return false;">
+    <input type="hidden" name="uid" value="{$userInfo.uid}">
+    <input type="hidden" name="cid" value="0" id="cidValue">
+    <div class="row">
+        <div class="col-sm-6">
+            <input type="text" placeholder="请输入商品名称或商品货号关键词... ..." class="form-control" value="" name="w" size="25">
+        </div>
+        <div class="col-sm-2">
+            <button type="button" class="btn btn-sm btn-primary" onclick="getBjSkuGoods();">搜索</button>
+        </div>
+    </div>
+</form>

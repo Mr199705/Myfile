@@ -1,0 +1,57 @@
+<script type="text/html" id="order_goodscat">
+    {{if(ljk){}}
+    <div class="page__bd bjquery_goods_cat type1" style="height: calc(100% - 54px);"> 
+        <ul>
+            <li id="addOrderBuHuo" class="end_dt" data-click="bjquery({cid:''},false);">所有商品</li>
+        </ul>
+        {{for(var j=0;j<ljk.length;j++){}}
+        <dl>
+            <dt data-click="bjquery({cid:'{{=ljk[j].p.id}}'},false);">{{=ljk[j].p.title}}</dt>
+            <dd class="type1_dd" data-click="bjquery({cid:'{{=ljk[j].p.id}}'},false);">全部</dd>
+            {{for(var i=0;i<ljk[j].c.length;i++){}}
+            <dd class="type1_dd" data-click="bjquery({cid:'{{=ljk[j].c[i].id}}'},false);">{{=ljk[j].c[i].title}}</dd>
+            {{}}}
+        </dl>
+        {{}}}
+    </div>
+    {{}}}
+    <script type="text/javascript">
+        var alldl=$('.bjquery_goods_cat').children('dl');
+        var alldd = $(alldl).children('dd');
+        var alldt = $(alldl).children('dt');
+        $('#addOrderBuHuo').on('click',function (){
+            $('.end_dt').removeClass('end_dt');
+            $('.type1 dd').hide();
+            $(this).addClass('end_dt');
+            isRequest(this);
+        });
+        $(alldd).each(function (){
+            $(this).on('click',function (){
+                $(this).addClass('end_dt');
+                $(this).siblings('dd').removeClass('end_dt');
+                isRequest(this);
+            });
+        });
+        $(alldt).on('click',function (){
+            var dl = $(this).parent();
+            var dd = dl.children('dd'); 
+            $('#addOrderBuHuo').removeClass('end_dt');
+            $(alldd).hide();
+            $(alldd).removeClass('end_dt');
+            if($(this).hasClass('end_dt')){
+                $(alldt).removeClass('end_dt');
+                $('#addOrderBuHuo').addClass('end_dt');
+                bjquery({cid:''},false);
+                $(dd).hide();
+            }else{
+                $(alldt).removeClass('end_dt');
+                $(dd[0]).addClass('end_dt');
+                isRequest(this);
+                $(this).addClass('end_dt');
+                $(dd).each(function (){
+                    $(this).show();
+                });
+            }
+        });
+    </script>
+</script>

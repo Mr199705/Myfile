@@ -1,0 +1,190 @@
+{include file="common/header" /}
+<style type="text/css">
+    *::-webkit-scrollbar{
+        width: 0px;
+        height: 0px;
+    }
+    td{
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
+    table{
+        border-collapse:collapse;
+        border-spacing:0;
+        table-layout:fixed;
+        width: 100%;
+    }
+</style>
+</head>
+<body>
+{include file="common/warning" /}
+{include file="common/tips" /}
+<div class="pace  pace-inactive">
+    <div class="pace-progress" data-progress-text="100%" data-progress="99" style="width: 100%;">
+    <div class="pace-progress-inner"></div>
+</div>
+    <div class="pace-activity"></div>
+</div>
+<div style="background: #fff;">
+    <div class="gray-bg dashbard-1">
+        <div class="row" style="margin:0px; padding:0px;">
+            <div class="col-sm-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <span class="label label-info pull-right">今日</span>
+                        <h5>订单</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">{if condition="$order neq 0"}{$order}{else condition="$order eq 0" /}{$order}{/if}</h1>
+                        <div class="stat-percent font-bold text-info">{if condition="$todayorder neq 0"}{$todayorder}{else condition="$todayorder eq 0" /}{$todayorder}{/if}
+                        </div>
+                        <small>订单总数</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <span class="label label-primary pull-right">今日</span>
+                        <h5>客户</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">{if condition="$users neq 0"}{$users}{else condition="$users eq 0" /}{$users}{/if}</h1>
+                        <div class="stat-percent font-bold text-navy">{if condition="$todayuser neq 0"}{$todayuser}{else condition="$todayuser eq 0" /}{$todayuser}{/if}
+                        </div>
+                        <small>客户总数</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <span class="label label-danger pull-right">最新</span>
+                        <h5>公司信息</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <ul class="nav" >
+                            <li >公司名称<span class=" arrow"  style=" margin:0px;line-height: 11px;">老窖客系统</span></li>
+                            <li >管理员 <span class=" arrow" style=" margin:0px;line-height: 11px;">余超伟</span></li>
+                            <li >员工人数 <span class="arrow text-warning"  style=" margin:0px;line-height: 12px;">{if condition="$groups neq 0"}{$groups}人{else/}0人{/if}</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row  border-bottom white-bg dashboard-header">
+            <div class="col-sm-3">
+                <h2>客户数量</h2>
+                <ul class="list-group clear-list m-t">
+                    {if $usersnum}
+                        {foreach name="usersnum" item="um"}
+                        <li class="list-group-item fist-item">
+                            <span class="pull-right">{$um.num}个</span>
+                            <span class="label label-success">{$key+1}</span>
+                            <a href="/admin/baobiao/job/searchsubmit/1/guid/{$um.uid}" data-index="_baobiao_job_guid_371" onClick="return c(this);">
+                                {$um.realname}<span style="display: none">的工作报表</span>
+                            </a>
+                        </li>
+                        {/foreach}
+                    {/if}
+
+                </ul>
+            </div>
+            <div class="col-sm-9">
+                <div class="flot-chart dashboard-chart">
+                    <div class="flot-chart-content" id="flot-dashboard-chart"></div>
+                </div>
+                <div class="row text-left">
+                    <div class="col-xs-4">
+                        <span class="h4 font-bold m-t block">近一年交易总金额：¥{$sum}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="common/footerjs"}
+<!--表格统计加载-->
+<script>
+    $(document).ready(function () {
+        var data = [{$monthsData}];
+        var unit = [{$unit}];
+        $("#flot-dashboard-chart").bind("plotclick", function (event, pos, item) {
+            if (item) {
+                var contents = (item.datapoint[1] / unit[0]).toFixed(2) + unit[1] + '元';
+                showTooltip(item.pageX,item.pageY,contents);
+            }
+        });
+        function showTooltip(x, y, contents) {
+            $('<div onclick="this.style.display=\'none\';">' + contents + '</div>').css({
+                position: 'absolute',
+                display: 'none',
+                top: y - 30,
+                left: x - 20,
+                border: '1px solid #fdd',
+                padding: '2px',
+                cursor:'pointer',
+                'background-color': '#dfeffc',
+                opacity: 0.80
+            }).appendTo("body").fadeIn(200);
+        }
+        // var data = [29.9, 71.5,106.4]
+        $("#flot-dashboard-chart").length && $.plot($("#flot-dashboard-chart"), [
+            data
+        ], {
+            series: {
+                lines: {
+                    show: false,
+                    fill: true
+                },
+                splines: {
+                    show: true,
+                    tension: 0.4,
+                    lineWidth: 1,
+                    fill: 0.4
+                },
+                points: {
+                    radius: 1,
+                    show: true
+                },
+                shadowSize: 1
+            },
+            grid: {
+                hoverable: true,
+                clickable: true,
+                tickColor: "#d5d5d5",
+                borderWidth: 1,
+                color: '#d5d5d5'
+            },
+            colors: ["#1ab394", "#464f88"],
+            xaxis: {
+                ticks: [{$xaxis}]
+            },
+            yaxis: {
+                ticks: [{$yaxis}]
+            },
+            tooltip: false
+        });
+    });
+
+    ws = new WebSocket("wss://api.ljk.cc:8282");
+    ws.onopen = function() {
+        console.log("连接成功");
+        ws.send('{"id":507,"type":"init","sign":"sign_507","username":"管理员"}');
+        //console.log("给服务端发送一个字符串：tom");
+    };
+    ws.onmessage = function(e) {
+        data=JSON.parse(e.data);
+        if(data.msgtype=='newordermsg'){
+            autoPlay();
+        }
+        //alert("收到服务端的消息：" + e.data);
+    };
+    function autoPlay(){
+        var myAuto = document.getElementById('neworder');
+        myAuto.play();
+    }
+</script>
+<!--表格统计加载-->
+</body>
+</html>

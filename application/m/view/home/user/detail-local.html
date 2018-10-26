@@ -1,0 +1,312 @@
+<script type="text/template" charset="utf-8" id='userdetail'>
+    <div class="ljk_top">
+        <a class="top_left" onclick="goSys('m_index_home','{$m_user_index.url_name}');">
+            <i class="fa fa-angle-left fa-2x"></i>
+        </a>
+        <a class="top_right" href="javascript:;" style="padding-top: 12px;" onclick="location.reload();">
+            <i class="fa fa-refresh" style="font-size:1.3em;"></i>
+        </a>
+        <p class="weui-flex__item top_center">客户资料</p>
+    </div>
+    {{if(ljk){}}
+    {if $m_user_qrcode}
+        {{?!!ljk.bindwx}}
+        <div class="js_dialog" id="userQrcode" onclick="$(this).hide();" style="display: none;overflow: hidden;max-width: none;height: 100%;position: fixed;width: 100%;z-index: 4;height: calc(100%);top: 50px;">
+            <div class="weui-mask"></div>
+            {if count($groupShop)}
+            {foreach name="groupShop" item="shop"}
+            <div class="weui-dialog" style="width:250px;overflow-y:scroll;">
+                <p style="text-align:center;heigth:30px;line-height:30px;color:#fff;font-size:18px;background:#4fb234;">商城-{$shop.name}</p>
+                <img src="http://pan.baidu.com/share/qrcode?w=250&h=250&url={$shop.url}/shopid/{$shop.id}/gid/{$shop.gid}/uid/{{=ljk.uid}}" style="width:250px;height:250px;">
+            </div>
+            {/foreach}
+            {/if}
+        </div>
+        {{?}}
+    {/if}
+    <div class="ljk_neirong" >
+        <!--内容--->
+        <div class="weui-form-preview">
+            {if $m_user_profile}
+            {{?ljk.actpromise}}
+            <a class="weui-cell weui-cell_access" data-id="xiugaikehu" href="javascript:;" onClick="editProfile(this);" style="padding-bottom:0px; font-size:16px;">
+                <div class="weui-cell__bd  sy_kh">
+                    <p>{{=ljk.realname}}</p>
+                </div>
+                <div style="color: dodgerblue;">修改</div>
+            </a>
+            {{??}}
+            <a class="weui-cell" href="javascript:;" style="padding-bottom:0px; font-size:16px;">
+                <div class="weui-cell__bd  sy_kh">
+                    <p>{{=ljk.realname}}</p>
+                </div>
+            </a>
+            {{?}}
+            {/if}
+            <div class="weui-form-preview__bd" style="  padding-bottom: 0px;  font-size: .9em;">
+                <p>
+                    <label class="weui-form-preview__label">联系人</label>
+                    <span class="weui-form-preview__value">{{if(ljk.contact){}}{{=ljk.contact}}{{}}}{{if(ljk.contact==''){}}未设置{{}}}</span>
+                </p>
+                <p>
+                    <label class="weui-form-preview__label">联系电话</label>
+                    <span class="weui-form-preview__value">{{if(ljk.mobile){}}<a href="tel:{{=ljk.mobile}}" style="color:#999999">{{=ljk.mobile}}{{}}}</a>{{if(ljk.mobile==''){}}未设置{{}}}</span>
+                </p>
+				{{if(ljk.address){}}
+                <p>
+                    <label class="weui-form-preview__label">地址</label>
+                    <span class="weui-form-preview__value">{{=ljk.address}}</span>
+                </p>
+				{{}}}
+				{{if(ljk.bftime!==''){}}
+                <p>
+                    <label class="weui-form-preview__label">拜访周期</label>
+                    <span class="weui-form-preview__value">{{=ljk.bftime}}天未拜访</span>
+                </p>
+				{{}}}
+				{{if(ljk.otime!==''){}}
+                <p>
+                    <label class="weui-form-preview__label">下单周期</label>
+                    <span class="weui-form-preview__value">{{=ljk.otime}}天未下单</span>
+                </p>
+				{{}}}
+        </div>
+            <div class="weui-panel__bd">
+               <div class="weui-panel__hd " style="padding: 9px 9px 9px 14px;" id="dhxxuserdetail">
+                    <h4 class="weui-media-box__title" style="width: 50%; float: left; color:#000000;">更多信息</h4>
+                    <div class="Commodity_hiding">
+                    <i class="fa fa-eye" aria-hidden="true" id="eyeuserdetail" style="display:none;"></i>
+                    <i class="fa fa-eye-slash" aria-hidden="true" id="eye-slashuserdetail"></i>
+                </div>
+            </div>
+            <div class="weui-form-preview__bd dinhuouserdetail" style="display:none;  font-size: .9em;" > 
+              <p>
+                    <label class="weui-form-preview__label">积分</label>
+                    <span class="weui-form-preview__value">{{=ljk.rank_points}}</span>
+                </p>
+                <p>
+                    <label class="weui-form-preview__label">客户类型</label>
+                    <span class="weui-form-preview__value">{{=ljk.tt}}</span>
+                </p>
+                {{if(ljk.rn){}}
+                <p>
+                    <label class="weui-form-preview__label">等级</label>
+                    <span class="weui-form-preview__value">{{=ljk.rn}}</span>
+                </p>
+                {{}}}
+				{{if(ljk.phone){}}
+                <p>
+                    <label class="weui-form-preview__label">客户电话</label>
+                    <span class="weui-form-preview__value">{{=ljk.phone}}</span>
+                </p>
+				{{}}}
+				{{if(ljk.x){}}
+				<p>
+                    <label class="weui-form-preview__label">导航</label>
+                    <span class="weui-form-preview__value"><a class="weui-btn weui-btn_mini weui-btn_primary" href="javascript:" onclick="userNavigation('{{=ljk.uid}}');">开始导航</a></span>
+                </p>
+				{{}}}
+            </div> <br> 
+        <div class="weui-grids">
+            {if $m_user_qrcode}
+            {{?!!ljk.bindwx}}
+            <a href="javascript:;" class="weui-grid get_user_qrcode">
+                <div class="weui-grid__icon" style="text-align:center;">
+                    <i class="{$m_user_qrcode.icon}" style="{$m_user_qrcode.icon_style}" ></i>
+                </div>
+                <p class="weui-grid__label">二维码</p>
+            </a>
+            {{?}}
+            {/if}
+            {if $m_user_addvisit}
+            <a href="javascript:;" class="weui-grid" data-id="addgj" onclick="return addvisit(this);">
+                <div class="weui-grid__icon" style="text-align:center;">
+                    <i class="{$m_user_addvisit.icon}" style="{$m_user_addvisit.icon_style}" ></i>
+                </div>
+                <p class="weui-grid__label">{$m_user_addvisit.url_title}</p>
+            </a>
+            {/if}
+        {if $m_user_addstock}
+         <a href="javascript:;" class="weui-grid" style="position:inherit;" data-id="shangbaokucun" onClick="return addstock(this);">     
+                <div class="weui-grid__icon" style="text-align:center;">                                 
+                    <i class="fa fa-table weui-tabbar__icon" style="color:#F54805;"  ></i>
+                </div>
+                <p class="weui-grid__label">上报库存</p>
+            </a>
+			{/if}
+           {if $m_order_addorder}
+            <a href="javascript:;" class="weui-grid" data-id="xiadingdan" onClick="initAddOrderGoodsTpl('{{=ljk.uid}}');">
+                 <div class="weui-grid__icon" style="text-align:center;">
+                    <i class="fa fa-shopping-cart weui-tabbar__icon" style="color:#B007BB;"></i>
+                </div>
+                <p class="weui-grid__label">下订单</p>
+            </a>
+            {/if}
+			 {if $m_user_addhs}
+               <a href="javascript:;" class="weui-grid" data-id="huishou" onClick="return addhs(this);">
+                <div class="weui-grid__icon" style="text-align:center;">
+                    <i class="fa fa-undo weui-tabbar__icon" style="color:#017EFF;" ></i>
+                </div>
+                <p class="weui-grid__label">回收</p>
+            </a>   
+			{/if}      
+            <a href="javascript:;" class="weui-grid" style="position:inherit;" data-id="user_visit_record" onclick="re(this,'visit',{{=ljk.uid}});">
+                <span class="weui-badge" style="position: absolute;top: 1em;right:1em;">{{=ljk.visit_record_num}}</span>
+                <div class="weui-grid__icon" style="text-align:center;">                                 
+                    <i class="fa fa-clock-o weui-tabbar__icon" style="color:#FF9900;"  ></i>
+                </div>
+                <p class="weui-grid__label">拜访记录</p>
+            </a>
+            {if $m_rg_index && $m_rg_org}
+            <a href="javascript:;" class="weui-grid" style="position:inherit;" onclick="/*mResetChosedOrg();*/initUrg({uid:'{{=ljk.uid}}',realname:'{{=ljk.realname}}',mobile:'{{=ljk.mobile}}'},'{$m_rg_urg.url_name}');">
+                <div class="weui-grid__icon" style="text-align:center;">                                 
+                    <i class="fa fa-recycle weui-tabbar__icon" style="color:#FF0004;"  ></i>
+                </div>
+                <p class="weui-grid__label">退货</p>
+            </a>
+            <a href="javascript:;" class="weui-grid" style="position:inherit;" onclick="mRgList({uid:{{=ljk.uid}}},'{$m_rg_index.url_name}',1);">
+                <span class="weui-badge" style="position: absolute;top: 1em;right:1em;">{{=ljk.rg_record_num}}</span>
+                <div class="weui-grid__icon" style="text-align:center;">                                 
+                    <i class="fa fa-sign-in weui-tabbar__icon" style="color:#FF0004;"  ></i>
+                </div>
+                <p class="weui-grid__label">退货记录</p>
+            </a>
+            {/if}
+            {if $m_user_addstock}
+            <a href="javascript:;" class="weui-grid" data-id="user_stock_record" onclick="re(this,'stock',{{=ljk.uid}});">
+                <span class="weui-badge" style="position: absolute;top: 1em;right:1em;">{{=ljk.stock_record_num}}</span>
+                <div class="weui-grid__icon" style="text-align:center;">
+                    <i class="fa fa-cubes weui-tabbar__icon" style="color:#FF00D4;"></i>
+                </div>
+                <p class="weui-grid__label">库存信息</p>
+            </a>
+			{/if}
+			 {if $m_user_addhs}
+            <a href="javascript:;" class="weui-grid" data-id="user_hs_record" onclick="re(this,'hs',{{=ljk.uid}});">
+                <span class="weui-badge" style="position: absolute;top: 1em;right:1em;">{{=ljk.hs_record_num}}</span>
+                <div class="weui-grid__icon" style="text-align:center;">
+                    <i class="fa fa-recycle weui-tabbar__icon" style="color:#10aeff;"></i>
+                </div>
+                <p class="weui-grid__label">回收信息</p>
+            </a>
+			{/if}
+               {if $m_order_addorder}
+            <a href="javascript:;" class="weui-grid" data-click="orderList({uid:'{{=ljk.uid}}'},'m_order_index');" onclick="isRequest(this);" >
+                <span class="weui-badge" style="position: absolute;top: 1em;right:1em;">{{=ljk.order_record_num}}</span>
+                <div class="weui-grid__icon" style="text-align:center;">
+                    <i class="fa fa-align-justify weui-tabbar__icon" style="color:#F90606;"></i>
+                </div>
+                <p class="weui-grid__label">订单列表</p>
+            </a>
+			{/if}
+            <a href="javascript:;" class="weui-grid" data-id="user_ch_record" onclick="re(this,'ch',{{=ljk.uid}});">
+               <!-- <span class="weui-badge" style="position: absolute;top: 1em;right:1em;">13</span>-->
+                <div class="weui-grid__icon" style="text-align:center;">
+                    <i class="fa fa-truck weui-tabbar__icon" style="color:#FF008D;"></i>
+                </div>
+                <p class="weui-grid__label">出货信息</p>
+            </a>
+        </div>
+        <div style="width:100%; height:57px;">
+    </div>
+    {{}}}
+    <script type="text/javascript">
+        $('.get_user_qrcode').on('click', function (){   
+            $('#userQrcode').show();
+        });
+        function re(a,action,uid){
+            var id = $(a).attr('data-id');
+            var list = id + '_list';
+            if($('.list' + list + '_contents').length !== 0){
+                $('.list' + list + '_contents').html('<div class="listcontent list'+ list +'"><div id="cd-timeline" class="cd-container ' + list + '"></div></div>');
+                showLL('/m/user/record',list,{action:action,uid:uid,limit:10,p:1});
+            }
+            window.pageManager.go(id);
+        }
+        function searchUserOrder(a,uid){
+            var oldOuid = $('#ouid').val();
+            var resetSign = false;
+            $('#ouid').val(uid);
+            if(oldOuid != uid){
+                resetSign = true;
+            }
+            orderList({uid:uid},true);
+        }
+		 function addhs(a){
+            var id = $(a).attr('data-id');
+            $("#uploadimgs").remove();
+            if($('#addHsContent').length == 1){
+                initHsForm('/m/user/addhs');
+            }
+            window.pageManager.go(id);
+        }
+        function addvisit(a){
+            var id = $(a).attr('data-id');
+            $("#uploadimgs").remove();
+            if($('.user_addvisit').length != 0){
+                showLA('/m/user/addvisit/','user_addvisit',{action:'show'});
+            }
+            window.pageManager.go(id);
+        }
+		 function addstock(a){
+            var id = $(a).attr('data-id');
+            $("#uploadimgs").remove();
+            if($('#addStockContent').length == 1){
+                initStockForm('/m/user/addstock');
+            }
+            window.pageManager.go(id);
+        }
+        function editProfile(s){
+            var uid = $('#uid').html();
+            showLA('/m/user/profile/','user_editprofile',{action:'show',uid:uid});
+            var id = $(s).data('id');
+            window.pageManager.go(id);
+        }
+        $(function(){
+            $('.js_item').on('click', function(){
+                var id = $(this).data('id');
+                window.pageManager.go(id);
+            });
+        });
+        {{if( ljk.x ){}}
+        function createMap(){
+            var x = {{=ljk.x}};
+            if(!!x){
+                var y = {{=ljk.y}};
+                var t = '{{=ljk.realname}}';
+                var map = new BMap.Map("map");
+                map.centerAndZoom(new BMap.Point(y, x), 14);
+                addMarker(x, y,map,t);
+                map.enableScrollWheelZoom();
+            }
+        }
+        {{}}}
+        $(function(){
+            $('.js_item').on('click', function(){
+                var id = $(this).data('id');
+                window.pageManager.go(id);
+            });
+            $("#dhxxuserdetail").on('click',function(){
+                if($(".dinhuouserdetail").css("display")=="none"){
+                    $(".dinhuouserdetail").show();
+                    {{if( ljk.x ){}}
+                    var el = '<div style="width:100%;height:200px;" id="map"></div>';
+                    $(".dinhuouserdetail").append(el);
+                    createMap();
+                    {{}}}
+                    $('#eyeuserdetail').show();
+                    $('#eye-slashuserdetail').hide();
+                }else{
+                    $(".dinhuouserdetail").hide();
+                    $('#map').remove();
+                    $('#eyeuserdetail').hide();
+                    $('#eye-slashuserdetail').show();
+                }
+            });
+        });
+    </script>
+</script>
+{include file="home/user/user_nav"}
+{include file="home/user/report"}
+{include file="home/user/record"}
+

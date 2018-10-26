@@ -1,0 +1,65 @@
+<script type="text/template" charset="utf-8" id='orderlists'>
+{{if( ljk && ljk.length>0 ){ }}
+{{for(var i=0; i<ljk.length; i++){ }}
+<div class="weui-cells">
+    <a class="weui-cell weui-cell_access" data-id="dingdanxiangqing" href="javascript:" onClick="ShowOrderViewTpl(this,'orderdetail','{{=ljk[i].oid}}');" style="padding: 13px 15px 0px 15px;">
+        <div class="weui-cell__bd  sy_kh">
+            <p>{{=ljk[i].number}}</p>
+        </div>
+    </a>
+    <div class="weui-form-preview__bd" style="padding: 0px 16px 10px 16px;margin-top: 0px;">
+
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">订货人：</label>
+            <span class="weui-form-preview__value">{{=ljk[i].host.realname}}/*({{=ljk[i].host.trust}})*/</span>
+        </div>
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">联系电话：</label>
+            <span class="weui-form-preview__value">{{=ljk[i].host.mobile}}</span>
+        </div>
+        {{?ljk[i].host.address}}
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">地址：</label>
+            <span class="weui-form-preview__value">{{=ljk[i].host.address}}</span>
+        </div>
+        {{?}}
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">付款金额：</label>
+            <span class="weui-form-preview__value">{{=ljk[i].total}}</span>
+        </div>
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">下单时间：</label>
+            <span class="weui-form-preview__value">{{=ljk[i].adate}}</span>
+        </div>
+        {{if(ljk[i].content!=''){}}
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">订单备注：</label>
+            <span class="weui-form-preview__value">{{=ljk[i].content}}</span>
+        </div>
+        {{}}}
+		<div class="weui-form-preview__item">
+                <label class="weui-form-preview__label Order_status" style="color:#4498FC; border:1px solid #4498FC; margin:0px 2px;">{{=ljk[i].confirm_desc}}</label>
+               {{if(ljk[i].dispatch_desc!=''){}}
+			    <label class="weui-form-preview__label Order_status" style=" color:#F9AF35; border:1px solid #F9AF35; margin:0px 2px;">{{=ljk[i].dispatch_desc}}</label>
+				{{}}}
+				 {{if(ljk[i].pay_desc!=''){}}
+                <label class="weui-form-preview__label Order_status" style=" color:#6DC710; border:1px solid #6DC710; margin:0px 2px;">{{=ljk[i].pay_desc}}</label>
+				{{}}}
+				 {{if(ljk[i].trade_desc!=''){}}
+                <label class="weui-form-preview__label Order_status" style=" color:#6DC710; border:1px solid #6DC710; margin:0px 2px;">{{=ljk[i].trade_desc}}</label>
+				{{}}}
+        </div>
+    </div>
+    <div class="weui-form-preview__ft">
+        <button type="submit" class="weui-form-preview__btn weui-form-preview__btn_primary" href="javascript:" onClick="showdaohangtpl(this,'{{=ljk[i].oid}}');">订单导航</button>
+        <button type="submit" class="weui-form-preview__btn weui-form-preview__btn_primary" data-id="dingdanxiangqing" href="javascript:" onClick="ShowOrderViewTpl(this,'orderdetail','{{=ljk[i].oid}}');">订单详情</button>
+    </div>
+</div>
+{{ } }}
+{{ }else{ }}
+<div style="  width: 100%;height: 15em; text-align: center;  margin-top: 10em;   color: #ddd;">
+    <i class="fa fa-file-text-o fa-5x" aria-hidden="true"></i>
+    <p>未查询到符合条件的订单！</p><br>
+</div>
+{{ } }}
+</script>

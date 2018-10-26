@@ -1,0 +1,45 @@
+    {include file="common/header" /}
+    </head>
+    <body>
+        {include file="common/warning" /}
+        {include file="common/tips" /}
+        <div class="modal-backdrop" style="display: none;background: rgba(0,0,0,0.5);z-index: 99990 !important;" id="modalBackdropBox"></div>
+        <div id="wrapper">
+            <div  class="gray-bg dashbard-1">
+                <!--头部-->
+                <div class="row wrapper border-bottom white-bg page-heading">
+                    <div class="col-sm-8">
+                        <h2>仓库列表</h2>
+                    </div>
+                    <div class="col-sm-2">
+                        <br />
+                        <a href="javascript:void(0)" class="btn btn-primary btn-open-modal" data-id="#addStorage" onClick="openModal(this);">新建仓库</a>
+                    </div>
+                </div>
+                <!--头部-->
+                <div class="wrapper wrapper-content animated fadeInRight">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="ibox float-e-margins">
+                                <div class="ibox-content">
+                                    <form method="post" id='{$initData.sign}SearchForm' action="{$initData.requestUrl}" onSubmit="return false;">
+                                        <input type="hidden" name="action" value="showlist" />
+                                        {include file="storage/search/index"}
+                                    </form>
+                                    <div id="{$initData.sign}List">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {include file="storage/act/add_storage"}
+                {include file="storage/act/edit_storage"}
+            </div>
+        </div>
+        {include file="common/footerjs"}
+        <script type="text/javascript">
+            getList({sign:'{$initData.sign}'});
+        </script>
+    </body>
+</html>

@@ -1,0 +1,177 @@
+<!-- 编辑框 dot动态 -->
+<script type="text/template" id="ruleDialog">
+    {{ 
+        selectedBjs = {};
+        if(typeof ljk.baojia_ids !== 'undefined'){
+            for(var bi in ljk.baojia_ids){
+                selectedBjs[ljk.baojia_ids[bi].id] = ljk.baojia_ids[bi].goodsName;
+            }
+        }
+    }}
+    <div class="modal inmodal in" style="display: block;position:relative;height:100%;overflow-y:scroll;">
+        <div class="modal-dialog" style="width: 720px;">
+            <div class="modal-content animated fadeIn">
+                <div class="modal-header">
+                    <button type="button" class="close modal-close"> <span aria-hidden="true">×</span> <span class="sr-only">Close</span> </button>
+                    <h4 class="modal-title">添加/编辑提成规则</h4>
+                </div>
+                <form class="ruleDialogForm form-horizontal" action="/admin/dispatch/rule" method="post" class="form-horizontal" enctype="multipart/form-data" onsubmit="return false;">
+                    <input type="hidden" name="action" value="{{? ljk.action != null }}{{=ljk.action }}{{?}}">
+                    <input type="hidden" name="editid" value="{{? ljk.id != null }}{{=ljk.id }}{{?}}">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">标题：</label>
+                            <div class="col-sm-9">
+                                <input id="edit_title" type="text" class="form-control" name="title" value="{{? ljk.title != null }}{{=ljk.title }}{{?}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">提成路段：</label>
+                            <div class="col-sm-9">
+                                <ul id="roadContainer">
+                                    <li style="border: 1px solid #eee;padding: 3px 5px;" class="form-inline"> 
+                                        <b style="display: inline-block;width: 50%;text-align: center;">区间路段</b>
+                                        <b style="display: inline-block;width: 28%;text-align: center;">件/提成</b>
+                                    </li>
+                                    {{ if( typeof ljk.rules !== "undefined" && ljk.rules.length > 0 ) { }}
+                                    {{ for( var i = 0; i < ljk.rules.length; i++ ){ }}
+                                    <li style="border: 1px solid #eee;padding: 3px 5px;" class="form-inline">
+                                        <input type="hidden" name="uindex[]" value="{{=i }}">
+                                        <input type="number" class="form-control" style="width: 25%;" name="umin[{{=i }}]" value="{{=ljk.rules[i].min }}" step="0.01"> 
+                                        <input type="number" class="form-control" style="width: 25%;" name="umax[{{=i }}]" value="{{=ljk.rules[i].max }}" step="0.01"> 
+                                        <input type="text" class="form-control" style="width: 28%;" name="utotal[{{=i }}]" value="{{=ljk.rules[i].total }}" step="0.01">
+                                        <a onclick="$(this).parent().remove();">x</a>
+                                    </li>
+                                    {{ } }}
+                                        {{ 
+                                            ruleRoadLiItemId = i;
+                                            i--;
+                                            console.log( ljk.rules[i].min + "/" + i );
+                                            $('#ruleDialogFormContainer').find('input[name=addmin]').val(parseFloat(ljk.rules[i].min));
+                                            $('#ruleDialogFormContainer').find('input[name=addmax]').val(ljk.rules[i].max);
+                                            $('#ruleDialogFormContainer').find('input[name=addtotal]').val(ljk.rules[i].total);
+                                        }}
+                                    {{ } }}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">路段添加：</label>
+                            <div class="col-sm-9 form-inline">
+                                <input type="number" class="form-control" style="width: 23%;" name="addmin" value="{{? typeof ljk.rules !== 'undefined' }}{{=ljk.rules[i].max }}{{??}}0{{?}}" step="0.01">
+                                <span>到</span>
+                                <input type="number" class="form-control" style="width: 23%;" name="addmax" value="{{? typeof ljk.rules !== 'undefined' }}{{=(parseFloat(ljk.rules[i].max) + 5) }}{{??}}5{{?}}" step="0.01">
+                                <span>件/提成</span>
+                                <input type="number" class="form-control" style="width: 23%;" name="addtotal" value="{{? typeof ljk.rules !== 'undefined' }}{{=ljk.rules[i].total }}{{??}}3.60{{?}}" step="0.01">
+                                <button type="button" class="btn btn-sm btn-info" onclick="return ruleRoadAdd( this, this.form);">添加</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">适用商品：</label>
+                            <div class="col-sm-9">
+                                <div class="col-sm-12 form-inline" id="baojiaList" style="padding:0px;">
+                                    {{for( var bjid in selectedBjs){}}
+                                    <span style="display: inline-block;margin:3px;margin-left:0px;" id="selectedBjItem_{{=bjid}}">
+                                        <label class="label label-info">{{=selectedBjs[bjid]}}</label>
+                                        <input type="hidden" name="baojia_id[]" value="{{=bjid}}"> 
+                                        <a data-bjid="{{=bjid}}" onclick="checkBaojiaList(this);">X</a>
+                                    </span>
+                                    {{}}}
+                                </div>
+                                <input type="text" id="selectBaojiaSearchKeywords" class="form-control" style="width: 100%;" placeholder="搜索：商品名称">
+                                <div id="selectBaojiaListCon" style="overflow-y: scroll;height: 180px;">
+                                    <div id="selectBaojiaList" class="ruleDialogGoodsTpl" style="overflow: visible;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">状态： </label>
+                            <div class="col-sm-9">
+                                <select class="form-control" name="status">
+                                    <option value="1">有效</option>
+                                    <option value="0">无效</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" name="editsubmit" value="提交" class="btn btn-primary" onclick="formAct2(this.form,'','正在提交提成规则信息，请稍后！');">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(function (){
+            var lock = false;
+            var $searchInput = $('#selectBaojiaSearchKeywords');
+            $searchInput.on(
+            {
+                compositionstart:function(){
+                    lock = true;
+                },
+                compositionend:function(){
+                    lock = false;
+                },
+                input:function(){
+                    var that = this;
+                    if(typeof t !== 'undefined'){
+                        clearTimeout(t);
+                    }
+                    t = setTimeout(function (){
+                        if(!lock){
+                            getGoods();
+                            if(!that.value.length){
+                                clearTimeout(t);
+                            }
+                        }
+                    },500);
+                }
+            }
+            );
+        });
+        function checkBaojiaList(btn){
+            var bjid = $(btn).data('bjid');
+            if(typeof selectedBjs[bjid] !== 'undefined'){ 
+                /*说明是移除操作*/
+                delete(selectedBjs[bjid]);
+                $('#selectedBjItem_' + bjid).remove();
+                $('#bjItem_' + bjid).removeClass('bjSelect');
+            }else{
+                
+                selectedBjs[bjid] = $(btn).data('gname');
+                $('#bjItem_' + bjid).addClass('bjSelect');
+                var s = '<span style="display: inline-block;margin:3px;margin-left:0px;" id="selectedBjItem_' + bjid + '">';
+                s += '<label class="label label-info">' + selectedBjs[bjid] + '</label>';
+                s += '<input type="hidden" name="baojia_id[]" value="' + bjid + '">';
+                s += '<a data-bjid="' + bjid + '" onclick="checkBaojiaList(this);">X</a>';
+                s += '</span>';
+                $('#baojiaList').append(s);
+            }
+        }
+        function selectBaojia(btn){
+            var bjid = $(btn).data('bjid');
+            $(btn).parent().remove();
+            $('#bjItem_' + bjid).removeClass('bjSelect');
+        }
+        $('#selectBaojiaListCon').scroll(function(){
+            var totalHeight = $('#selectBaojiaListCon').scrollTop() + $('#selectBaojiaListCon').height();
+            totalHeight = totalHeight / $('#selectBaojiaList').height();
+            if( totalHeight === 1 ){
+                getGoods(true);
+            }
+        });
+        getGoods();
+    </script>
+</script>
+<script type="text/template" id="ruleDialogGoodsTpl">
+    {{ for(var bi in ljk ){}}
+    {{?typeof selectedBjs[ljk[bi].id] !== 'undefined'}}
+    <a class="bjSelect" data-gname="{{=ljk[bi].goodsName}}" data-bjid="{{=ljk[bi].id }}" id="bjItem_{{=ljk[bi].id }}" onclick="checkBaojiaList(this);">{{=ljk[bi].goodsName }}</a>
+    {{??}}
+    <a data-bjid="{{=ljk[bi].id }}" data-gname="{{=ljk[bi].goodsName}}" id="bjItem_{{=ljk[bi].id }}" onclick="checkBaojiaList(this);">{{=ljk[bi].goodsName }}</a>
+    {{?}}
+    {{}}}
+</script>
+<!-- 编辑框end -->

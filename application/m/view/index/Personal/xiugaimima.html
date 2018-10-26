@@ -1,0 +1,96 @@
+<!--修改密码-->
+<script type="text/html" id="tpl_xiugaimima">
+<div class="page">
+<!--顶部--->
+   <!--顶部--->
+  <div class="ljk_top">
+     <a class=" top_left js_item " data-id="Personal_Center" href="javascript:;">
+         <i class="fa fa-angle-left fa-2x"></i>
+     </a>
+     <p class="weui-flex__item top_center">修改密码</p>
+  </div>
+  <!---顶部-->
+ 
+<!--内容-->
+
+<div class="ljk_neirong">
+    <form method="post" onsubmit="return false;">
+        <div class="page__bd">
+        <div class="weui-panel weui-panel_access">
+          <div class="weui-panel__bd">
+           <div class="weui-cell">
+                <div class="weui-cell__hd"><label class="weui-label" style="text-align: center; width:25px; padding-top: 6px;"><i class="fa fa-unlock-alt fa-2x"  style=" color:#09BB07; font-size:1.2em;" ></i></label></div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="password" value="" name="oldpwd" placeholder="请输入原密码"/>
+                </div>
+            </div>
+			<div class="weui-cell">
+             <div class="weui-cell__hd"><label class="weui-label" style="text-align: center; width:25px; padding-top: 6px;"><i class="fa fa-key fa-2x"  style="color:#09BB07;  font-size:1.2em;" ></i></label></div>
+              <div class="weui-cell__bd">
+                  <input class="weui-input" type="password" value="" name="pwd" placeholder="请输6位的新密码"/>
+              </div>
+            </div>
+            <div class="weui-cell">
+                 <div class="weui-cell__hd"><label class="weui-label" style="text-align: center; width:25px; padding-top: 6px;"><i class="fa fa-key fa-2x"  style="color:#09BB07;  font-size:1.2em;" ></i></label></div>
+                  <div class="weui-cell__bd">
+                      <input class="weui-input" type="password" value="" name="pwdconfirm" placeholder="请确定密码"/>
+                  </div>
+            </div>
+		</div>
+      </div>
+	 </div><br>
+	<div class="weui-btn-area">
+            <div class="page__bd page__bd_spacing">
+                <input class="weui-btn weui-btn_primary" onClick="return editpwd(this.form)" type="submit" value="保存" >
+            </div>
+        </div>
+    </form>
+    </div>
+<div style="width:100%; height:57px;"></div>
+<!--内容-->
+</div>
+<script type="text/javascript">
+    dianji();
+    goSys('m_index_index');
+    function editpwd(fm){
+        $.ajax({
+            beforeSend:function(){
+                var tips = {
+                    type:1,
+                    title:'提示信息',
+                    content:'正在修改个人信息，请稍候！'
+                };
+                setTips(tips);
+            },
+            url:'/m/home/updatePassword',
+            data:$(fm).serializeArray(),
+            type:'post',
+            dataType:'json',
+            success:function (data){
+                if(data.code==1){
+                    var tips = {
+                        type:1,
+                        title:'提示信息',
+                        content:data.msg,
+                        btn:1,
+                        btnm:1,
+                        btnmc:'关闭'
+                    };
+                    setTips(tips);
+                }else{
+                    var tips = {
+                        type:1,
+                        title:'提示信息',
+                        content:data.msg,
+                        btn:1,
+                        btnm:1,
+                        btnmc:'关闭'
+                    };
+                    setTips(tips);
+                }
+            }
+        });
+    }
+</script>
+</script>
+<!--修改密码-->

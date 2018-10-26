@@ -1,0 +1,68 @@
+<script type="text/html" id="add_order_goods_cat">
+    {{if(ljk){}}
+    <div style="height:380px;" class="page__bd add_order_goods_cat_content type1" >
+        <ul>
+            <li id="addOrderBuHuo3"  class="end_dt" data-click="getAddOrderGoodsList({cid:'',type:0},false);">所有商品</li>
+            <li id="addOrderGoodsBuHuo3" data-click="getAddOrderGoodsList({cid:'',type:1},false);">补货</li>
+        </ul>
+        {{for(var j=0;j<ljk.length;j++){}}
+        <dl>
+            <dt data-click="getAddOrderGoodsList({cid:'{{=ljk[j].p.id}}',type:0},false);">{{=ljk[j].p.title}}</dt>
+            <dd class="type1_dd" data-click="getAddOrderGoodsList({cid:'{{=ljk[j].p.id}}',type:0},false);">全部</dd>
+            {{for(var i=0;i<ljk[j].c.length;i++){}}
+            <dd class="type1_dd" data-click="getAddOrderGoodsList({cid:'{{=ljk[j].c[i].id}}',type:0},false);">{{=ljk[j].c[i].title}}</dd>
+            {{}}}
+        </dl>
+        {{}}}
+    </div>
+    {{}}}
+    <script type="text/javascript">
+        dianji();
+        $("#m_user_index").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+        goSys('m_index_home');
+        var alldl=$('.add_order_goods_cat_content').children('dl');
+        var alldd = $(alldl).children('dd');
+        var alldt = $(alldl).children('dt');
+        $('#addOrderBuHuo3').on('click',function (){
+            $('.end_dt').removeClass('end_dt');
+            $('.type1 dd').hide();
+            $(this).addClass('end_dt');
+            isRequest(this);
+        });
+        $('#addOrderGoodsBuHuo3').on('click',function (){
+            $('.end_dt').removeClass('end_dt');
+            $('.type1 dd').hide();
+            $(this).addClass('end_dt');
+            isRequest(this);
+        });
+        $(alldd).each(function (){
+            $(this).on('click',function (){
+                $(this).addClass('end_dt');
+                $(this).siblings('dd').removeClass('end_dt');
+                isRequest(this);
+            });
+        });
+        $(alldt).on('click',function (){
+            var dl = $(this).parent();
+            var dd = dl.children('dd'); 
+            $('#addOrderBuHuo3').removeClass('end_dt');
+            $('#addOrderGoodsBuHuo3').removeClass('end_dt');
+            $(alldd).hide();
+            $(alldd).removeClass('end_dt');
+            if($(this).hasClass('end_dt')){
+                $('#addOrderBuHuo3').addClass('end_dt');
+                getAddOrderGoodsList({cid:'',type:0},false);
+                $(this).removeClass('end_dt');
+                $(dd).hide();
+            }else{
+                $(alldt).removeClass('end_dt');
+                $(dd[0]).addClass('end_dt');
+                isRequest(this);
+                $(this).addClass('end_dt');
+                $(dd).each(function (){
+                    $(this).show();
+                });
+            }
+        });
+    </script>
+</script>

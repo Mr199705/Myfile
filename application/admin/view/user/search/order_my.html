@@ -1,0 +1,107 @@
+<input type='hidden' id='submitType' value='搜索' name='searchsubmit'/>
+<input type="hidden" data-sign="{$initData.sign}" value="" id="initDataSign" />
+<div class="row">
+    <div class="col-sm-1" style=" padding-right:0px; width:110px;margin-left:20px;">
+        <div class="input-group">
+            <select name="type" class="input-sm form-control" style="width:103px;" onchange="getList({sign:'{$initData.sign}'},1);">
+                <option value="number">订单号</option>
+                <option value="phone">收货人电话</option>
+                <option value="address">收货人地址</option>
+                <option value="realname">订货客户</option>
+                <option value="mobile">订货人电话</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-3"  >
+        <div class="input-group">
+            <input type="text" name="keyword" placeholder="请输入关键词搜索订单！" value="" class="input-sm form-control searchOrderKeyword" data-sign ="{$initData.sign}" />
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <span class="col-sm-1" style="text-align: right;width: 110px; line-height:30px;margin-left:20px;">
+    订单时间：从
+    </span>
+    <div class="col-sm-2" style="padding: 0px;width:180px; "  >
+        <div class="input-group">
+            <input type="text" placeholder="点击设置订单开始时间" value="" name="csdate" class="laydate-input input-sm form-control">
+        </div>
+    </div>
+    <span class="col-sm-1" style="text-align: center;width: 20px; padding: 0px;line-height:30px;">
+        到
+    </span>
+    <div class="col-sm-2" style="padding: 0px; ">
+        <div class="input-group">
+            <input type="text" placeholder="点击设置订单结束时间" value="" name="cedate" class="laydate-input input-sm form-control" >
+        </div>
+    </div>
+    <div class="col-sm-2" style="padding: 0px; ">
+        <div class="input-group">
+            <input type="submit" value="确定" class=" btn btn-sm btn-success" onclick="getList({sign:'{$initData.sign}'},1);" style="margin-right: 10px;" />
+            <button type="button" class="btn btn-sm btn-primary" id="genduo"> 更多</button>
+        </div>
+    </div>
+</div>
+<div class="row" id="saixuan" style=" display:none;">
+<ul class="select">
+    <li class="select-list">
+        <dl>
+            <dt>订单状态：</dt>
+            <dd>
+                <label><input type="radio" value="" name="confirm" checked="checked" />全部</label>
+            </dd>
+            <dd>
+                <label><input type="radio" value="0" name="confirm" />未确认</label>
+            </dd>
+            <dd>
+                <label><input type="radio" value="1" name="confirm" />已经确认</label>
+            </dd>
+            <dd>
+                <label><input type="radio" value="-1" name="confirm" />无效订单</label>
+            </dd>
+        </dl>
+    </li>
+    <li class="select-list">
+        <dl>
+            <dt>付款状态：</dt>
+            <dd>
+                <label><input type="radio" value="" name="pay" checked="checked" />全部</label>
+            </dd>
+            <dd>
+                <label><input type="radio" value="1" name="pay" />已付款</label>
+            </dd>
+            <dd>
+                <label><input type="radio" value="0" name="pay" />未付款</label>
+            </dd>
+        </dl>
+    </li>
+    <li class="select-list">
+        <dl>
+            <dt>结束状态：</dt>
+            <dd>
+                <label><input type="radio" value="" name="trade" checked="checked" />全部</label>
+            </dd>
+            <dd>
+                <label><input type="radio" value="1" name="trade" />已结束</label>
+            </dd>
+            <dd>
+                <label><input type="radio" value="0" name="trade" />未结束</label>
+            </dd>
+        </dl>
+    </li>
+    <li class="select-list">
+        <dl>
+            <dt>订单来源：</dt>
+            <dd>
+                <label><input type="radio" value="" name="otype" checked="checked" />全部</label>
+            </dd>
+            {foreach $ordType as $k=>$v}
+            <dd>
+                <label><input type="radio" value="{$k}" name="otype" />{$v}</label>
+            </dd>
+            {/foreach}
+        </dl>
+    </li>
+</ul>
+</div>

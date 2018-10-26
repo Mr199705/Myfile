@@ -1,0 +1,170 @@
+{include file="common/header"}
+</head>
+<body>
+{include file="common/warning"}
+{include file="common/tips"}
+<div class="pace  pace-inactive">
+    <div class="pace-progress" data-progress-text="100%" data-progress="99" style="width: 100%;">
+        <div class="pace-progress-inner"></div>
+    </div>
+    <div class="pace-activity"></div>
+</div>
+<div class="modal-backdrop fade in" style="display: none;z-index: 99990 !important;" id="warningBackdrop"></div>
+<script type="text/javascript">
+    function closeTip(){
+        $('#tipBox').hide();
+        $('#tipBackdrop').hide();
+    }
+</script>
+<div class="modal-backdrop fade in" style="display: none;z-index: 99990 !important;" id="tipBackdrop"></div>
+<div id="wrapper">
+    <div class="gray-bg dashbard-1">
+        <div class="row wrapper border-bottom white-bg page-heading">
+            <div class="col-sm-10">
+                <h2>{if $list.title !=''}{$list.title}{else/}客户进度分类{/if}</h2>
+            </div>
+            <div class="col-sm-1">
+                <br>
+                <a class="  btn btn-success " href="#" data-toggle="modal" data-target="#myModatitle" >设置标题</a>
+            </div>
+            <div class="col-sm-1">
+                <br>
+                <a class="btn btn-success" href="#" data-toggle="modal" data-target="#myModal1" onclick="showModel();">添加</a>
+            </div>
+        </div>
+        <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <form id="{$initData.sign}Conditions" method="post" action="{$initData.requestUrl}" onsubmit="return false;">
+                                <input type="hidden" name="action" value="showlist">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="input-group">
+                                            <input type="text" placeholder="请输入关键词" name="keywords" oninput="getList({sign:'{$initData.sign}'},1);" class="input-sm form-control">
+                                            <span class="input-group-btn">
+                                                 <button type="button" class="btn btn-sm btn-primary" onclick="getList({sign:'{$initData.sign}'},1);"> 刷新</button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="ibox-content">
+                            <div id="{$initData.sign}List">
+                            </div>
+                        </div>
+                    </div></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal inmodal" id="myModal1" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">×</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">添加{if $list.title !=''}{$list.title}{else/}客户进度分类{/if}</h4>
+            </div>
+            <form action="{$initData.requestUrl}" method="post" enctype="multipart/form-data" class="form-horizontal" onsubmit="return addForm(this);">
+                <input type="hidden" name="action" value="addsta">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">分类名称: </label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" autocomplete="off" value="" id="title" name="title">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">显示顺序: </label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" autocomplete="off" value="" name="displayorder">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+                    <input type="submit" name="authsubmit" value="提交" class="btn btn-primary" tabindex="3">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal inmodal" id="myModal2" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">×</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">编辑{if $list.title !=''}{$list.title}{else/}客户阶段{/if}</h4>
+            </div>
+            <form action="{$initData.requestUrl}" class="form-horizontal" method="post" enctype="multipart/form-data" onsubmit="return editForm(this);">
+                <input type="hidden" name="id" id="memberTypeId" value="">
+                <input type="hidden" name="action" value="editsta">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">分类名称: </label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" autocomplete="off" name="title" id="memberTypeTitle" value="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">显示顺序: </label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" autocomplete="off" value="" name="displayorder" id="displayorder">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+                    <input type="submit" value="提交" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal inmodal" id="myModatitle" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">×</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">设置标题</h4>
+            </div>
+            <form action="{$initData.requestUrl}" class="form-horizontal" method="post" enctype="multipart/form-data" onsubmit="return editForm(this);">
+                <input type="hidden" name="id" id="baojiatagId" value="{if $list.id !=0}{$list.id}{else/}0{/if}">
+                <input type="hidden" name="action" value="edittag">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">标题: </label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" autocomplete="off" name="title" id="memberTitle"  value="{if $list.title !=''}{$list.title}{else/}客户进度分类{/if}">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+                    <input type="submit" value="保存" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{include file="common/footerjs"}
+<script type="text/javascript">
+    getList({sign:'{$initData.sign}'});
+    function showModel() {
+        $("input[name='title']").val('');
+        $("input[name='displayorder']").val('');
+    }
+</script>
+</body>
+</html>

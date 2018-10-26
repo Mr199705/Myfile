@@ -1,0 +1,196 @@
+{include file="common/header" /}
+</head>
+<body>
+{include file="common/warning" /}
+{include file="common/tips" /}
+<div class="modal-backdrop" style="display: none;background: rgba(0,0,0,0.5);z-index: 99990 !important;" id="modalBackdropBox"></div>
+<div id="wrapper">
+    <div  class="gray-bg dashbard-1">
+        <!--头部-->
+        <div class="row wrapper border-bottom white-bg page-heading">
+            <div class="col-sm-8">
+                <h2>{$title}分销商品</h2>
+            </div>
+        </div>
+        <form id="GoodsAddtForm" class="form-horizontal" method="post" action="/admin/marketing/showgoodslist" {if $title=='新增'}onsubmit="return market_edit(this,this.id,'正在添加分销商品！');"{else/}onsubmit="return market_edit(this,this.id,'修改数据后，将会改变所选择的项目状态信息，请谨慎操作！','正在修改分销商品！');"{/if}>
+            {if $title=='新增'}
+            <input type="hidden" name="action" value="domarket_add">
+            {else/}
+            <input type="hidden" name="action" value="domarket_update">
+            {/if}
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <tbody>
+                    <tr>
+                        <td style="width: 10%;">
+                            <div>
+                                &emsp;标题<span style="color:red;">(必填)</span>：
+                            </div>
+                        </td>
+                        <td>
+                            <table class="table table-striped table-bordered">
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        <input autocomplete="off" type="text" class="form-control" value="{if $into eq ''}{else/}{$into.title}{/if}" placeholder="请输入分享标题" name="title">
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr id="goodsInfoTr" data-content="0">
+                        <td style="width: 10%;">
+                            <div>
+                                &emsp;分销商品<br/>（<a href="javascript:void(0);" onclick="openGoodsModel('goodsSelect');GetSkuGoods();">重新选择</a>）
+                            </div>
+                        </td>
+                        <td>
+                            <table class="table table-striped table-bordered">
+                                <tbody>
+                                <input type="hidden" id="bjid" name="bjid" value="{if $into neq ''}{$into.bjid}{else/}{/if}">
+                                <input type="hidden" id="into_id" name="into_id" value="{if $into neq ''}{$into.id}{else/}0{/if}">
+                                <input type="hidden" id="goodsid" name="goodsid" value="{if $into neq ''}{$goodsInfo.goods_id}{else/}{/if}">
+                                <input type="hidden" id="unitgid" name="unitgid" value="{if $into neq ''}{$into.unitgid}{else/}{/if}">
+                                <input type="hidden" id="unitid" name="unitid" value="{if $into neq ''}{$into.unitid}{else/}{/if}">
+                                <input type="hidden" id="unit" name="unit" value="{if $into neq ''}{$into.unit}{else/}{/if}">
+                                <input type="hidden" id="skuid_status" name="skuid_status" value="{if $into neq ''}{$count_rule}{else/}1{/if}">
+                                <tr>
+                                    <td>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">商品名称：</label>
+                                            <div class="col-sm-11">
+                                                <input type="text" class="form-control" placeholder="商品名称" id="goods_name" name="goods_name" value="{if $into neq ''}{$into.goodsName}{else/}{/if}">
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">商品属性：</label>
+                                            <div class="col-sm-11" id="avsList">
+                                                {if $into neq ''}
+                                                    {if $goodsInfo.skus}
+                                                        {foreach name="$goodsInfo.skus" item="skus"}
+                                                        <span style="margin:5px 2px;overflow:hidden;" class="btn btn-sm {in name='$skus.id' value='$into.skuids'}btn-success{else/}btn-white{/in}" data-skuid="{$skus.id}" onclick="Selavs(this,'{$skus.id}');">{$skus.attrs_value}
+                                                            {in name='$skus.id' value='$into.skuids'}
+                                                            <input type="hidden" id="skuid" name="skuid[]" value="{$skus.id}">{else/} {/in}
+                                                        </span>
+                                                        {/foreach}
+                                                    {else/}
+                                                        <span style="width:80px;margin:5px 2px;overflow:hidden;" data-skuid="0" class="btn btn-sm btn-success">无属性！
+                                                            <input type="hidden" id="skuid" name="skuid[]" value="0">
+                                                        </span>
+                                                    {/if}
+                                                {else/}{/if}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">商品单位：</label>
+                                            <div class="col-sm-11" id="unitList">
+                                                {if $into neq ''}
+                                                {foreach name="$goodsInfo.units" item="units"}
+                                                <span style="margin:5px 5px;overflow:hidden;" class="btn btn-sm {if $units.id==$into.unitid}btn-success{else/}btn-white{/if}" data-skuid="{$units.id}" onclick="Selunit(this,'{$units.id}');">{$units.uname}</span>
+                                                {/foreach}
+                                                {else/}{/if}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">商品条码：</label>
+                                            <div class="col-sm-11">
+                                                <input type="text" class="form-control" placeholder="商品条形码" id="goods_number" name="goods_number" value="{if $into neq ''}{$goodsInfo.seller_note}{else/}{/if}">
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">商品规格：</label>
+                                            <div class="col-sm-11">
+                                                <input type="text" class="form-control" placeholder="商品规格" id="goods_unit_title" name="goods_unit_title" value="{if $into neq ''}{$goodsInfo.unit_title}{else/}{/if}">
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 10%;">
+                            <div>
+                                &emsp;分销提成<br/>（<span style="color: red;">至少填写一个</span>）
+                            </div>
+                        </td>
+                        <td>
+                            <table class="table table-striped table-bordered">
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        <table class="table table-striped table-bordered">
+                                            <tbody>
+                                            <tr id="intoRules_level">
+                                                <td id="level_1" style="text-align: center;">
+                                                    <label class="control-label">一级分销</label>
+                                                </td>
+                                                <td id="level_2" style="text-align: center;">
+                                                    <label class="control-label">二级分销</label>
+                                                </td>
+                                                <td id="level_3" style="text-align: center;">
+                                                    <label  class="control-label">三级分销</label>
+                                                </td>
+                                            </tr>
+                                            <tr id="intoRules_into">
+                                                <td>
+                                                    <input type="number" class="form-control" name="levelprice[1]" value="{if $into neq ''}{if isset($intorules[0]['into'])}{$intorules[0]['into']}{else/}0.00{/if}{else/}0.00{/if}" step="0.01">
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control" name="levelprice[2]" value="{if $into neq ''}{if isset($intorules[1]['into'])}{$intorules[1]['into']}{else/}0.00{/if}{else/}0.00{/if}" step="0.01">
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control" name="levelprice[3]" value="{if $into neq ''}{if isset($intorules[2]['into'])}{$intorules[2]['into']}{else/}0.00{/if}{else/}0.00{/if}" step="0.01">
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="position: fixed; right: 0px; z-index: 100; top: 290.5px;" id="submitButton">
+                <button class="btn btn-sm btn-primary">提交</button>
+            </div>
+        </form>
+        {include file="marketing/tpl/goods"}
+    </div>
+</div>
+{include file="common/footerjs"}
+<script type="text/javascript">
+    $(function () {
+        $('#goods_name').attr('readonly',true);
+        $('#goods_avs').attr('readonly',true);
+        $('#goods_number').attr('readonly',true);
+        $('#goods_unit_title').attr('readonly',true);
+        if('{$title}'=='新增'){
+            openGoodsModel('goodsSelect');
+            GetSkuGoods();
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,662 @@
+<!--下订单-->
+<!--库存不足弹窗-->
+<div class="js_dialog" id="iosDialog22" style="opacity: 0;display: none;">
+    <div class="weui-mask"></div>
+    <div class="weui-dialog">
+        <div class="weui-dialog__bd"></div>
+        <div class="weui-dialog__ft">
+            <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">知道了</a>
+        </div>
+    </div>
+</div>
+<!--库存不足弹窗-->
+<!--成功弹窗-->
+<div id="toastcart" style="opacity: 0; display: none;">
+    <div style="" class="weui-mask_transparent"></div>
+    <div style="width:175px;height:49px;min-height: 4.6em;" class="weui-toast">
+        <i class="weui-icon-success-no-circle weui-icon_toast" style="margin:0px;"> </i>
+        <p  class="weui-toast__content"></p>
+    </div>
+</div>
+<style>
+    .weui-icon_toast.weui-icon-success-no-circle:before {
+        font-size: 42px;
+    }
+</style>
+<!--成功弹窗-->
+<script type="text/html" id="tpl_xiadingdan">
+    <div class="page">
+        <!--顶部--->
+        <div class="ljk_top">
+            <a class="top_left js_item" data-id="m_user_index"  href="javascript:;">
+                <i class="fa fa-angle-left fa-2x"></i>
+            </a>
+            <a class="top_right cartcart" href="javascript:;" data-id="cart" >
+                <span class="weui-badge cartnum" style="position: absolute;top:0.4em;right:0.2em;"></span>
+                <i class="fa fa-shopping-cart fa-2x db_xinxi"></i>
+            </a>
+            <p class="weui-flex__item top_center">下订单</p>
+        </div>
+        <div  class="ljk_neirong" style="margin:0px;">
+            <div class="add_order_search_goods_form"></div>
+            <div class="goods_shousuo add_order_goods_cat"></div>
+            <div class="add_order_goods" >
+            </div>
+            <div>
+                <div class="weui-mask" id="iosMaskOrdergoodslist" style="display: none;"></div>
+                <div class="weui-actionsheet" id="iosActionsheetOrdergoodslist" style="right: 0px;width: 80%;left: 20%;height: 100%;overflow-y: auto;">
+                    <div class="weui-actionsheet__menu addordergoods"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(function(){
+            dianji();
+            $("#m_user_index").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+            goSys('m_index_home');
+            initAddOrderGoodsTpl();
+            $('.cartcart').on('click', function(){
+                var id = $(this).data('id');
+                window.pageManager.go(id);
+                var uid =$('#uid').html();
+                ShowOrderTpllistbyID('cart','cart',uid);
+            });
+        });
+        // ios
+        $(function(){
+            var $iosActionsheetOrdergoodslist = $('#iosActionsheetOrdergoodslist');
+            var $iosMaskOrdergoodslist = $('#iosMaskOrdergoodslist');
+            function hideActionSheet() {
+                $iosActionsheetOrdergoodslist.removeClass('weui-actionsheet_toggle');
+                $iosMaskOrdergoodslist.fadeOut(200);
+            }
+            $iosMaskOrdergoodslist.on('click', hideActionSheet);
+            $('#iosActionsheetOrdergoodslistCancel').on('click', hideActionSheet);
+            $("#showiosActionsheetOrdergoodslist").on("click", function(){
+                $iosActionsheetOrdergoodslist.addClass('weui-actionsheet_toggle');
+                $iosMaskOrdergoodslist.fadeIn(200);
+            });
+        });
+        // android
+        $(function(){
+            var $androidActionSheet = $('#androidActionsheet');
+            var $androidMask = $androidActionSheet.find('.weui-mask');
+            $("#showAndroidActionSheet").on('click', function(){
+                $androidActionSheet.fadeIn(200);
+                $androidMask.on('click',function () {
+                    $androidActionSheet.fadeOut(200);
+                });
+            });
+        });
+        // toast
+        $(function(){
+            var $toast = $('#toast');
+            $('#showToast').on('click', function(){
+                if ($toast.css('display') != 'none') return;
+                $toast.fadeIn(100);
+                setTimeout(function () {
+                    $toast.fadeOut(100);
+                }, 2000);
+            });
+        });
+        function ShowGoodsTpl(s,url,tid){
+            if(url=='addordergoods'){
+                u='addgoodslistinfo';
+                $('#goodsid').html(tid);
+            }
+            urlstr="/m/order/"+u;
+            ShowTplData(urlstr,url,{id:tid});
+            var $iosMaskOrdergoodslist = $('#iosMaskOrdergoodslist');
+            var $iosActionsheetOrdergoodslist = $('#iosActionsheetOrdergoodslist');
+            $iosActionsheetOrdergoodslist.addClass('weui-actionsheet_toggle');
+            $iosMaskOrdergoodslist.fadeIn(200);
+            $('#iosActionsheetOrdergoodslistCancel').on('click', hideActionSheet);
+        }
+        function hideActionSheet() {
+            var $iosMaskOrdergoodslist = $('#iosMaskOrdergoodslist');
+            var $iosActionsheetOrdergoodslist = $('#iosActionsheetOrdergoodslist');
+            $iosActionsheetOrdergoodslist.removeClass('weui-actionsheet_toggle');
+            $iosMaskOrdergoodslist.fadeOut(200);
+        }
+        $(function(){
+            var $tooltips = $('.js_tooltips');
+            $(".meishi").on('click',function(){
+                if ($('.meishi22').hasClass('grade-w-roll')) {
+                    $('.meishi22').removeClass('grade-w-roll');
+                } else {
+                    $('.meishi22').addClass('grade-w-roll');
+                }
+            });
+
+            $(".meishi").on('click',function(){
+                if ($('.meishi22').sddClass('grade-w-roll')) {
+                    $('.meishi22').removeClass('grade-w-roll');
+                } else {
+                    $('.meishi22').hasClass('grade-w-roll');
+                }
+            });
+
+            $(".meishi2").on('click',function(){
+                $("#meishib")
+                    .css("left","50%")
+            });
+
+            $(".meishia-t>li").on('click',function(){
+                $(".meishia-s")
+                    .css("left","50%")
+            });
+            $(".Regional").on('click',function(){
+                if ($('.grade-eject').hasClass('grade-w-roll')) {
+                    $('.grade-eject').removeClass('grade-w-roll');
+                } else {
+                    $('.grade-eject').addClass('grade-w-roll');
+                }
+            });
+
+            $(".Regional").on('click',function(){
+                if ($('.grade-eject').sddClass('grade-w-roll')) {
+                    $('.grade-eject').removeClass('grade-w-roll');
+                } else {
+                    $('.grade-eject').hasClass('grade-w-roll');
+                }
+            });
+            $("#gradew").on('click',function(){
+                $("#gradet")
+                    .css("left","50%")
+            });
+            $(".Sort").on('click',function(){
+                if ($('.Sort-eject').hasClass('grade-w-roll')) {
+                    $('.Sort-eject').removeClass('grade-w-roll');
+                } else {
+                    $('.Sort-eject').addClass('grade-w-roll');
+                }
+            });
+
+            $(".Sort").on('click',function(){
+                if ($('.Sort-eject').sddClass('grade-w-roll')) {
+                    $('.Sort-eject').removeClass('grade-w-roll');
+                } else {
+                    $('.Sort-eject').hasClass('grade-w-roll');
+                }
+            });
+            $(".Brand").on('click',function(){
+                if ($('.Category-eject').hasClass('grade-w-roll')) {
+                    $('.Category-eject').removeClass('grade-w-roll');
+                } else {
+                    $('.Category-eject').addClass('grade-w-roll');
+                }
+            });
+
+            $(".Brand").on('click',function(){
+                if ($('.Category-eject').sddClass('grade-w-roll')) {
+                    $('.Category-eject').removeClass('grade-w-roll');
+                } else {
+                    $('.Category-eject').hasClass('grade-w-roll');
+                }
+            });
+        });
+</script>
+</script>
+{include file="home/order/goods_cat"}
+{include file="home/order/goods_search"}
+<!--下订单-->
+<!--操作日志-->
+<script type="text/html" id="xiadingdangoods">
+    <div class="weui-panel__bd">
+    {{if( ljk && ljk.length>0 ){ }}
+        {{for(var i=0; i<ljk.length; i++){ }}
+        <a href="javascript:;" class="weui-media-box weui-media-box_appmsg"  style="padding:8px;color:#030303;}" onClick="javascript:ShowGoodsTpl(this,'addordergoods','{{=ljk[i].goods_id}}');">
+            <div style="width:100%;">
+            <div style="width:4em; height:3.5em; float:left; margin-right: 5px; margin-bottom: 5px;"> <img class="weui-media-box__thumb" src="{{=ljk[i].info.goods_img}}" alt=""></div>
+            <div style=" float:left; width:70%;margin-bottom: 5px; ">
+            <span class="weui-media-box__ti">{{=ljk[i].info.goods_name}}</span>
+            <p class="weui-media-box__desc">价格：¥<span style="color:red;">{{=ljk[i].tuanprice}}</span>元/{{=ljk[i].unit}}</p>
+            <p style=" color:#838B8B;"  class="mb0"> <del class="old-price">¥{{=ljk[i].retailprice}}/{{=ljk[i].unit}}</del> </p>
+        </div>
+            {{if(ljk[i].cuxiao!=''){}}<p style=" width: 100%; color: #999999; overflow: hidden;" >{{=ljk[i].cuxiao}}</p>{{}}}
+            </div>
+            </a>
+        {{}}}
+    {{}else{}}
+        <div style="width: 100%;height: 15em; text-align: center;  margin-top: 10em;   color: #ddd;">
+            <i class="fa fa-file-text-o fa-5x" aria-hidden="true"></i>
+            <p>未找到符合条件的商品！</p><br>
+        </div>
+    {{}}}
+</div>
+</script>
+<script type="text/html" id="tpl_addordergoods">
+    <form method="post" action="/m/order/addcart" id="addOrderGoodsForm" onsubmit="return false;">
+        <input type="hidden" name="goods_id" value="{{=ljk.goods_id}}"/>
+        <input type="hidden" name="uid" value="{{=ljk.uid}}"/>
+        <div class="weui-panel__bd">
+            <a class="weui-media-box weui-media-box_appmsg">
+                <div class="weui-media-box__hd" style="width: 85px;height: 85px;">
+                    <img class="weui-media-box__thumb" src="{{=ljk.info.goods_img}}" alt="">
+                </div>
+                <div class="weui-media-box__bd">
+                    <h6 style="font-weight:initial;" >{{=ljk.info.goods_name}}</h6>
+                    <p class="weui-media-box__desc">货号：{{=ljk.info.goods_sn}}</p>
+                    {{if(ljk.sm_score){}}
+                    <p class="weui-media-box__desc">积分：{{=ljk.sm_score}}</p>
+                    {{}}}
+                    <p class="weui-media-box__desc">规格：{{=ljk.gunit}}</p>
+                    <input type="hidden" class="data-tuan" data-tuan="{{=ljk.tuanprice}}">
+                    <input type="hidden" id="baojia" data-sku="{{? ljk.baojia.length>0}}1{{??}}0{{?}}">
+                </div>
+            </a>
+            <div id="skulistdiv" {{? ljk.baojia.length>0 }}data-skus="1" {{??}}data-skus="0"  {{?}}></div>
+            {{? ljk.baojia.length>0 }}
+            <div>
+                <div class="weui-cell__bd">
+                    <p>&emsp;属性</p>
+                </div>
+                <div>
+                    <ul id="skulist" data-skus="1">
+                        {{for(var i=0; i< ljk.baojia.length; i++){ }}
+                            <li {{if(i==0){}} class="weui-btn weui-btn_mini form-sku form-sku-checked weui-btn_primary"{{}else{}}class="weui-btn weui-btn_mini form-sku weui-btn_default"{{}}} data-storage="{{=ljk.baojia[i].storage_num}}"  data-avs="{{=ljk.baojia[i].attrs_value}}" data-skuid="{{=ljk.baojia[i].id}}" onclick="setSku(this);" style="overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">
+                                <input type="radio" name="skuid" {{if(i==0){}}checked="checked"{{}else{}}{{}}} value="{{=ljk.baojia[i].id}}" style='opacity:0;display:none;' />{{=ljk.baojia[i].attrs_value}}
+                            </li>
+                        {{}}}
+                        <input type="hidden" id="priceid" name="priceid"  value="">
+                        <input type="hidden" id="attrs_value" name="attrs_value"  value="">
+                    </ul>
+                </div>
+            </div>
+            {{??}}&emsp;<span>无属性</span>{{?}}
+
+            <div class="weui-cell">
+                <div class="weui-cell__bd">
+                    <p>数量</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <span class="input-number-decrement" onclick="decre(this);">–</span>
+                    <input class="input-number" type="text" autocomplete="off" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" oninput="checksto(this);" value="1" style="width: 30px;" maxlength="4" id="num" name="num" />
+                    <span id="getstoNum" data-sto="" class="input-number-increment" onclick="incre(this);">+</span>
+                    <div id="div-sto-msg" style="display: none;font-size: 10px;" class="weui-cell__bd"></div>
+                </div>
+            </div>
+            <div class="weui-cell" style="padding-bottom:0px;padding-top:0px;">
+                <div class="weui-cell__bd">
+                    <p>库存</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <span class="weui-form-preview__value weui-cells__title" style="margin:0px;">
+                        <span id="ordergoodsstoragenum" data-value="" class="weui-media-box__desc" pattern="[0-9\.]*" data-id="">--</span>
+                    </span>
+                </div>
+            </div>
+            <div class="weui-cell" style="padding-bottom:0px;padding-top:0px;">
+                <div class="weui-cell__bd">
+                    <p>单位</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <span id="storageList" class="weui-form-preview__value weui-cells__title" style="margin:0px;">
+                        {{? ljk.unitlist.length>0}}
+                            {{for(var i=0;i< ljk.unitlist.length;i++){ }}
+                                <a {{if(i==0){}}class="weui-btn weui-btn_mini form-unitid form-unitid-checked weui-btn_primary"{{}else{}}class="weui-btn weui-btn_mini form-unitid weui-btn_default"{{}}} data-id="{{=ljk.unitlist[i].coefficient}}" onclick="setUnit(this);">
+                                    <input style="opacity:0;display:none;" type="radio" name="unitid" {{if(i==0){}}checked="checked"{{}else{}}{{}}} value="{{=ljk.unitlist[i].id}}" data-value="{{=ljk.unitlist[i].uname}}" style="border-radius:10px;" />{{=ljk.unitlist[i].uname}}
+                                </a>
+                            {{}}}
+                        {{??}}
+                        {{ for(var i=0; i< ljk.baojia.length; i++){ }}
+                        <ul style="display: none;width:150px;" id="unit_{{=ljk.baojia[i].id}}">
+                            <li>
+                                {{ for(var j=0; j < ljk.baojia[i].unitlist.length; j++) { }}
+                                <a {{if(j==0){}}class="weui-btn weui-btn_mini form-unitid form-unitid-checked weui-btn_primary"{{}else{}} class="weui-btn weui-btn_mini form-unitid weui-btn_default"{{}}} data-tuanprice="{{? ljk.baojia[i].price.length>0}}{{=ljk.baojia[i].price[j].tuanprice}}{{??}}0{{?}}" data-id="{{? ljk.baojia[i].price.length>0}}{{=ljk.baojia[i].price[j].id}}{{??}}0{{?}}"  data-coefficient="{{=ljk.baojia[i].unitlist[j].coefficient}}" onclick="setUnit(this);">
+                                    <input style="opacity:0;display:none;" type="radio"  data-id="{{=ljk.baojia[i].unitlist[j].id}}" data-value="{{=ljk.baojia[i].unitlist[j].uname}}" style="border-radius:10px;" />{{= ljk.baojia[i].unitlist[j].uname}}
+                                </a>
+                                {{ } }}
+                            </li>
+                        </ul>
+                        {{ } }}
+                        <input type="hidden" id="unitid" name="unitid" value="">
+                        {{?}}
+                    </span>
+                </div>
+            </div>
+            <div class="weui-cell" style="padding-bottom: 0px;padding-top: 0px;">
+                <div class="weui-cell__bd">
+                    <p>销售类型</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <span class="weui-form-preview__value weui-cells__title" style="margin: 0px;">
+                        {{ for (var i in ljk.order_goods_status) { }}
+                         <a class="weui-btn weui-btn_mini form-selltypeid {{if(i==1){}} weui-btn_primary{{}else{}} weui-btn_default{{}}}" onclick="setSelltype(this,{{=i}});"><input style="opacity:0;display:none;" type="radio" name="type" {{if(i==1){}}checked="checked"{{}}} value="{{=i}}" style="border-radius:10px;" />{{=ljk.order_goods_status[i]}}</a>
+                        {{}}}
+                    </span>
+                </div>
+            </div>
+
+            <div class="weui-cells weui-cells_form"  style="margin-top: 0px;">
+                <div class="weui-cell" >
+                    <div class="weui-cell__hd"><label class="weui-label">价格(¥)</label></div>
+                    <div class="weui-cell__bd">
+                        <input id="ordergoodsPrice" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" class="weui-input" type="number" name="price" value=" " placeholder="请输入价格"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{if(ljk.cuxiao){}} <div class="weui-cells__title">促销：{{=ljk.cuxiao}}</div> {{}}}
+        <div id="btn_msg1" class="weui-form-preview__ft">
+            <button class="weui-form-preview__btn weui-form-preview__btn_default" style="border-style: solid;border-width: 1px;border-color: #1AAD19;color: #1AAD19;height:50px;" href="javascript:" id="showToast" onClick="addcart(this.form,0);">加入购物车</button>
+            <button class="weui-form-preview__btn weui-form-preview__btn_default" style="background: #1AAD19;color: #F2F2F2;" href="javascript:;" onClick="addcart(this.form,1);">直接购买</button>
+         </div>
+        <div id="btn_msg2" class="weui-form-preview__ft">
+            <button id="iosActionsheetCancel_2" class="weui-actionsheet__cell" type="submit" disabled="" style="width: 100%; background: rgb(127, 127, 127); color: rgb(255, 255, 255); display: block;">库存不足，无法购买！</button>
+
+        </div>
+        <div class="weui-mask add-cart-goods-dialog" style="display: none;z-index:9999;"></div>
+        <a class="weui-media-box weui-media-box_appmsg">
+            <div class="weui-media-box__hd"></div>
+            <div class="weui-media-box__bd"></div>
+        </a>
+    </form>
+    <script type="text/javascript">
+        $(function(){
+            dianji();
+            $("#m_user_index").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+            goSys('m_index_home');
+            var price=$('.data-tuan').attr('data-tuan');
+            var type = $("input[name='type']:checked").val();
+            var skulistnum=Number($('#skulistdiv').data('skus'));
+            if(skulistnum==0){
+                var ss=$("#storageList").find('.form-unitid-checked').data('id');
+                if(type==2){
+                    $('#ordergoodsPrice').val(Number(0).toFixed(2));
+                }else{
+                    $('#ordergoodsPrice').val(Number(price*ss).toFixed(2));
+                }
+                $("#btn_msg1").show();
+                $("#btn_msg2").hide();
+            }else if(skulistnum==1){
+                if($('#skulist>li').find('input').attr('checked')){
+                    var sku_id=$('.form-sku-checked').data('skuid');
+                    $('#unit_'+sku_id).css('display','block').siblings('display','none');
+                    $('#unit_'+sku_id).find('a').eq(0).find('input').attr('checked','checked');
+                    $('#unit_'+sku_id).siblings().find('a').find('input').removeAttr('checked','checked');
+
+                    $("#attrs_value").val($('.form-sku-checked').data('avs'));
+                    var ss=$("#unit_"+sku_id).find('.form-unitid-checked').data('id');
+                    $("#priceid").val($("#unit_"+sku_id).find('.form-unitid-checked').data('id'));
+
+                    var price1=$('#unit_'+sku_id).find('.form-unitid-checked').data('tuanprice');
+
+                    var storage=Number($('.form-sku-checked').data('storage'));
+                    var coe=Number($('#unit_'+sku_id).find('.form-unitid-checked').data('coefficient'));
+                    $('#unitid').val($('#unit_'+sku_id).find('.form-unitid-checked').children().data('id'));
+                    var sto=Math.floor(storage/coe);
+
+                    $('#getstoNum').data('sto',sto);
+                    $("#ordergoodsstoragenum").data('value',sto);
+                    $("#ordergoodsstoragenum").text(sto);
+                    if(sto>0){
+                        isNaN(sto)?$('#ordergoodsstoragenum').text('--'):$('#ordergoodsstoragenum').text(sto);
+                    }else{
+                        isNaN(sto)?$('#ordergoodsstoragenum').text('--'):$('#ordergoodsstoragenum').text(0);
+                    }
+                    if($("#num").val()<=sto && $("#num").val()>0){
+                        $("#btn_msg1").show();
+                        $("#btn_msg2").hide();
+                        $("#div-sto-msg").css('display','none');
+                    }else{
+                        $("#btn_msg1").hide();
+                        $("#btn_msg2").show();
+                        $("#div-sto-msg").text('库存不足，无法下单！');
+                        $("#div-sto-msg").css('display','block');
+                    }
+                    if(type==2){
+                        $('#ordergoodsPrice').val(Number(0).toFixed(2));
+                    }else{
+                        $('#ordergoodsPrice').val(Number(price1).toFixed(2));
+                    }
+                }
+            }
+        });
+        function setSku(btn){
+            $('.form-sku').each(function (){
+                $(this).attr('class','weui-btn weui-btn_mini form-sku weui-btn_default');
+                $(this).children('input').removeAttr('checked');
+            });
+            $(btn).attr('class','weui-btn weui-btn_mini form-sku form-sku-checked weui-btn_primary');
+            $(btn).children('input').attr('checked','checked');
+            $(btn).each(function () {
+                if($(btn).children('input').attr('checked','checked')){
+                    var attrs_value=$(this).data('avs');
+                    var sku_id=$(this).data('skuid');
+                    $('#attrs_value').val(attrs_value);
+                    $('#unit_'+sku_id).css('display','block').siblings().css('display','none');
+                    $('#unit_'+sku_id).find('a').eq(0).find('input').attr('checked','checked');
+                    $('#unit_'+sku_id).siblings().find('a').find('input').removeAttr('checked','checked');
+
+                    if($('#unit_'+sku_id).find('a').length!==1){
+                        $('#unit_'+sku_id).find('a').eq(0).removeClass('weui-btn weui-btn_mini form-unitid weui-btn_default');
+                        $('#unit_'+sku_id).find('a').eq(0).addClass('weui-btn weui-btn_mini form-unitid form-unitid-checked weui-btn_primary');
+                        $('#unit_'+sku_id).find('a').eq(0).siblings().removeClass('weui-btn weui-btn_mini form-unitid form-unitid-checked weui-btn_primary');
+                        $('#unit_'+sku_id).find('a').eq(0).siblings().addClass('weui-btn weui-btn_mini form-unitid weui-btn_default');
+                    }else{
+                        $('#unit_'+sku_id).find('a').eq(0).removeClass('weui-btn weui-btn_mini form-unitid weui-btn_default');
+                        $('#unit_'+sku_id).find('a').eq(0).addClass('weui-btn weui-btn_mini form-unitid form-unitid-checked weui-btn_primary')
+                    }
+
+                    $("#priceid").val($("#unit_"+sku_id).find('.form-unitid-checked').data('id'));
+                    var type = $("input[name='type']:checked").val();
+                    var price1=$('#unit_'+sku_id).find('.form-unitid-checked').data('tuanprice');
+                    var storage=Number($('.form-sku-checked').data('storage'));
+                    $('#unitid').val($('#unit_'+sku_id).find('.form-unitid-checked').children().data('id'));
+
+                    var coe=Number($('#unit_'+sku_id).find('.form-unitid-checked').data('coefficient'));
+                    var sto=Math.floor(storage/coe);
+                    $('#getstoNum').data('sto',sto);
+                    $("#ordergoodsstoragenum").data('value',sto);
+                    $("#ordergoodsstoragenum").text(sto);
+
+                    if(sto>0 || isNaN(sto)==false){
+                        $('#ordergoodsstoragenum').text(sto);
+                    }else{
+                        isNaN(sto)?$('#ordergoodsstoragenum').text('--'):$('#ordergoodsstoragenum').text(0);
+                    }
+                    if($("#num").val()<=sto && $("#num").val()>0){
+                        $("#btn_msg1").show();
+                        $("#btn_msg2").hide();
+                        $("#div-sto-msg").css('display','none');
+                    }else{
+                        $("#btn_msg1").hide();
+                        $("#btn_msg2").show();
+                        $("#div-sto-msg").text('库存不足，无法下单！');
+                        $("#div-sto-msg").css('display','block');
+                    }
+                    if(type==2){
+                        $('#ordergoodsPrice').val(Number(0).toFixed(2));
+                    }else{
+                        $('#ordergoodsPrice').val(Number(price1).toFixed(2));
+                    }
+                }
+            });
+        }
+
+        function setUnit(btn){
+            $('.form-unitid').each(function (){
+                $(this).attr('class','weui-btn weui-btn_mini form-unitid weui-btn_default');
+                $(this).children('input').removeAttr('checked');
+            });
+            $(btn).attr('class','weui-btn weui-btn_mini form-unitid form-unitid-checked weui-btn_primary');
+            $(btn).children('input').attr('checked','checked');
+            var type = $("input[name='type']:checked").val();
+            var skulistnum=Number($('#skulistdiv').data('skus'));
+            if(skulistnum==0){
+                var ss=$("#storageList").find('.form-unitid-checked').data('id');
+                var price2=$('.data-tuan').attr('data-tuan');
+                if(type==2){
+                    $('#ordergoodsPrice').val(Number(0).toFixed(2));
+                }else{
+                    $('#ordergoodsPrice').val(Number(price2*ss).toFixed(2));
+                }
+            }else if(skulistnum==1){
+                if($(btn).children('input').attr('checked')){
+                    $("#priceid").val($('.form-unitid-checked').data('id'));
+                    var price1=$('.form-unitid-checked').data('tuanprice');
+                    var storage=Number($('.form-sku-checked').data('storage'));
+                    var coe=Number($('.form-unitid-checked').data('coefficient'));
+                    var sto=Math.floor(storage/coe);
+                    $('#unitid').val($('.form-unitid-checked').children().data('id'));
+
+                    $("#ordergoodsstoragenum").data('value',sto);
+                    if(sto>0 || isNaN(sto)==false){
+                        $('#ordergoodsstoragenum').text(sto);
+                    }else{
+                        isNaN(sto)?$('#ordergoodsstoragenum').text('--'):$('#ordergoodsstoragenum').text(0);
+                    }
+                    if(type==2){
+                        $('#ordergoodsPrice').val(Number(0).toFixed(2));
+                    }else{
+                        $('#ordergoodsPrice').val(Number(price1).toFixed(2));
+                    }
+                    $('#getstoNum').data('sto',sto);
+                    if($("#num").val()<=sto && $("#num").val()>0){
+                        $("#btn_msg1").show();
+                        $("#btn_msg2").hide();
+                        $("#div-sto-msg").css('display','none');
+                    }else{
+                        $("#btn_msg1").hide();
+                        $("#btn_msg2").show();
+                        $("#div-sto-msg").text('库存不足，无法下单！');
+                        $("#div-sto-msg").css('display','block');
+                    }
+                }
+            }
+        }
+        function addcart(formObj,isgocart){
+            if($("#num").val()>$("#ordergoodsstoragenum").val()){
+                    $("#num").val($("#ordergoodsstoragenum").val());
+            }
+            var $toast=$('#toastcart');
+            var $iosDialog2=$('#iosDialog22');
+            $('#dialogs').remove();
+            $.ajax({
+                    type:'post',
+                    url:$(formObj).attr('action'),
+                    data:$(formObj).serializeArray(),
+                    dataType:'json',
+                    beforeSend:function (){
+                        var tip = {
+                            type:1,
+                            title:'添加到购物车',
+                            content:'正在添加到购物车，请稍后！'
+                        };
+                        if(!isgocart){
+                            var template = doT.template($('#tpldialogs').html());
+                            var t_html = template(tip);
+                            $('.add-cart-goods-dialog').append(t_html);
+                        }
+                    },
+                    success:function (data){
+                        if(data['code']==1){
+                            $('.cartnum').html(data.data);
+                            $($toast).find('p').html('加入购物车成功~');
+                            if(isgocart){
+                                if ($toast.css('display') != 'none') return;
+                                $toast.fadeIn(100);
+                                setTimeout(function () {
+                                    $toast.fadeOut(100);
+                                }, 1000);
+                                ShowOrderTpllistbyID('cart','cart',data.uid);
+                            }else{
+                                if ($toast.css('display') != 'none') return;
+                                $toast.fadeIn(100);
+                                setTimeout(function () {
+                                    $toast.fadeOut(100);
+                                }, 1000);
+                            }
+                        }else if(data['code']==2){
+                            $($iosDialog2).find('.weui-dialog__bd').text(data['msg']);
+                            $iosDialog2.fadeIn(100);
+                            $($iosDialog2).find('a').click(function () {
+                                $iosDialog2.fadeOut(100);
+                            });
+                            setTimeout(function () {
+                                $iosDialog2.fadeOut(100);
+                            }, 2000);
+                        }
+                    }
+                });
+        }
+        function hideActionSheet() {
+            var $iosMaskOrdergoodslist = $('#iosMaskOrdergoodslist');
+            var $iosActionsheetOrdergoodslist = $('#iosActionsheetOrdergoodslist');
+            $iosActionsheetOrdergoodslist.removeClass('weui-actionsheet_toggle');
+            $iosMaskOrdergoodslist.fadeOut(200);
+        }
+        function setSelltype(btn,id){
+            $('.form-selltypeid').each(function (){
+                $(this).attr('class','weui-btn weui-btn_mini form-selltypeid weui-btn_default');
+                $(this).children('input').removeAttr('checked');
+            });
+            $(btn).attr('class','weui-btn weui-btn_mini form-selltypeid weui-btn_primary');
+            $(btn).children('input').attr('checked','checked');
+
+            if(Number($('#skulistdiv').data('skus'))==0){
+                var ss=$("#storageList").find('.form-unitid-checked').data('id');
+                var price=$('.data-tuan').attr('data-tuan');
+                if(id===2){
+                    $('#ordergoodsPrice').val(Number(0).toFixed(2));
+                }else{
+                    $('#ordergoodsPrice').val(Number(price*ss).toFixed(2));
+                }
+            }else{
+                var price1=$('.form-unitid-checked').data('tuanprice');
+                if(id==2){
+                    $('#ordergoodsPrice').val(Number(0).toFixed(2));
+                }else{
+                    $('#ordergoodsPrice').val(Number(price1).toFixed(2));
+                }
+            }
+            console.log($('#addOrderGoodsForm').serializeArray());
+        }
+        function checksto(obj) {
+            var sto=Number($('#getstoNum').attr('data-sto'));
+            var num=Number($(obj).val());
+            if(num===0){
+                $(obj).val('1');
+                return true;
+            }else if(num>sto){
+                $("#btn_msg1").hide();
+                $("#btn_msg2").show();
+                $("#div-sto-msg").text('库存不足，无法下单！');
+                $("#div-sto-msg").css('display','block');
+                return false;
+            }else{
+                $("#btn_msg1").show();
+                $("#btn_msg2").hide();
+                $("#div-sto-msg").css('display','none');
+                return true;
+            }
+        }
+
+        function decre(obj){
+            var $num=0;
+            var sto=Number($('#getstoNum').attr('data-sto'));
+            var goods_num=Number($('#ordergoodsstoragenum').text());
+            $num = parseInt($(obj).next('input').val()) - 1;
+            $num < 1 ? $num = 1 : null;
+            $(obj).next('input').val($num);
+            if($("#skulistdiv").data('skus')===1){
+                checksto();
+            }
+        }
+        function incre(obj){
+            var $num=0;
+            if($("#skulistdiv").data('skus')===1){
+                $num = parseInt($(obj).prev('input').val()) + 1;
+                $num >=Number($('#ordergoodsstoragenum').data('value')) ? $num = Number($('#ordergoodsstoragenum').data('value')) : null;
+                $(obj).prev('input').val($num);
+                checksto();
+            }else{
+                $num = parseInt($(obj).prev('input').val()) + 1;
+                $num >9999 ? $num = 9999 : null;
+                $(obj).prev('input').val($num);
+            }
+        }
+</script>
+</script>

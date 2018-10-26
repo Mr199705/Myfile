@@ -1,0 +1,142 @@
+{include file="common/top" /}
+<title>首页</title>
+</head>
+<body>
+    <header class="header">
+        <div class="fix_nav">
+            <div style="max-width: 768px; margin: 0 auto; height: 44px; position: relative; background: #FE5400;">
+                <form action="/shop/search" method="get" id="searchform"
+                    name="searchform">
+                    <div class="navbar-search left-search">
+                        <input type="text" id="keyword" name="w" value="" placeholder="输入关键词搜索商品... ..." class="form-control">
+                    </div>
+                    <div class="nav-right">
+                        <input type="button" value="搜索" onclick="searchproduct();" class="img-responsive" style="text-align: center; background: #F3A93A; border-radius: 5px; border: none; height: 34px; vertical-align: middle; clear: both; padding: 0px; width: 42px; color: #fff;" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="row">
+            <div id="slide">
+                {if condition="$list"}
+                <div class="hd">
+                    <ul>
+                        {volist name="list" id="lb"}
+                        <li class="on">{$lb.id}</li>
+                        {/volist}
+                    </ul>
+                </div>
+                {/if}
+                <div class="bd">
+                    {if condition="$list"}
+                    <div class="tempWrap" style="overflow: hidden; position: relative;">
+                        <ul style="width: 3840px; position: relative; overflow: hidden; padding: 0px; margin: 0px; transition-duration: 200ms; transform: translateX(-768px);">
+                            {volist name="list" id="lb"}
+                            <li style="display: table-cell; vertical-align: top; width: 768px;">
+                                <a href="{$lb.url }" target="_blank"><img style="height: 180px;" src="{$lb.picurl }" ppsrc="{$lb.picurl }" /></a>
+                            </li>
+                            {/volist}
+                        </ul>
+                    </div>
+                    {else/}
+                    <div style="color: #f00; text-align: center;">暂时没有幻灯片！</div>
+                    {/if}
+                </div>
+            </div>
+        </div>
+        <div class="row category">
+            <div class="category_items_box" style="display: flex;display: -webkit-flex;flex-direction: row;flex-wrap: wrap;margin:0px auto;">
+                {volist name="category" id="cavo"}
+                <div style="display:inline-block;width:60px;height:60px;line-height:60px;background:#fff;border:1px #eee solid;margin:1px 1px;">
+                    <a href="/shop/category/categorylist.html?clas={$cavo.id }" style="display:inline-block;height:100%;width:100%;line-height:60px;{if $cavo.img}background:url({$cavo.img }) no-repeat;background-size:60px 60px;{/if}">
+                        <div style="width:100%;height:100%;white-space: nowrap;text-overflow: ellipsis;overflow:hidden;text-align:center;margin: auto;background:rgba(255,255,255,0.6);color:darkgreen;">{$cavo.title }</div>
+                    </a>
+                </div>
+                {/volist}
+            </div>
+        </div>
+        <div class="row">
+            <div class="tb_box">
+                <div class="tb_type tb_type_even clearfix">
+                    <div class="item-list" id="container" rel="2" status="0">
+                        <input type="hidden" id="ListTotal" value="1">
+                        <!-- 产品块 -->
+                        {if condition="$inde"} 
+                        {volist name="inde" id="lb"}
+                        <a href="/shop/views.html?id={$lb.id }">
+                            <div class="hproduct clearfix" style="background: #fff; border-top: 0px;">
+                                <div class="p-pic">
+                                    {if $Think.session.gid == 205 ||  $Think.session.gid == -1}
+                                    <div style="height:163px;margin:auto;background-image:url({$lb.goodsImg });background-size:163px 163px;background-repeat:no-repeat;" class="img-responsive"></div>
+                                    {else}
+                                    <div style="height:100px;margin:auto;background-image:url({$lb.goodsImg });background-size:163px 100px;background-repeat:no-repeat;" class="img-responsive"></div>
+                                    {/if}
+                                </div>
+                                <div class="p-info">
+                                    <p class="p-title">{$lb.goodsName}</p>
+                                    {if $Think.session.gid == 205 ||  $Think.session.gid == -1}
+                                    <p class="p-origin">
+                                        会员价：<span  style="color:red;font-size:14px;">¥{$lb.tuanprice}/{$lb.unit}</span>
+                                    </p>
+                                    <p class="p-origin" style="font-size:12px;">
+                                        非会员价：<span style="color:red;font-size:14px;">¥{$lb.retailprice}/{$lb.unit}</span>
+                                    </p>
+                                    {else}
+                                    <p class="p-origin">
+                                        <em class="price">¥{$lb.tuanprice}/{$lb.unit}</em>
+                                    </p>
+                                    <p class="mb0">
+                                        <del class="old-price">¥{$lb.retailprice} / {$lb.unit}</del>
+                                    </p>
+                                    {/if}
+                                </div>
+                            </div>
+                        </a> 
+                        {/volist} 
+                        {else/}
+                        <div style="color: #f00; text-align: center;">你好，暂时没有相关推荐商品！</div>
+                        {/if}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {include file="common/footer_nav" /}
+    <script charset="utf-8" src="__JS__/TouchSlide.js"></script>
+    <script type="text/javascript">
+            TouchSlide({
+                    slideCell : "#slide",
+                    titCell : ".hd ul", //开启自动分页 autoPage:true ，此时设置 titCell 为导航元素包裹层
+                    mainCell : ".bd ul",
+                    effect : "left",
+                    autoPlay : true,//自动播放
+                    autoPage : true, //自动分页
+                    switchLoad : "_src" //切换加载，真实图片路径为"_src"
+            });
+            
+    </script>
+    <script type="text/javascript">
+            $(document).ready(function() {
+                $("#slide img").each(function() {
+                    var img_src = $(this).attr("_src");
+                    $(this).attr("src", img_src);
+                });
+                var w = $(window).width();
+                var mn = Math.floor((w - 20) / 64);
+                var iw = mn * 64;
+                $('.category_items_box').css('max-width',iw + 'px');
+            });
+
+            function searchproduct() {
+                var keyword = document.getElementById("keyword").value;
+                if (keyword == undefined || keyword == null || keyword == "") {
+                    alert("请输入搜索关键字！");
+                    return false;
+                }
+                document.getElementById("searchform").submit();
+            }
+    </script>
+</body>
+</html>

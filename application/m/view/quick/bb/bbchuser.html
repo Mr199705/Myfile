@@ -1,0 +1,227 @@
+<script type="text/template" id="bbuserchgoodsContents">
+    <div class="weui-media-box weui-media-box_small-appmsg">
+        <div class="ljk_top" style="position:relative;">
+            <a class="top_left" href="javascript:;" onclick="hideChUsersContents();">
+                <i class="fa fa-angle-left fa-2x"></i>
+            </a> 
+            <a class="top_right" href="javascript:;" style="padding-top: 12px;" data-click="getChUsersContents();" onclick="isRequest(this);">
+                <i class="fa fa-refresh" style="font-size:1.3em;"></i>
+            </a>
+            <p class="weui-flex__item top_center">单品出货统计</p>
+        </div>
+        <form onsubmit="return false;" id="searchChUsersForm">
+            <input type="hidden" name="goodid" value="" id="onegoodid" />
+            <input type="hidden" name="unitgid" value="" id="onegoodunitgid" />
+            <div class="weui-cells" style="width:100%;">
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label for="" class="weui-label">
+                        <i class="fa fa-clock-o" style="color: cornflowerblue;"></i>开始时间</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input  class="weui-input" type="datetime-local" placeholder="点击设置开始时间" value="{:date('Y-m-d',strtotime('-1Months'))}T00:00:00" name="s" />
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label for="" class="weui-label">
+                        <i class="fa fa-clock-o" style="color: cornflowerblue;"></i>结束时间</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input  class="weui-input" type="datetime-local" placeholder="点击设置结束时间" value="{:date('Y-m-d')}T{:date('H:i')}" name="e" />
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label for="" class="weui-label">
+                            <i class="weui-icon-search" style="color: cornflowerblue;"></i>关键词
+                        </label>
+                    </div>
+                    <div class="weui-cell__bd" style="height:30px;overflow:hidden;">
+                        <input type="text" class="weui-input" id="usersSearchInput" autocomplete="off" placeholder="客户名称或联系方式！" style="padding:0px;height:30px;width:90%;" />
+                        <a href="javascript:" class="weui-icon-clear" id="usersSearchClear" style="padding:0px;width:8%;"></a> 
+                        <div style="display:none;background:rgba(255,255,255);height:200px;position:fixed;z-index:9999 !important;" class="searchChUsersList"></div>
+                    </div>
+                </div>
+                <div class="page__bd page__bd_spacing">
+                    <button class="weui-btn weui-btn_primary" data-click="getChUsersContents()" onclick="isRequest(this);">搜索</button>
+                </div>
+            </div>
+        </form>
+        <p style="font-size:14px;text-align:center;">商品名称：<span id="chGoodsName" style="color:red;"></span></p>
+        <div class="weui-form-preview__ft" style="background:#fff;height:24px;line-height:24px;">
+            <p class="weui-form-preview__btn" style="text-align:left;">客户：<span id="chGoodsUsersCount" style="color:red;">0</span></p>
+            <p class="weui-form-preview__btn" style="text-align:left;">数量：<span id="chGoodsCount" style="color:red;">0</span></p>
+        </div>
+        <div class="weui-form-preview__ft" style="background:#fff;height:24px;line-height:24px;border-bottom:1px solid #000;">
+            <p class="weui-form-preview__btn" style="text-align:left;">均价：<span id="chGoodsPrice" style="color:red;">0</span></p>
+            <p class="weui-form-preview__btn" style="text-align:left;">总价：<span id="chGoodsAmount" style="color:red;">0</span></p>
+        </div>
+    </div>
+    <div class="bbchuserscontents"></div>
+    <script type="text/javascript">
+        function hideChUsersContents(){
+            $('#bbuserchgoods').html('');
+            $('#bbuserchgoods').hide();
+            $('#bbchallgoods').show();
+            $('.listbbchList').find('.dropload-down2').addClass('dropload-down').removeClass('dropload-down2');
+        }
+        function userch(uid){
+            console.log(uid);
+            var url = "/m/quick/bbch";
+            $.ajax({
+                data:{uid:uid,action:'setsessionuid'},
+                type:'post',
+                dataType:'json',
+                url:url,
+                success:function (data){
+                    if(data.code == 0){
+                        dianji();
+                        goSys('{$m_index_home.url_name}');
+                        $("#{$m_user_index.url_name}").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+                        window.location.href = '#user_ch_record';
+                    }
+                }
+            });
+        }
+        function getChUsersContents(){
+            var url = "/m/quick/bbch";
+            var $fm = $('#searchChUsersForm');
+            var dataA = $fm.serializeArray();
+            var data = {};
+            for(var i=0;i < dataA.length;i++){
+                if(dataA[i].value.trim() !== ''){
+                    if(typeof data[dataA[i].name] !== 'undefined'){
+                        console.log(typeof data[dataA[i].name]);
+                        if(typeof data[dataA[i].name] !== 'object'){
+                            var x = data[dataA[i].name];
+                            data[dataA[i].name] = new Array();
+                            data[dataA[i].name].push(x);
+                        }
+                        data[dataA[i].name].push(dataA[i].value);
+                    }else{
+                        data[dataA[i].name] =  dataA[i].value;
+                    }
+                }
+            }
+            data.p = 1;
+            data.limit = 10;
+            data.action = 'showbbonegoodsch';
+            $('.listbbchList').find('.dropload-down').addClass('dropload-down2').removeClass('dropload-down');
+            $('.searchChUsersList').find('.dropload-down').addClass('dropload-down2').removeClass('dropload-down');
+            $('.bbchuserscontents').html('<div class="dkjllistcontent listbbchusersList"><div class="bbchusersList"></div></div>');
+            $('.listbbchusersList').height($('.listbbchusersList').height() - 329 + 'px');
+            showLL(url,'bbchusersList',data);
+        }
+        $(function (){
+            var $searchBar = $('#usersSearchBar');
+            var $searchInput = $('#usersSearchInput');
+            var $searchClear = $('#usersSearchClear');
+            var url = "/m/quick/bbch";
+            var lock = false;
+            var t = false;
+            var data = {};
+            $('.searchChUsersList').width($('.searchChUsersList').parent().width());
+            $searchInput.on('focus',function (){
+                if($(this).val().trim().length > 0){
+                    $('.listbbchusersList').find('.dropload-down').addClass('dropload-down2').removeClass('dropload-down');
+                    $('.searchChUsersList').find('.dropload-down2').addClass('dropload-down').removeClass('dropload-down2');
+                    $('.searchChUsersList').show();
+                }
+            }).on('compositionstart',function (){
+                lock = true;
+            }).on('compositionend',function (){
+                lock = false;
+            }).on('input',function (){
+                var that = this;
+                if(t){
+                    clearTimeout(t);
+                }
+                t = setTimeout(function (){
+                    clearTimeout(t);
+                    if(!lock){
+                        var keywords = $(that).val().trim();
+                        if(!keywords.length){
+                            $('.searchChUsersList').hide();
+                            $('.searchChUsersList').html('');
+                            return;
+                        }
+                        data.action = 'searchChUsers';
+                        data.goodid = $('#onegoodid').val();
+                        data.onegoodunitgid = $('#onegoodunitgid').val();
+                        data.t = keywords;
+                        data.p = 1;
+                        data.limit = 10;
+                        var s = '<div id="" style="height:30px;margin-top:170px;"><p style="text-align:center;height:30px;"><a class="weui-btn weui-btn_primary" style="margin:0px;padding-top:0px;padding-bottom:0px;" href="javascript:;" onclick="$(\'.searchChUsersList\').hide();$(\'.listbbchusersList\').find(\'.dropload-down\').addClass(\'dropload-down2\').removeClass(\'dropload-down\');">关闭</a></p></div>';
+                        $('.searchChUsersList').show();
+                        $('.listbbchusersList').find('.dropload-down').addClass('dropload-down2').removeClass('dropload-down');
+                        $('.searchChUsersList').html('<div style="height:170px;position: fixed;width:100%;"><div class="dkjllistcontent listsearchUsers" style="background:#fff;"><ul style="border-bottom:1px dashed #000;" class="searchUsers"></ul></div></div>' + s);
+                        showLL(url,'searchUsers',data);
+                    }
+                },300);
+            });
+            $searchClear.on('click', function(){
+                $searchInput.val('');
+                $('.searchChUsersList').html('');
+                $('.searchChUsersList').hide();
+            });
+        });
+    </script>
+</script>
+<script type="text/template" id="searchUsers">
+    {{?ljk}}
+    {{for(var i=0;i<ljk.length;i++){}}
+    <li style="width:100%;padding:0px 10px;height:28px;border-bottom:1px solid #eee;line-height:28px;"><label style="display:inline-block;width:100%;"><input type="checkbox" name="usersids" value="{{=ljk[i].uid}}" /><span style="margin-left:10px;">{{=ljk[i].realname}}({{=ljk[i].mobile}})</span></label></li>
+    {{}}}
+    {{??}}
+    <div style="text-align:center; color:#CBCBCB; padding:2em 10px 0px 10px;">
+        <i class="fa fa-file-text-o fa-5x"></i><br>
+        <span>未查询到客户信息，您可更换其它关键词再进行搜索！</span>
+    </div>
+    {{?}}
+</script>
+<script type="text/template" id="bbchusersList">
+    {{?ljk}}
+        {{for(var i=0;i<ljk.data.length;i++){}}
+        <div style="background:#fff;margin:5px 0px 0px 0px;padding:0px 10px;font-size:14px;">
+            <div class="weui-form-preview__item">
+                <label class="weui-form-preview__label">客户名称：</label>
+                <span class="weui-form-preview__value" style="color:red;">{{=ljk.data[i].realname}}({{=ljk.data[i].mobile}})</span>
+            </div>
+            <div class="weui-form-preview__item">
+                <label class="weui-form-preview__label">购买数量：</label>
+                <span class="weui-form-preview__value">{{=ljk.data[i].num}} {{=ljk.data[i].unit}}</span>
+            </div>
+            <div class="weui-form-preview__item">
+                <label class="weui-form-preview__label">商品单价：</label>
+                <span class="weui-form-preview__value">{{=ljk.data[i].price}}元 / {{=ljk.data[i].unit}}</span>
+            </div>
+            <div class="weui-form-preview__item">
+                <label class="weui-form-preview__label">商品总价：</label>
+                <span class="weui-form-preview__value">{{=ljk.data[i].amount}}元</span>
+            </div>
+        </div>
+        <div class="weui-form-preview__ft" style="height:30px;line-height:30px;background:#fff;border-bottom:1px outset #333;">
+            <a class="weui-form-preview__btn" style="font-size:14px;" href="javascript:;" onclick="userch('{{=ljk.data[i].uid}}');">当前客户出货统计</a>
+        </div>
+        {{}}}
+        {{
+            $('#chGoodsUsersCount').html('{{=ljk.total}}个');
+            $('#chGoodsCount').html('{{=ljk.num}} {{=ljk.uname}}');
+            $('#chGoodsAmount').html('{{=ljk.tam}}元');
+            $('#chGoodsPrice').html('{{=ljk.price}}元 / {{=ljk.uname}}');
+        }}
+    {{??}}
+    <div style="text-align:center; color:#CBCBCB; padding:2em 10px 0px 10px;">
+        <i class="fa fa-file-text-o fa-5x"></i><br>
+        <span>未查询到符合条件的出货信息，请更换条件后搜索！</span>
+    </div>
+    {{
+      /*  $('#chGoodsName').html('无');*/
+        $('#chGoodsUsersCount').html('无');
+        $('#chGoodsCount').html('无');
+        $('#chGoodsAmount').html('无');
+        $('#chGoodsPrice').html('无');
+    }}
+    {{?}}
+</script>

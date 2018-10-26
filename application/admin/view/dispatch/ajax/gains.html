@@ -1,0 +1,29 @@
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>成员姓名</th>
+                <th>提成总额</th>
+            </tr>
+        </thead>
+        <tbody>
+            {if count($data)}
+            {foreach name="data" item="vo"}
+            <tr>
+                <td>                   
+                    {if $vo.type === 0}
+                    <label style="cursor:pointer;white-space:nowrap;display:inline-block;background: #1a7bb9;padding:2px;color: white;border-radius:3px;">{$vo.t_name}</label>
+                    {else}
+                    <label style="cursor:pointer;white-space:nowrap;display:inline-block;background: #23c6c8;padding:2px;color: white;border-radius:3px;">{$vo.t_name}</label>
+                    {/if}
+                </td>
+                <td>¥<span style="color:red;">{$vo.tt}</span></td>
+            </tr>
+            {/foreach}
+            {else}
+            <tr><td colspan="2" style="text-align: center;color:red;">没有找到符合条件的记录！</td></tr>
+            {/if}
+        </tbody>
+    </table>
+</div>
+{include file="common/page"}

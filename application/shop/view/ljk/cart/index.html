@@ -1,0 +1,346 @@
+{include file="common/top" /}
+<script charset="utf-8" src="__JS__/shopCart.js?v=01291"></script>
+<title>购物车</title>
+<style type="text/css">
+    .cart-item{
+        width:28px;
+        height:28px;
+        border-radius: 5px;
+    }
+    .checked-item{
+        background-image: url(__IMGS__/checked.png);
+        background-repeat:no-repeat;
+        background-size:28px 28px;
+        border:1px #eee solid;
+    }
+    .unchecked-item{
+        background:white;
+        border:1px #ccc solid;
+    }
+</style>
+<script type="text/javascript">
+    var a = 0;
+    var total = 0;
+    var checkedItems = [];
+    var allItems = [];
+    var allTotal = 0;
+    function changeCartNum(cartid,inc,price){ 
+        var n = parseInt($('#gn_' + cartid).val());
+        var nn = n + inc;
+        if(nn <= 0){
+            nn = 1;
+        }
+        if(nn > 999){
+            nn = 999;
+        }
+        var ot = Number($('#subTotal_' + cartid).html());
+        var nt = nn * price;
+        $.ajax({
+            url:'/shop/shopcart/cartfun',
+            type:'post',
+            data:{id:cartid,action:'setitemnumber',number:nn},
+            dataType:'json',
+            beforeSend: function (){
+                showToast({msg:'更新中！'});
+            },
+            success:function (res){
+                if(res.code === 0){
+                    showToast({msg:'已更新！'});
+                    if(checkedItems.indexOf(parseInt(cartid)) !== -1){
+                        total -= ot;
+                        total += nt;
+                        $('#total').html(total.toFixed(2));
+                    }
+                    allTotal -= ot;
+                    allTotal += nt;
+                    $('#gn_' + cartid).val(nn);
+                    $('#subTotal_' + cartid).html(nt.toFixed(2));
+                }else if(res.code === -1){
+                    showToast({msg:res.msg});
+                }
+                setTimeout(function (){
+                    closeToast('toast');
+                },500);
+            }
+        });
+    }
+    function checkAll(d){
+        var i = parseInt($(d).attr('data-sign'));
+        if(allItems.length === 0){
+            showToast({msg:'购物车为空！'});
+            setTimeout(function (){
+                closeToast('toast');
+            },500);
+            return false;
+        }
+        $.ajax({
+            url:'/shop/shopcart/cartfun',
+            type:'post',
+            data:{id:allItems,action:'checkitem',i:i},
+            dataType:'json',
+            beforeSend: function (){
+                if(i === -1){
+                    showToast({msg:'正在选中！'});
+                }else{
+                    showToast({msg:'取消选中！'});
+                }
+            },
+            success:function (res){
+                if(res.code === 0){
+                    if(i === -1){
+                        $(d).find('.tip-text').html('全不选');
+                        $(d).attr('data-sign','0');
+                        $('.cart-item').addClass('checked-item').removeClass('unchecked-item');
+                        checkedItems = [].concat(allItems);
+                        total = allTotal;
+                        showToast({msg:'已选中！'});
+                        $('#goToAddOrder').attr('onclick','goToAddOrder();');
+                        $('#goToAddOrder').removeClass('btn-default').addClass('btn-success');
+                    }else{
+                        $(d).find('.tip-text').html('全选');
+                        $(d).attr('data-sign',-1);
+                        $('.cart-item').addClass('unchecked-item').removeClass('checked-item');
+                        checkedItems = [];
+                        total = 0;
+                        $('#goToAddOrder').removeAttr('onclick');
+                        $('#goToAddOrder').removeClass('btn-success').addClass('btn-default');
+                    }
+                    $('#total').html(total.toFixed(2));
+                }else if(res.code === -1){
+                    showToast({msg:res.msg});
+                }
+                setTimeout(function (){
+                    closeToast('toast');
+                },500);
+            }
+        });
+        
+    }
+    function removeCartItem(cartid,subTotal){
+        $.ajax({
+            url:'/shop/shopcart/cartfun',
+            type:'post',
+            data:{id:cartid,action:'del'},
+            dataType:'json',
+            beforeSend: function (){
+                showToast({msg:'移除中，请稍后！'});
+            },
+            success:function (res){
+                if(res.code === 0){
+                    var i = checkedItems.indexOf(parseInt(cartid));
+                    var j = allItems.indexOf(parseInt(cartid));
+                    if(i !== -1){
+                        total -= subTotal;
+                        $('#total').html(total.toFixed(2));
+                        checkedItems.splice(i,1);
+                    }
+                    if(j !== -1){
+                        allItems.splice(j,1);
+                    }
+                    allTotal -= subTotal;
+                    $('#cartItem_' + cartid).remove();
+                    showToast({msg:'已移除！'});
+                    if(checkedItems.length === 0){
+                        $('#checkAll').attr('data-sign','-1');
+                        $('#checkAll').find('.cart-item').addClass('unchecked-item').removeClass('checked-item');
+                        $('#checkAll').find('.tip-text').html('全选');
+                        $('#goToAddOrder').removeAttr('onclick');
+                        $('#goToAddOrder').removeClass('btn-success').addClass('btn-default');
+                    }else{
+                        $('#checkAll').attr('data-sign','0');
+                        $('#checkAll').find('.cart-item').addClass('checked-item').removeClass('unchecked-item');
+                        $('#checkAll').find('.tip-text').html('全不选');
+                        $('#goToAddOrder').attr('onclick','goToAddOrder();');
+                        $('#goToAddOrder').removeClass('btn-default').addClass('btn-success');
+                    }
+                    if(allItems.length === 0){
+                        showToast({msg:'购物车为空！'});
+                        var s = '<div style="height:100%;position:absolute;width:100%;color:red;line-height:100px;text-align:center;display:flex;display:-webkit-flex;flex-direction:row;align-items:center;justify-content:center;">';
+                        s += '<span>购物车为空！</span>';
+                        s += '</div>';
+                        $('.cartBox').html(s);
+                        $('.dropload-down').remove();
+                    }
+                }else if(res.code === -1){
+                    showToast({msg:'移除失败'});
+                }
+                setTimeout(function (){
+                    closeToast('toast');
+                },500);
+            }
+        });
+    }
+    function checkItems(cartid){
+        var d = event.srcElement || event.target;
+        var i = checkedItems.indexOf(parseInt(cartid));
+        $.ajax({
+            url:'/shop/shopcart/cartfun',
+            type:'post',
+            data:{id:cartid,action:'checkitem',i:i},
+            dataType:'json',
+            beforeSend: function (){
+                if(i === -1){
+                    showToast({msg:'正在选中！'});
+                }else{
+                    showToast({msg:'取消选中！'});
+                }
+            },
+            success:function (res){
+                if(res.code === 0){
+                    var t = $('#subTotal_' + cartid).html();
+                    if(i === -1){
+                        showToast({msg:'已选中！'}); 
+                        $(d).removeClass('unchecked-item').addClass('checked-item');
+                        total += Number(t);
+                        checkedItems.push(parseInt(cartid));
+                        if(checkedItems.length === allItems.length){
+                            $('#goToAddOrder').attr('onclick','goToAddOrder();');
+                            $('#goToAddOrder').removeClass('btn-default').addClass('btn-success');
+                            $('#checkAll').attr('data-sign','0');
+                            $('#checkAll').find('.cart-item').addClass('checked-item').removeClass('unchecked-item');
+                            $('#checkAll').find('.tip-text').html('全不选');
+                        }
+                        $('#goToAddOrder').attr('onclick','goToAddOrder();');
+                        $('#goToAddOrder').removeClass('btn-default').addClass('btn-success');
+                    }else{
+                        $(d).removeClass('checked-item').addClass('unchecked-item');
+                        total -= Number(t);
+                        showToast({msg:'已取消选中！'});
+                        checkedItems.splice(i,1);
+                        if(checkedItems.length === 0){
+                            $('#goToAddOrder').removeAttr('onclick');
+                            $('#goToAddOrder').removeClass('btn-success').addClass('btn-default');
+                            $('#checkAll').attr('data-sign','-1');
+                            $('#checkAll').find('.cart-item').addClass('unchecked-item').removeClass('checked-item');
+                            $('#checkAll').find('.tip-text').html('全选');
+                            $('#goToAddOrder').removeAttr('onclick');
+                            $('#goToAddOrder').removeClass('btn-success').addClass('btn-default');
+                        }
+                    }
+                    $('#total').html(total.toFixed(2));
+                }else if(res.code === -1){
+                    showToast({msg:'操作失败！'});
+                }
+                setTimeout(function (){
+                    closeToast('toast');
+                },500);
+            }   
+        });
+    }
+    function goToAddOrder(){
+        window.location.href = "/shop/settlement/index";
+    }
+</script>
+</head>
+<body>
+    <div class="fanhui_cou">
+        <div class="fanhui_1"></div>
+        <div class="fanhui_ding">顶部</div>
+    </div>
+    <header class="header header_1">
+        <div class="fix_nav">
+            <div class="nav_inner">
+                <a class="nav-left back-icon" href="javascript:history.back();">返回</a>
+                <div class="tit">购物车</div>
+            </div>
+        </div>
+    </header>
+    <div class="container ">
+        <div class="row rowcar">
+            <div class="listcartBox" style="position: absolute;width:100%;height:calc(100% - 97px);overflow-x:hidden;overflow-y:scroll;">
+                <div class="cartBox"></div>
+            </div>
+        </div>
+    </div>
+    <div class="fixed-foot">
+        <div class="fixed_inner" style="background:#fff;">
+            <div style="display:flex;display:-webkit-flex;flex-direction: row;flex-wrap: nowrap;align-items: center;height:49px;">
+                <div id="checkAll" data-sign="" style="display:flex;display:-webkit-flex;flex-direction: row;flex-wrap: nowrap;align-items: center;width: 80px;" onclick="checkAll(this);">
+                    <div class="cart-item unchecked-item" style="width:30px;height:30px;"></div>
+                    <div class="tip-text">全选</div>
+                </div>
+                <div style="width: 140px;">合计：¥<span id="total" style="font-weight: bold;font-size:18px;color:red;">00.00</span></div>
+                <div class="btn btn-lg btn-default" style="width: calc(100% - 220px);background:#FE5400;" id="goToAddOrder">去结算</div>
+            </div>
+        </div>
+    </div>
+    {include file="common/footer_nav" /}
+    <!-- 模版 -->
+    <script id="cartBox" type="text/template">
+        {{?ljk && ljk.length}}
+        {{for(var item in ljk){}}
+        {{   
+            var subTotal = ljk[item].goods_price * ljk[item].goods_number;
+            if(ljk[item].checked === 1){
+                checkedItems.push(ljk[item].id);
+                total += subTotal;
+            }
+            allTotal += subTotal;
+            allItems.push(ljk[item].id);
+        }}
+        <div id="cartItem_{{=ljk[item].id}}" style="display:flex;display:-webkit-flex;flex-direction:row;flex-wrap:nowrap;align-items:center;margin:5px;padding:5px;border:1px solid #ccc;{{?a++%2}}background:#fffeff;{{??}}background:#fff;{{?}}">
+            <div class="cart-item {{?ljk[item].checked === 1}}checked-item{{??}}unchecked-item{{?}}" onclick="checkItems({{=ljk[item].id}});"></div>
+            <div style="width:80px;height:70px;text-align: center;">
+                <img src="{{=ljk[item].goodsThumb}}" style="width: 70px;height: 70px;" />
+            </div>
+            <div style="display:flex;display:-webkit-flex;flex-direction:column;width: calc(100% - 160px);">
+                <div style="font-size:14px;font-weight:bold;color:#000;margin:1px 0px;">{{=ljk[item].goods_name}}</div>
+                {{?ljk[item].avs.length}}<div style="font-size:10px;color:#f00;margin:1px 0px;">{{=ljk[item].avs}}</div>{{?}}
+                <div style="display:flex;display:-webkit-flex;flex-direction:row;align-items: flex-start;margin:1px 0px;">
+                    <div style="width:40px;">单价:</div>
+                    <div style="width:calc(100% - 40px);">
+                        ¥{{=ljk[item].goods_price}}/{{=ljk[item].unit}}
+                    </div>
+                </div>
+                <div style="display:flex;display:-webkit-flex;flex-direction:row;align-items: center;margin:1px 0px;">
+                    <div style="width:40px;">数量:</div>
+                    <div style="width:calc(100% - 40px);display:flex;display:-webkit-flex;flex-direction:row;align-items:center;">
+                        <button style="width: 30px;height:30px;"  onclick="changeCartNum('{{=ljk[item].id}}',-1,{{=ljk[item].goods_price}});">-</button>
+                            <input readonly="readonly" style="line-height:30px;width: 60px;height:30px;text-align: center;" type="text" id="gn_{{=ljk[item].id}}" name="goods_number[{{=ljk[item].id}}]" value="{{=parseInt(ljk[item].goods_number)}}"/>
+                        <button style="width: 30px;height:30px;" onclick="changeCartNum('{{=ljk[item].id}}',1,{{=ljk[item].goods_price}});">+</button>
+                    </div>
+                </div>
+                <div style="display:flex;display:-webkit-flex;flex-direction:row;align-items: flex-start;margin:2px 0px;">
+                    <div style="width:40px;">小计:</div>
+                    <div style="color:red;width:calc(100% - 40px);">
+                        ¥<span id="subTotal_{{=ljk[item].id}}">{{=subTotal.toFixed(2)}}</span>
+                    </div>
+                </div>
+            </div>
+            <div style="width:50px;height:30px;">
+                <button class="btn btn-warning btn-sm" onclick="removeCartItem({{=ljk[item].id}},{{=subTotal}});">移除</button>
+            </div>
+        </div>
+        {{}}}
+        {{
+            $('#total').html(total.toFixed(2));
+            if(checkedItems.length === 0){
+                $('#goToAddOrder').removeAttr('onclick');
+                $('#goToAddOrder').removeClass('btn-success').addClass('btn-default');
+                $('#checkAll').attr('data-sign','-1');
+                $('#checkAll').find('.cart-item').addClass('unchecked-item').removeClass('checked-item');
+                $('#checkAll').find('.tip-text').html('全选');
+            }else{
+                $('#goToAddOrder').attr('onclick','goToAddOrder();');
+                $('#goToAddOrder').removeClass('btn-default').addClass('btn-success');
+                $('#checkAll').attr('data-sign','0');
+                $('#checkAll').find('.cart-item').addClass('checked-item').removeClass('unchecked-item');
+                $('#checkAll').find('.tip-text').html('全不选');
+            }
+        }}
+        {{??}}
+        <div style="height:100%;position:absolute;width:100%;color:red;line-height:100px;text-align:center;display:flex;display:-webkit-flex;flex-direction:row;align-items:center;justify-content:center;">
+            <span>购物车为空！</span>
+        </div>
+        {{ 
+            $('.dropload-down').remove();
+            $('#goToAddOrder').removeAttr('onclick');
+            $('#goToAddOrder').removeClass('btn-success').addClass('btn-default');
+        }}
+        {{?}}
+    </script>
+    <script type="text/javascript">
+        showLLL('/shop/shopcart/cartfun','cartBox',{action:'showlist',p:1,limit:10});
+    </script>
+</body>
+</html>

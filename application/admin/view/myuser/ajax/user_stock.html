@@ -1,0 +1,29 @@
+ <div class="table-responsive">
+        <table class="table table-striped dindan">
+            <thead>
+            <tr>
+                <th>商品名称</th>
+                <th>数量</th>
+                <th>生产日期</th>
+                <th>上报时间</th>
+                <th>备注</th>
+            </tr>
+            </thead>
+            <tbody id="orderList">
+            {if $stocklist}
+            {foreach name="stocklist" item="sto"}
+            <tr>
+                <td>{$sto.goodsname}</td>
+                <td>{$sto.num}</td>
+                <td>{$sto.mdate}</td>
+                <td>{$sto.adate}</td>
+                <td>{$sto.code}</td>
+            </tr>
+            {/foreach}
+            {else}
+            <tr><td colspan="8" style="color:red;text-align: center;">该时间段无库存信息，您可以重新设置时间段再查询！</td></tr>
+            {/if}
+            </tbody>
+        </table>
+    </div>
+{include file="common/page"}

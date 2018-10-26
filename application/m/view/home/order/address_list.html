@@ -1,0 +1,206 @@
+<!--地址选择-->
+<script type="text/html" id="tpl_addressdata">
+    {{if( ljk.address && ljk.address.length>0 ){}}
+    <div id="aaa">
+        {{for(var i=0; i<ljk.address.length; i++){ }}
+        <div data-id="{{=ljk.address[i].uid}}"  class="weui-cells">
+            <a class="weui-cell weui-cell_access">
+            <div data-type="{{?ljk.address[i].id!=0}}{{??}}0{{?}}" id="address_{{=ljk.address[i].id}}" class="weui-cell__bd  sy_kh">
+                <div class="weui-form-preview__bd">
+                    <label class="weui-form-preview__label">{{? ljk.address[i].consignee}}{{=ljk.address[i].consignee}}{{??}} 未设置{{?}}</label>
+                    <span class="weui-form-preview__value" style="width:106px;margin-left:175px;" >{{? ljk.address[i].mobile}}{{=ljk.address[i].mobile}}{{??}} 未设置{{?}}</span>
+                </div>
+                <p style="word-wrap: break-word; word-break: normal;">{{if(ljk.address[i].isdefault==1){}}<span style="color: #008B00">[默认]</span>{{}else{}} {{}}} <span id="{{=ljk.address[i].id}}" data-value="{{=ljk.address[i].areaids}}" style="">{{=ljk.address[i].areaname }}{{=ljk.address[i].address}}</span></p>
+            </div>
+            </a>
+            <div style="font-size: 10px;" class="weui-form-preview__ft">
+                <button type="button" class="weui-form-preview__btn" data-id="cart" onclick="choseaddress(this,'{{=ljk.address[i].id}}');">选择 </button>
+                <button type="button" id="addressdata" data-id="{{=ljk.address[i].id}}" class="weui-form-preview__btn" onclick="editmyaddresstpl('{{=ljk.address[i].id}}');">编辑 </button>
+                <button type="button" class="weui-form-preview__btn" onclick="delisdefaulttpl('{{=ljk.address[i].id}}','{{=ljk.address[i].uid}}');">删除</button>
+            </div>
+        </div>
+        {{}}}
+        <div class="weui-cell">
+            <button  class="weui-btn weui-btn_primary" data-id="0" onclick="editmyaddresstpl(0);">添加收货地址</button>
+        </div>
+        <div class="weui-mask addresslist-dialog" style="display: none;z-index:9999;"></div>
+    </div>
+    {{ }else{ }}
+        <div class="weui-cell"> 收货地址为空！</div>
+        <div class="weui-cell">
+            <button  class="weui-btn weui-btn_primary" data-id="0" onclick="editmyaddresstpl(0);">添加收货地址</button>
+        </div>
+    {{ } }}
+        <script type="text/javascript">
+            $("#m_user_index").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+            goSys('m_index_home');
+            function editmyaddresstpl(uid){
+                if(uid!=0){
+                    $('#addressdata').data('id',uid);
+                    ShowadeditmydressTpllistbyID('editaddress','editaddress',uid);
+                }else{
+                    var L=$("#aaa").find('div[class^="weui-cells"]').length;
+                    if(L<5){
+                        $('#addressdata').data('id',uid);
+                        ShowadeditmydressTpllistbyID('editaddress','editaddress',uid);
+                    }else{
+                        var msg='最多添加5个收货地址';
+                        $('#androidDialogmsg2').find('.weui-dialog__bd').text(msg+'！');
+                        $('#androidDialogmsg2').fadeIn(200);
+                        $(".weui-dialog__btn").on('click',function () {
+                            setTimeout("$('#androidDialogmsg2').fadeOut(200)",200);
+                        });
+                        setTimeout("$('#androidDialogmsg2').fadeOut(200)",5000);
+                        return false;
+                    }
+                }
+
+
+            }
+            function delisdefaulttpl(id,uid) {
+                var tip = {
+                    type:4,
+                    title:'订单确认',
+                    content:'确认删除该地址吗？',
+                    btn:1,
+                    btns:1,
+                    btnsa:1,
+                    btnsc:'取消',
+                    btnm:1,
+                    btnma:1,
+                    btnmc:'确认'
+                };
+                var template = doT.template($('#tpldialogs').html());
+                var t_html = template(tip);
+                $('.listaddress').append(t_html);
+                $('#androidDialog2').find(".weui-dialog__btn_default").on('click',function () {
+                    $('#androidDialog2').fadeOut(200);
+                    $('#dialogs').remove();
+                    return false;
+                });
+                $('#androidDialog2').find(".weui-dialog__btn_primary").on('click',function () {
+                    $.ajax({
+                        type:'post',
+                        url:'/m/order/delisdefault',
+                        data:{id:id},
+                        dataType:'json',
+                        success:function (data) {
+                            if (data['code'] == 1) {
+                                var tip = {
+                                    type:5,
+                                    content:'已删除'
+                                };
+                                var template = doT.template($('#tpldialogs').html());
+                                var t_html = template(tip);
+                                $('#dialogs').remove();
+                                $('.listaddress').append(t_html);
+                                setTimeout(function (){getthis();},600);
+                                console.log('删除成功:' + data['code']);
+                            }
+                        }
+                    });
+                });
+            }
+</script>
+</script>
+{include file="home/order/address_edit"}
+<script type="text/html" id="tpl_address">
+    <div class="page">
+        <!---顶部-->
+        <div class="ljk_top">
+            <a class="top_left"onclick="GO(this);" id="js_item" data-id=""  href="javascript:;">
+                <i class="fa fa-angle-left fa-2x"></i>
+            </a>
+            <a class="top_right" href="javascript:;" style="padding-top: 12px;" data-click="getthis();" onclick="isRequest(this);">
+                <i class="fa fa-refresh" style="font-size:1.3em;"></i>
+            </a>
+            <p class="weui-flex__item top_center">选择收货地址</p>
+        </div>
+        <!---顶部-->
+        <!--底部--->
+        <!--内容-->
+        <div class="ljk_neirong" style="position: relative;margin:0px;top:49px;width: 100%;height: calc(100% - 100px);">
+            <div class="listcontent listsaddress" style="padding-bottom: 0px;">
+                <div class="listaddress"> </div>
+            </div>
+        </div>
+        <!--内容-->
+    </div>
+    <script type="text/javascript">
+        $(function(){
+            $("#m_user_index").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+            goSys('m_index_home');var urlstr = "/m/order/addressinfo";
+            var uid = $('#uid').html();
+            ShowTplDataList(urlstr,'address',{id:uid,limit:10,p:1});
+        });
+        function GO(obj) {
+            var order_address=$('#order_address').data('addrtype');
+            var cart_address=$('#cart_address').data('addrtype');
+            if(order_address!=undefined){
+                $('#js_item').data('id',order_address);
+            }else if(cart_address!=undefined){
+                $('#js_item').data('id',cart_address);
+                var uid=$("#address_cart_select").parent().data('uid');
+                $('.dropload-down').remove();
+                ShowTplDataList('/m/order/cartinfo','cart',{id:uid,limit:10,p:1});
+            }
+            $('.layui-laydate').hide();
+            var id=$(obj).data('id');
+            window.pageManager.go(id);
+        }
+        function getthis() {
+            var uid=$("#address_cart_select").parent().data('uid');
+            ShowaddressTpllistbyID('address','address',uid);
+        }
+        function choseaddress(obj,id){
+            var address=document.getElementById('address_'+id);
+            var consiginee=$(address).find('label').text();
+            var mobile=$(address).find('span').eq(0).text();
+            var L=$(address).find('span').length;
+            var areaids='';
+            var areas='';
+            if(L==3){
+                areas=$(address).find('span').eq(2).text();
+                areaids=$(address).find('span').eq(2).data('value');
+            }else if(L==2){
+                areas=$(address).find('span').eq(1).text();
+                areaids=$(address).find('span').eq(1).data('value');
+            }
+            var uid=$(".addressadd").data('type');
+
+            var order_address=$('#order_address').data('addrtype');
+            var cart_address=$('#cart_address').data('addrtype');
+            if(order_address!=undefined){
+                $("#address_order_select").find('span').eq(0).text(consiginee);
+                $("#address_order_select").find('span').eq(1).text(mobile);
+                $("#address_order_select").find('span').eq(2).text(areas);
+                $("#address_order_select").find('span').eq(2).data('value',areaids);
+                window.pageManager.go(order_address);
+                $('#js_item').data('id',order_address);
+            }else if(cart_address!=undefined){
+                if(uid==1){
+                    $("#address_cart_select").find('span').eq(1).text(consiginee);
+                    $("#address_cart_select").find('span').eq(2).text(mobile);
+                    $("#address_cart_select").find('span').eq(3).text(areas);
+                }else if(uid==2){
+                    $("#address_cart_select2").find('span').eq(1).text(consiginee);
+                    $("#address_cart_select2").find('span').eq(2).text(mobile);
+                    $("#address_cart_select2").find('span').eq(3).text(areas);
+                    $("#addreashtml").css('display','none');
+                    $("#address_cart_select2").parent().parent().css('display','block');
+                }else if(uid==-1){
+                    $("#address_cart_select3").find('span').eq(1).text(consiginee);
+                    $("#address_cart_select3").find('span').eq(2).text(mobile);
+                    $("#address_cart_select3").find('span').eq(3).text(areas);
+                    $("#addreashtml1").css('display','none');
+                    $("#address_cart_select3").parent().parent().css('display','block');
+                }
+                $("#address_status").data('status',1);
+                $('#psdate').show();
+                $('input[name="address_id"]').val(id);
+                window.pageManager.go(cart_address);
+                $('#js_item').data('id',cart_address);
+            }
+        }
+</script>
+</script>

@@ -1,0 +1,60 @@
+<script type="text/template" id="goodsAddSearchFm">
+    <div class="weui-media-box weui-media-box_small-appmsg" style="width: 100%; z-index:2;" id="orderaddgoodsfm">
+        <div class="weui-cells">
+            <div class="weui-search-bar weui-search-bar_focusing" id="BJSearchBar">
+                <div id='orderaddgoodssearchkey' style="display:none"></div>
+                <form class="weui-search-bar__form">
+                    <div class="weui-search-bar__box"> <i class="weui-icon-search" style=" margin-top:5px;"></i>
+                        <input type="search" class="weui-search-bar__input" id="BJSearchInput" placeholder="请输入商品名称或商品货号" required  style="height:30px;" />
+                        <a href="javascript:" class="weui-icon-clear" id="BJSearchClear" style=" margin-top:5px;"></a> 
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var $searchBar = $('#BJSearchBar'),$searchInput = $('#BJSearchInput'),$searchClear = $('#BJSearchClear');
+        var lock = false;
+        function searchOrderaddgoods(t){
+            var s=$('#orderaddgoodssearchkey').html();
+            if(t!=" "&&s!=t){
+                $('#orderaddgoodssearchkey').html(t);
+                var data = {t:t,limit:15,p:1,oid:'{$orderinfo.order.oid}',action:'bjgoods'};
+                var el = '<div class="listcontent listorder_bjGoods type2" style="width: 56%; height:83%; right: 12%; top:59px;"><div class="weui-panel__bd order_bjGoods"></div></div>';
+                $('.addordergoodscontents').html(el);
+                showLL('/admin/order/addordergoods','order_bjGoods',data);
+            }
+        }
+        function hideSearchResult(){
+            $searchInput.val('');
+        }
+        function cancelSearch(){
+            $searchBar.removeClass('weui-search-bar_focusing');
+        }
+        $searchInput.on('blur', function (){
+            if(!this.value.length) cancelSearch();
+        }).on('compositionstart',function (){
+            lock = true;
+        }).on('compositionend',function (){
+            lock = false;
+        }).on('input', function(){
+            var that = this;
+            setTimeout(function (){
+                if(!lock){
+                    if(that.value.length) {
+                        searchOrderaddgoods(that.value);
+                    }else{
+                        hideSearchResult();
+                        $searchInput.focus();
+                        searchOrderaddgoods(that.value);
+                    }
+                }
+            },500);
+        });
+        $searchClear.on('click', function(){
+            hideSearchResult();
+            $searchInput.focus();
+            searchOrderaddgoods(this.value);
+        });
+    </script>
+</script>

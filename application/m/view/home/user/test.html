@@ -1,0 +1,111 @@
+{{if(ljk){}}
+<form action="/m/user/profile" method="post" enctype="multipart/form-data" onsubmit="return false;">
+    <input type="hidden" name="action" value="create" />
+    <input type="hidden" name="uid" value="{{=ljk.uid}}" />
+    <input type="hidden" name="x" id="x" value="{{=ljk.x}}" />
+    <input type="hidden" name="y" id="y" value="{{=ljk.y}}" />
+    <div class="ljk_neirong" style="margin-bottom:50px;">
+        <div class="page__bd">
+            <div class="weui-cells weui-cells_form">
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">客户名称</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" type="text" name="realname"  value="{{=ljk.realname}}">
+                    </div>
+                </div>
+                <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label for="" class="weui-label">客户类型</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <select class="weui-select" id="tpid" name="tpid">
+                        {{for(var i=0;i<ljk.type.length;i++){}}
+                            <option value="{{=ljk.type[i].id}}" {{if(ljk.tpid===ljk.type[i].id){}}selected="selected"{{}}}>{{=ljk.type[i].title}}</option>
+                        {{}}}
+                        </select>
+                    </div>
+                </div>
+                <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label for="" class="weui-label">拜访路线</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <select class="weui-select" id="visitid" name="visitid">
+                        {{for(var i=0;i<ljk.visit.length;i++){}}
+                            <option value="{{=ljk.visit[i].id}}" {{if(ljk.visitid===ljk.visit[i].id){}}selected="selected"{{}}}>{{=ljk.visit[i].title}}</option>
+                        {{}}}
+                        </select>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">详细地址</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" type="text" name="address" value="{{=ljk.address}}"  placeholder="请输入...">
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">公司联系人</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" type="text" name="contact" value="{{=ljk.contact}}" placeholder="请输入...">
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">联系人手机</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" type="text" name="mobile" value="{{=ljk.mobile}}" placeholder="请输入...">
+                    </div>
+                </div>                
+                <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label for="" class="weui-label">性别</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <select class="weui-select" name="gender">
+                            <option value="1" {{if(ljk.gender==1){}}selected="selected"{{}}}>男</option>
+                            <option value="2" {{if(ljk.gender==2){}}selected="selected"{{}}}>女</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label for="" class="weui-label">生日类型</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <select class="weui-select" name="birthdaytype">
+                            <option value="1" {{if(ljk.birthdaytype==1){}}selected="selected"{{}}}>阳历</option>
+                            <option value="2" {{if(ljk.birthdaytype==2){}}selected="selected"{{}}}>农历</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label for="" class="weui-label">生日</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" type="date" name="birthday" value="{{=ljk.birthday}}"/>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">客户介绍</label></div>
+                    <div class="weui-cell__bd">
+                        <textarea class="weui-textarea" placeholder="请输入文本" name="summary" rows="2" maxlength="200" oninput="l(this);">{{=ljk.summary}}</textarea>
+                        <div class="weui-textarea-counter"><span style="color:red;">0</span>/200</div>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">地理位置</div>
+                    {if is_weixin()}
+                    <div class="weui-cell__ft">
+                        <button class="weui-btn weui-btn_primary weui-btn_mini" onclick="return wxdw();">定位</button>
+                    </div>
+                    {/if}
+                </div>
+                <div class="weui-cell">
+                    <div id="createmap" style="height:200px;width:100%;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="page__bd page__bd_spacing">
+            <button href="javascript:;" class="weui-btn weui-btn_primary js_item" onclick="return post(this.form);">确定</button>
+        </div>
+    </div>
+</form>
+{{}}}

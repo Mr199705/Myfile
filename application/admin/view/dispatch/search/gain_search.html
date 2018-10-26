@@ -1,0 +1,54 @@
+<div class="row wrapper white-bg page-heading" style="">
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-sm-3" style="margin: 0px 5px 0px 0px;;padding:0px;width: 145px;">
+                <div class="input-group">
+                    <input type="text"class="laydate-input input-sm form-control" name="csdate" placeholder="申请开始时间"/>
+                </div>
+            </div>
+            <div class="col-sm-1" style="margin: 0px 5px 0px 0px;;padding:0px;width: 33px;">
+                <div class="input-group">
+                    <span class="input-sm form-control" style="text-align: center;">-</span>
+                </div>
+            </div>
+            <div class="col-sm-3" style="margin: 0px 5px 0px 0px;padding:0px;width: 145px;">
+                <div class="input-group">
+                    <input type="text" class="laydate-input input-sm form-control" name="cedate" placeholder="申请结束时间"/>
+                </div>
+            </div>
+            <div class="col-sm-1" style="width:90px;padding: 0px;">
+                <div class="input-group">
+                    <select name="status" class="input-sm form-control" style="margin: 0 0;padding: 0 0;" >
+                        <option value="">审核状态</option>
+                        <option value="0">未审核</option>
+                        <option value="1">已通过</option>
+                        <option value="-1">未通过</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-1" style="width:90px;padding: 0px;">
+                <div class="input-group">
+                    <select name="keytype" class="input-sm form-control" style="margin: 0 0;padding: 0 0;" >
+                        <option value="number">订单号</option>
+                        <option value="phone">收货人电话</option>
+                        <option value="address">收货地址</option>
+                        <option value="dtitle">小组名称</option>
+                        <option value="m">组员姓名</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-2" style="padding:0px;width:178px;">
+                <div class="input-group" style="position: relative;">
+                    <input type="text" style="width: calc(100% - 9px);" name="keyword" placeholder="输入关键词搜索" value="" class="input-sm form-control" onkeydown="if(event.keyCode == 13){ this.form.button.click(); }">
+                </div>
+            </div>
+            <div class="col-sm-1"  >
+                <div class="input-group">
+                    <span class="input-group-btn">
+                        <button type="button" name="button" class="btn btn-sm btn-primary" onclick="getGainStatics('{$initData.sign}');getList({sign:'{$initData.sign}'},1);"> 搜索</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

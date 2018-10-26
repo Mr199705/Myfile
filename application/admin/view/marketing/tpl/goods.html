@@ -1,0 +1,87 @@
+<script type="text/template" id="goodsSelect">
+<div class="modal-dialog" style="margin:0px auto;width:60%;">
+    <div class="modal-content animated fadeIn">
+        <div style="text-align:center;">
+            <h4 class="modal-title">选择营销商品</h4>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal" id="goodsSearchFormList" action="/admin/marketing/showlist" onsubmit="return false;">
+                <input type="hidden" id="cid" name="cid" value="0">
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <select class="form-control" name="pid" onchange="getccs(this);GetSkuGoods(this);">
+                            <option value="0">所有分类</option>
+                            {volist name="$category" id="cp"}
+                                <option value="{$cp.id}">{$cp.title}</option>
+                            {/volist}
+                        </select>
+                    </div>
+                    <div id="child_cate">
+                        {volist name="$category" id="cp"}
+                        <select style="display:none;" id="data_{$cp.id}"  class="form-control" name="pidww" onchange="getccs(this);GetSkuGoods(this);">
+                            <option value="{$cp.id}">所有分类</option>
+                            {if condition="isset($cp.c)"}
+                            {volist name="$cp.c" id="cpc"}
+                                <option value="{$cpc.id}">{$cpc.title}</option>
+                            {/volist}
+                            {/if}
+                        </select>
+                        {/volist}
+                    </div>
+                    <div class="col-sm-4">
+                            <input type="text" name="keywords" oninput="GetSkuGoods(this);" class="form-control" placeholder="请输入商品关键词">
+                    </div>
+                </div>
+                <div class="form-group" style="height:275px;">
+                    <div id="goodsFormList" style="position: relative;width: 100%;height: 100%;"><!-- 商品出库 商品选择列表 -->
+                        <div style="display: flex;flex-direction: row;flex-wrap: nowrap; background: #aaa;color: #fff;overflow-y: scroll;height: 40px;align-items: center;">
+                            <div style="width:50%;text-align:center">商品</div>
+                            <div style="width:50%;text-align:center">操作</div>
+                        </div>
+                        <div class="listgoods" style="position: absolute;width:100%;height:calc(100% - 2px);top:40px;overflow: hidden;overflow-y: scroll;">
+                            <div class="goods" style="display: flex;flex-direction: column;width:100%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</script>
+<script type="text/template" id="goods">
+    {{?ljk && ljk.length}}
+    {{for(var item in ljk){}}
+    {{
+        goodsList[index] = ljk[item];
+        var i = 0;
+        var bgc = (index % 2) ? '#fff' : '#ffe';
+        var $display='';
+        if(ljk[item].goods_id==ljk[item].into_goods_id){
+            $display='none';
+        }else{
+            $display='';
+        }
+    }}
+    <div onmouseover="$(this).css('background','#eee');" onmouseout="$(this).css('background','{{=bgc}}');" style="width:100%;background:{{=bgc}};display:flex;flex-direction: row;flex-wrap: nowrap;align-items: center;border-bottom:1px solid #ccc;">
+        <div style="width:50%;display: flex;flex-direction: row;flex-wrap: nowrap;align-items:center;">
+            <div style="width:60px;text-align:center;"><img src="{{=ljk[item].goodsImg}}" style="width:50px;height:50px;" /></div>
+            <div style="width:calc(100% - 60px);">{{=ljk[item].goodsName}}</div>
+        </div>
+        <div style="width:50%;text-align: center;">
+            <form method="post" action="/admin/order/add" onsubmit="return false;">
+                <input type="hidden" name="bjid" value="{{=ljk[item].id}}" />
+                <input type="hidden" name="ptype" value="{{=ljk[item].ptype}}" />
+                <input type="hidden" name="unitid" value="{{=ljk[item].unitid}}" />
+                <input type="hidden" name="skuid" value="0" />
+                <input type="hidden" name="priceid" value="0" />
+
+                <button class="btn btn-sm btn-info btnSel" data-goods='{{=JSON.stringify(ljk[item]) }}' data-name="{{=ljk[item].goodsName}}"  onclick="SelMarket_addgoods(this,'{{=ljk[item].id}}');">选择</button>
+            </form>
+        </div>
+    </div>
+    {{index++;}}
+    {{}}}
+    {{??}}
+    <p style="height:50px;line-height:50px;text-align:center;color:red;">没有查询到该条件下的商品信息！</p>
+    {{?}}
+</script>

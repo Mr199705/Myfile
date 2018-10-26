@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>无效操作</title>
+     <link rel="stylesheet" href="__CSSPAY__/weui.css"/>
+     <link rel="stylesheet" href="__CSSPAY__/example.css"/>
+     <link rel="stylesheet" href="__CSSPAY__/tubiao/css/font-awesome.min.css"/>
+     <link rel="stylesheet" href="__CSSPAY__/style.css"/>
+     <script src="__JSPAY__/zepto.min.js"></script>
+    <script src="__JSPAY__/weui.min.js"></script>
+    <script src="__JSPAY__/example.js"></script>
+    <script  type="text/javascript" src="__JSPAY__/dianji.js"></script>
+    <script  type="text/javascript" src="__JSPAY__/delay.js"></script>
+    <script  type="text/javascript" src="__JSPAY__/doT.js"></script>
+</head>
+<body ontouchstart>
+    <div class="weui-toptips weui-toptips_warn js_tooltips"></div>
+    <div class="container" id="container"></div>
+<!--首页-->
+<script type="text/html" id="tpl_home">
+    <div class="page">
+        <!--内容-->
+        <div class="ljk_neirong ljk_neirong_home"></div>
+        <!--内容-->
+    </div>
+    <script type="text/javascript">
+        $(function (){
+            $('#dialogs').remove();
+            var tip = {
+                type:1,
+                title:'提示信息',
+                content:'无权使用该功能，请系统管理员进行授权！',
+				btn:1,
+                btns:1,
+                btnsc:'重新登录',
+                btnsa:'onclick="window.location.href=\'/m/login/loginout.html\'"',
+				btnm:1,
+                btnmc:'返回',
+                btnma:'onclick="window.history.back();"',
+            };
+            var template = doT.template($('#tpldialogs').html());
+            var t_html = template(tip);
+            $('#container').append(t_html);
+            return false;
+        });
+    </script>
+</script>
+{include file="common/dialog" /}
+</body>
+</html>

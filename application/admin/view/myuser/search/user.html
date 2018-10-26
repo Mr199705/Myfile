@@ -1,0 +1,216 @@
+<div class="row">
+    <div class="col-sm-1" style=" padding-right:0px; width:100px;">
+        <div class="input-group">
+            <select class="input-sm form-control" style="width:93px;padding-left: 2px;padding-right: 0px;" name="status" onchange="getList({sign:'{$initData.sign}'},1);">
+                <option value="" selected="selected" >状态</option>
+                <option value="1"  >有效客户</option>
+                <option value="2">无效客户</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-1" style=" padding-right:0px; width:100px;">
+        <div class="input-group">
+            <select class="input-sm form-control" style="width:93px;padding-left: 2px;padding-right: 0px;" value="0" name="shopid" onchange="getList({sign:'{$initData.sign}'},1);">
+                <option value="">来自</option>
+                {if $shop}
+                {foreach name="shop" item="sh"}
+                <option value="{$sh.id}">{$sh.name}</option>
+                {/foreach}
+                {else}
+                {/if}
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-1" style=" padding-right:0px; width:100px;">
+        <div class="input-group">
+            <select class="input-sm form-control" style="width:93px;padding-left: 2px;padding-right: 0px;" value="0" name="rankid" onchange="getList({sign:'{$initData.sign}'},1);">
+                <option value="">客户等级</option>
+                {if $rank}
+                {foreach name="rank" item="ra"}
+                <option value="{$ra.id}">{$ra.rank_name}</option>
+                {/foreach}
+                {else}
+                {/if}
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-1" style=" padding-right:0px; width:100px;">
+        <div class="input-group">
+            <select class="input-sm form-control" style="width:93px;padding-left: 2px;padding-right: 0px;" value="" name="tpid" onchange="getList({sign:'{$initData.sign}'},1);">
+                <option value="">客户类型</option>
+                {if $type}
+                {foreach name="type" item="ty"}
+                <option value="{$ty.id}">{$ty.title}</option>
+                {/foreach}
+                {else}
+                {/if}
+            </select>
+        </div>
+    </div>
+    {if $stages}
+    <div class="col-sm-1" style=" padding-right:0px; width:100px;">
+        <div class="input-group">
+            <select class="input-sm form-control" style="width:93px;padding-left: 2px;padding-right: 0px;" value="" name="stage_id" onChange="getList({sign:'{$initData.sign}'},1);">
+                <option value="">{if $tag_title!='' ||$tag_title != null}{$tag_title}{else/}客户阶段{/if}</option>
+                {foreach name="stages" item="stage"}
+                <option value="{$stage.id}" >{$stage.title}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    {/if}
+    <div class="col-sm-1" style=" padding-right:0px; width:90px;">
+        <div class="input-group">
+            <select class="input-sm form-control" style="width:83px;padding-left: 2px;padding-right: 0px;" name="bdate" onchange="getList({sign:'{$initData.sign}'},1);">
+                <option value="">拜访周期</option>
+                <option value="7">7天以上</option>
+                <option value="14">14天以上</option>
+                <option value="30">30天以上</option>
+                <option value="60">60天以上</option>
+                <option value="90">90天以上</option>
+                <option value="120">120天以上</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-1" style=" padding-right:0px; width:90px;">
+        <div class="input-group">
+            <select class="input-sm form-control" style="width:83px;padding-left: 2px;padding-right: 0px;" name="odate" onchange="getList({sign:'{$initData.sign}'},1);">
+                <option value="">订单周期</option>
+                <option value="7">7天以上</option>
+                <option value="14">14天以上</option>
+                <option value="30">30天以上</option>
+                <option value="60">60天以上</option>
+                <option value="90">90天以上</option>
+                <option value="120">120天以上</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-1" style=" padding-right:0px; width:90px;">
+        <div class="input-group">
+            <select class="input-sm form-control" style="width:83px;padding-left: 2px;padding-right: 0px;" value="" name="type">
+                <option value="realname">客户名称</option>
+                <option value="address">客户地址</option>
+                <option value="contact">联系人</option>
+                <option value="mobile">联系手机</option>
+                <option value="content">拜访记录</option>
+                <option value="summary">客户介绍</option>
+            </select>
+        </div>
+    </div>
+    <!--style=" padding-left:0px; margin-right:0px;"-->
+    <div class="col-sm-2" style="width:180px;">
+        <div class="input-group">
+            <input type="text" style="width:155px;" name="keyword" placeholder="请输入关键词" value="" class="input-sm form-control"> <!--oninput="getList({sign:'userIndex'},1);"-->
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-sm btn-primary" onclick="getList({sign:'{$initData.sign}'},1);"> 搜索</button>
+            </span>
+        </div>
+    </div>
+    <div class="col-sm-1" style="margin-left: 25px;">
+        <button type="button" class="btn btn-sm btn-primary" id="genduo">更多</button>
+    </div>
+</div>
+<div class="row" id="saixuan" style=" display:none;">
+    <ul class="select">
+        <li class="select-list">
+            <dl id="select1">
+                <dt>拜访路线：</dt>
+                <dd class="select-all selected">
+                    <label><input type="radio" onclick="getList({sign:'{$initData.sign}'},1);" value="0" name="visitid" checked="checked">全部</label>
+                </dd>
+                {if $visit}
+                {foreach name="visit" item="vi"}
+                <dd class="select-all">
+                    <label><input type="radio" onclick="getList({sign:'{$initData.sign}'},1);" value="{$vi.id}" name="visitid">{$vi.title}</label>
+                </dd>
+                {/foreach}
+                {else}
+                {/if}
+            </dl>
+        </li>
+        <li class="select-list">
+            <dl id="select2">
+                <dt>认证状态：</dt>
+                <dd class="select-all selected">
+                    <label><input type="radio" onclick="getList({sign:'{$initData.sign}'},1);" value="" name="trust" checked="checked">全部</label>
+                </dd>
+                <dd>
+                    <label><input type="radio" onclick="getList({sign:'{$initData.sign}'},1);" value="0" name="trust">未认证</label>
+                </dd>
+                <dd>
+                    <label><input type="radio" onclick="getList({sign:'{$initData.sign}'},1);" value="1" name="trust">已认证</label>
+                </dd>
+            </dl>
+        </li>
+        <li class="select-list">
+            <dl id="select3">
+                <dt>地图标注：</dt>
+                <dd class="select-all selected">
+                    <label><input type="radio" onclick="getList({sign:'{$initData.sign}'},1);" value="" name="x" checked="checked">全部</label>
+                </dd>
+                <dd>
+                    <label><input type="radio" onclick="getList({sign:'{$initData.sign}'},1);" value="0" name="x">未标注</label>
+                </dd>
+                <dd>
+                    <label><input type="radio" onclick="getList({sign:'{$initData.sign}'},1);" value="1" name="x">已标注</label>
+                </dd>
+            </dl>
+        </li>
+        <li class="select-list ">
+            <dl id="select4">
+                <dt>客户资料更新：</dt>
+                <dd class="select-all selected">
+                    <label><input type="radio" onclick="getList({sign:'{$initData.sign}'},1);" value="0" name="lastvisit">全部</label>
+                </dd>
+                <dd>
+                    <label><input type="radio" onclick="getList({sign:'{$initData.sign}'},1);" value="1" name="lastvisit">一周内</label>
+                </dd>
+                <dd>
+                    <label><input type="radio" onclick="getList({sign:'{$initData.sign}'},1);" value="2" name="lastvisit">两周内</label>
+                </dd>
+                <dd>
+                    <label><input type="radio" onclick="getList({sign:'{$initData.sign}'},1);" value="3" name="lastvisit">一月内</label>
+                </dd>
+                <dd>
+                    <label><input type="radio" onclick="getList({sign:'{$initData.sign}'},1);" value="4" name="lastvisit">半年内</label>
+                </dd>
+                <dd>
+                    <label><input type="radio" onclick="getList({sign:'{$initData.sign}'},1);" value="5" name="lastvisit">一年内</label>
+                </dd>
+                <dd>
+                    <label><input type="radio" onclick="getList({sign:'{$initData.sign}'},1);" value="6" name="lastvisit">一年前</label>
+                </dd>
+            </dl>
+        </li>
+        <li class="select-list">
+            <dl id="select5">
+                <dt>微信绑定状态：</dt>
+                <dd class="select-all selected">
+                    <label><input type="radio" onclick="getList({sign:'{$initData.sign}'},1);" value="0" name="weixin" checked="checked">全部</label>
+                </dd>
+                <dd>
+                    <label><input type="radio" onclick="getList({sign:'{$initData.sign}'},1);" value="1" name="weixin">已绑定</label>
+                </dd>
+                <dd>
+                    <label><input type="radio" onclick="getList({sign:'{$initData.sign}'},1);" value="2" name="weixin">未绑定</label>
+                </dd>
+            </dl>
+        </li>
+        <li class="select-list">
+            <dl id="select6">
+                <dt style=" line-height: 30px;">注册时间：</dt>
+                <dd style=" line-height: 30px;">开始：</dd>
+                <dd>
+                    <input type="text" readonly="readonly" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})"  class="input-sm form-control" name="csdate" value="" placeholder="请选择一个开始时间" />
+                </dd>
+                <dd style=" line-height: 30px;">结束</dd>
+                <dd>
+                    <input type="text" readonly="readonly" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'});"  class="input-sm form-control" name="cedate" value="{:date('Y-m-d 23:59:59')}" />
+                </dd>
+                <dd style="margin-top: 2px;">
+                    <span><button type="button" class="btn btn-sm btn-primary" onclick="getList({sign:'{$initData.sign}'},1);">确定</button></span>
+                </dd>
+            </dl>
+        </li>
+    </ul>
+</div>

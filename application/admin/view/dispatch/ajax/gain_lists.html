@@ -1,0 +1,53 @@
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>订单编号</th>
+                <th>小组名称</th>
+                <th>小组人数</th>
+                <th>申请人</th>
+                <th>申请时间</th>
+                <th>配送距离</th>
+                <th>提成总额</th>
+                <th>审核状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {if count($gainOrders)}
+            {foreach name="gainOrders" item="vo"}
+            <tr>
+                <td>{$vo.number}</td>
+                <td>{$vo.dtitle }</td>
+                <td><span style="color:red;">{$vo.mnum}</span>人</td>
+                <td>{$vo.apRealname}</td>
+                <td>{$vo.applyDt}</td>
+                <td><span style="color:{$vo.clr};">{$vo.dst}{$vo.dw}</span></td>
+                <td>¥<span style="color:red;">{$vo.total + $vo.adjust}</span></td>
+                <td>
+                    {if $vo.status===0}
+                    <font color="blue">未审核</font>
+                    {elseif $vo.status===1}
+                    <font color="green">已通过</font>
+                    {elseif $vo.status===-1}
+                    <font color="#f7a54a">未通过</font>
+                    {/if}
+                </td>
+                <td>
+                    {if condition="$vo.status eq 0"}
+                    <a class="btn btn-success btn-sm" data-id="gainDetail" href="javascript:void(0);" onclick="getGainDetail({$vo.id});">审核</a>
+                    {elseif condition="$vo.status eq 1"}
+                    <a class="btn btn-primary btn-sm" data-id="gainDetail" href="javascript:void(0);" onclick="getGainDetail({$vo.id});">调整</a>
+                    {elseif condition="$vo.status eq -1"}
+                    <a class="btn btn-info btn-sm" data-id="gainDetail" href="javascript:void(0);" onclick="getGainDetail({$vo.id});">详情</a>
+                    {/if}
+                </td>
+            </tr>
+            {/foreach}
+            {else}
+            <tr><td colspan="9" style="text-align: center;color:red;">没有找到符合条件的记录！</td></tr>
+            {/if}
+        </tbody>
+    </table>
+</div>
+{include file="common/page"}

@@ -1,0 +1,81 @@
+<div class="table-responsive">
+    <form method="post" action="/admin/goodsbank/gb" id="displayOrderForm" onsubmit="return formAct2(this,'','正在进行排序操作！');">
+        <input type="hidden" name="action" value="displayorder">
+        <table class="table table-striped dindan" style="word-wrap:break-word;word-break:break-all;">
+            <thead>
+            <tr>
+                <th style="width: 5%;">选择</th>
+                <th style="width: 7%;">排序</th>
+                <th style="width: 10%;">商品图片</th>
+                <th style="width: 20%;">商品名称及条形码</th>
+                <th style="width: 13%;">属性</th>
+                <th style="width: 13%;">促销信息</th>
+                <th style="width: 8%;">市场价</th>
+                <th style="width: 8%;">批发价</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {if $goodsbank}
+            {foreach name="goodsbank" item="gb"}
+            <tr>
+                <td>
+                    <div class="icheckbox_square-green" style="position: relative;" id="{$gb.id}"onmouseover="hovers(id)" onmouseout="outs(id)" onclick="checks(id);" >
+                        <input class="i-checks" type="checkbox" name="ids[]" value="{$gb.id}" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                </td>
+                <td><input type="text" class="form-control" name="displayorder[{$gb.id}]" value="{$gb.displayorder}"></td>
+                <td>
+                    <img src="{$gb.img_url}" width="50px">
+                </td>
+                <td>
+                    {$gb.goodsName}<br/>
+                    {$gb.seller_note}<br/>
+                </td>
+                <td colspan="4">
+                    <table frame="void" class="table table-striped dindan">
+                        {if condition="$gb.sku neq null"}
+                            {foreach name="$gb.sku" item="sku"}
+                            <tr>
+                                <td style="width: 33%">{$sku.attrs_value}</td>
+                                <td style="width: 25%">{$gb.cuxiao}</td>
+                                <td style="width: 21%">{notempty name="$sku.jiage.retailprice"}{$sku.jiage.retailprice}/{$sku.unit.uname}{/notempty}</td>
+                                <td>{notempty name="$sku.jiage.tuanprice"}{$sku.jiage.tuanprice}/{$sku.unit.uname}{/notempty}</td>
+                            </tr>
+                            {/foreach}
+                        {elseif  condition="$gb.sku eq null"/}
+                        <tr>
+                            <td style="width: 33%"></td>
+                            <td style="width: 25%">{$gb.cuxiao}</td>
+                            <td style="width: 21%">{notempty name="$gb.retailprice"}{$gb.retailprice}/{$gb.unit.uname}{/notempty}</td>
+                            <td>{notempty name="$gb.tuanprice"}{$gb.tuanprice}/{$gb.unit.uname}{/notempty}</td>
+                        </tr>
+                        {/if}
+                    </table>
+                </td>
+                <td >
+                    <a class="btn btn-success btn-sm" href="/admin/goodsbank/detail/id/{$gb.id}" data-index="_quote_edit_baojia_id_{$gb.id}" onclick="return c(this);">修改<span style="display:none;">{$gb.goodsName}</span></a>
+                    <a class="btn btn-success btn-sm" onclick="ajaxAct2('/x/admin/quote/delete/baojia_id/3428','您真的要删除这个报价吗？','正在删除这个报价！')" href="javascript:void(0);">删除</a>
+                   {if condition="$gb.sell_status eq 1"}
+                    <a class="btn btn-warning btn-sm" onclick="ajaxAct2('/admin/goodsbank/gb','您真的要下架这个商品吗？','正在下架这个商品！',{action:'editStatus',type:'sell_status',act_name:'下架',value:'0',x:'{$gb.id}'})" href="javascript:void(0);">下架</a>
+                    {else/}
+                    <a class="btn btn-warning btn-sm" onclick="ajaxAct2('/admin/goodsbank/gb','','正在上架这个商品！',{action:'editStatus',type:'sell_status',act_name:'下架',value:'1',x:'{$gb.id}'})" href="javascript:void(0);">上架</a>
+                    {/if}
+                </td>
+            </tr>
+            {/foreach}
+            {else/}
+            <tr><td colspan="9" style="text-align:center;color:red;">没有找到符合条件的记录！</td></tr>
+            {/if}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td><a class="btn btn-sm btn-success" onclick="checkA(this,'{$initData.sign}List','ids[]');" href="javascript:void(0);">√</a></td>
+                <td colspan="8">
+                    <input type="submit" class="btn btn-sm btn-success" name="noticesubmit" value="排序">
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </form>
+</div>
+{include file="common/page" /}

@@ -1,0 +1,27 @@
+{if $multipage}
+<div class="row  Bind_client_row" style="">
+    <div class="col-sm-8">
+        <div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_0_paginate">
+            <ul class="pagination" id="multipage">
+                {foreach name="$multipage" item="page key=k}
+                <!--next or prev-->
+                {if $page.2 != ''}
+                {else/}
+                <!--当前页-->
+                {if $page.1 == ''}
+                <li class="paginate_button active" aria-controls="DataTables_Table_0" tabindex="0">
+                    <a href="javascript:void(0);">{$page.0}</a>
+                </li>
+                {else/}
+                <!--编号页-->
+                <li class="paginate_button" aria-controls="DataTables_Table_0" tabindex="0">
+                    <a href="#" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search('{$page.0}');">{$page.0}</a>
+                </li> 
+                {/if}
+                {/if}
+                {/foreach}
+            </ul>
+        </div>
+    </div>
+</div>
+{/if}

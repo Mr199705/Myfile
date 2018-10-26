@@ -1,0 +1,53 @@
+<table class="table invoice-total">
+    <tbody>
+        <tr>
+            <td style="width:200px;"><b>总金额：<span style="color: #f00;font-size: 16px;">¥{$order.total}</span></b></td> 
+        </tr>
+    </tbody>
+</table>
+<div class="table-responsive">
+    <table class="table table-striped dindan">
+        <thead>
+            <tr>
+                <th>商品名称</th>
+                <th>促销信息</th>
+                <th>单价</th>
+                <th>数量</th>
+                <th>类型</th>
+                <th>金额</th>
+                {if @$order.confirm != -1 && $order.trade !=1 && ($order.psid==0 ||  $order.psid==$gid)}
+                {if @$admin_order_editordergoods}
+                <th>操作</th>
+                {/if}
+                {/if}
+            </tr>
+        </thead>
+        <tbody>
+            {foreach name="$goodsList" item="goods"}
+            <tr>
+                <td>{$goods.name}</td>
+                <td>
+                    <ul>
+                        <li>{if @$goods.cuxiao}{$goods.cuxiao}{/if}</li>
+                        {if @$goods.csdate != 0}
+                        <li>开始：{$goods.csdate|date="Y-m-d",###}</li>
+                        <li>结束：{$goods.cedate|date="Y-m-d",###}</li>
+                        {/if}
+                    </ul>
+                </td>
+                <td>{$goods.price}</td>
+                <td>{$goods.num}{$goods.unit}</td>
+                <td>{$goods.goods_type}</td>
+                <td>{$goods.amount}</td>
+                {if $order.confirm ==0 && $order.trade !=1 && $order.gid==$gid}
+                {if @$admin_order_editgoods}<td><a href="javascript:void(0);" class="btn-sm btn-primary"  data-toggle="modal" data-target="#myModal58" onclick="showLA('/admin/order/editgoods','edit_order_goods',{id:'{$goods.id}',oid:'{$order.oid}',action:'showgoods'});">修改</a></td>{/if}
+                {/if}
+            </tr>
+            {/foreach}                                              
+        </tbody>
+    </table>
+</div>
+{include file="common/page"}
+<script type="text/javascript">
+    $('#ordergoodsnum').html('{$pageInfo.total}');
+</script>

@@ -1,0 +1,97 @@
+{include file="common/header" /}
+<style type="text/css">
+    *::-webkit-scrollbar{
+        width: 0px;
+        height: 0px;
+    }
+    td{
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
+    table{
+        border-collapse:collapse;
+        border-spacing:0;
+        table-layout:fixed;
+        width: 100%;
+    }
+</style>
+</head>
+<body>
+{include file="common/warning" /}
+{include file="common/tips" /}
+<div id="wrapper">
+    <div  class="gray-bg dashbard-1">
+        <!--头部-->
+        <div class="row wrapper border-bottom white-bg page-heading">
+            <div class="col-sm-8">
+                <h2>商品报价</h2>
+            </div>
+            <div class="col-sm-4">
+                <br>
+                <a class=" minimalize-styl-1 btn btn-success btn-sm" href="/x/admin/quote/index" onClick="return c(this);" data-index="_quote_index"  style=" margin:0px auto auto auto;">添加商品</a>
+                <a class=" minimalize-styl-1 btn btn-success btn-sm" data-toggle="modal" data-target="#myModa12" href="javascript:void(0);" style="margin-top:0px;">设置价格标签</a>
+
+                <!--<a class=" minimalize-styl-1 btn btn-success btn-sm" style=" margin:0px;" href="/adminx/baobiao/baojia">导出报表</a>-->
+            </div>
+        </div>
+        <!--头部-->
+        <!--内容-->
+        <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <form method="post" id="{$initData.sign}Conditions" action="{$initData.requestUrl}" onsubmit="return false;">
+                                <input type="hidden" name="action" value="showlist">
+                                {include file="goodsbank/search/gb"}
+                            </form>
+                            说明：添加商品报价后，订货系统会显示商品的价格和促销信息。
+                        </div>
+                        <div class="ibox-content">
+                            <div id="{$initData.sign}List"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--内容-->
+            <!--设置价格标签-->
+            <div class="modal inmodal" id="myModa12" tabindex="-1" role="dialog"  aria-hidden="true">
+                <div class="modal-dialog ">
+                    <div class="modal-content animated fadeIn">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">
+                                <span aria-hidden="true">&times;</span>
+                                <span class="sr-only">Close</span>
+                            </button>
+                            <h4 class="modal-title">价格标签</h4>
+                        </div>
+                        <form id="newuserform" name="newuserform" method="post" class="form-horizontal" action="/x/admin/quote/tag" onSubmit="return formAct(this,'正在设置价格标签，请稍后！');">
+                            <input type="hidden" name="action" value="edit" />
+                            <div class="modal-body">
+                                <p>说明：报价列表中成交价格标签的显示默认显示批发价</p>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">价格标签: </label>
+                                    <div class="col-sm-6">
+                                        <input type="text" name='title' value="" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <input type="submit" class="btn btn-primary" id="newusersubmit" name="addsubmit" value="提交">
+                                <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--设置价格标签-->
+        </div>
+    </div>
+</div>
+{include file="common/footerjs"}
+<script type="text/javascript">
+    getList({sign:'{$initData.sign}'});
+</script>
+</body>
+</html>
+

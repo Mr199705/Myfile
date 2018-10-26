@@ -1,0 +1,76 @@
+<script type="text/template" id="listPage">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="dataTables_info" id="DataTables_Table_0_info" role="alert" aria-live="polite" aria-relevant="all" style="margin-top:24px;">
+                显示 {if $pageInfo.f}{$pageInfo.f}{else}0{/if} 到 {if $pageInfo.t}{$pageInfo.t}{else}0{/if} 项，共 {if $pageInfo.total}{$pageInfo.total}{else}0{/if} 项
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_0_paginate">
+                <ul class="pagination" >
+                    {if $pageInfo.prev}
+                    <li class="paginate_button previous" aria-controls="DataTables_Table_0" tabindex="0" id="DataTables_Table_0_previous">
+                        <a href="javascript:void(0);" onclick="getList({u:'{$initData.requestUrl}',sign:'{$initData.sign}'},'{$pageInfo.prev}');">上一页</a>
+                    </li>
+                    {/if}
+                    <!--首页-->
+                    <li class="paginate_button {if $pageInfo.currentPage==1}active{/if}" aria-controls="DataTables_Table_0" tabindex="0">
+                        <a href="javascript:void(0);" {if $pageInfo.currentPage!=1}onclick="getList({u:'{$initData.requestUrl}',sign:'{$initData.sign}'},'1');"{/if}>1</a>
+                    </li>
+                    <!--首页-->
+                    <!--前置省略号-->
+                    {if $pageInfo.currentPage-3 > 2}
+                    <li class="paginate_button {if $pageInfo.currentPage==1}active{/if}" aria-controls="DataTables_Table_0" tabindex="0">
+                        <a href="javascript:void(0);">...</a>
+                    </li>
+                    {/if}
+                    <!--前置省略号-->
+                    <!--前置分页-->
+                    {for start='$pageInfo.currentPage-3' end='$pageInfo.currentPage' step='1'}
+                    {if $i>=2}
+                    <li class="paginate_button" aria-controls="DataTables_Table_0" tabindex="0">
+                        <a href="javascript:void(0);" onclick="getList({u:'{$initData.requestUrl}',sign:'{$initData.sign}'},'{$i}');">{$i}</a>
+                    </li>
+                    {/if}
+                    {/for}
+                    <!--前置分页-->
+                    <!--当前分页-->
+                    {if $pageInfo.currentPage != 1 && $pageInfo.currentPage != $pageInfo.lastPage}
+                    <li class="paginate_button active" aria-controls="DataTables_Table_0" tabindex="0">
+                        <a href="javascript:void(0);">{$pageInfo.currentPage}</a>
+                    </li>
+                    {/if}
+                    <!--当前分页-->
+                    <!--后置分页-->
+                    {for start='$pageInfo.currentPage + 1' end='$pageInfo.currentPage + 4' step='1'}
+                    {if $i<= $pageInfo.lastPage - 1}
+                    <li class="paginate_button" aria-controls="DataTables_Table_0" tabindex="0">
+                        <a href="javascript:void(0);" onclick="getList({u:'{$initData.requestUrl}',sign:'{$initData.sign}'},'{$i}');">{$i}</a>
+                    </li>
+                    {/if}
+                    {/for}
+                    <!--后置分页-->
+                    <!--前置省略号-->
+                    {if $pageInfo.currentPage + 3 < $pageInfo.lastPage - 1}
+                    <li class="paginate_button" aria-controls="DataTables_Table_0" tabindex="0">
+                        <a href="javascript:void(0);">...</a>
+                    </li>
+                    {/if}
+                    <!--前置省略号-->
+                    {if $pageInfo.lastPage > 1}
+                    <!--末页-->
+                    <li class="paginate_button {if $pageInfo.currentPage==$pageInfo.lastPage}active{/if}" aria-controls="DataTables_Table_0" tabindex="0">
+                        <a href="javascript:void(0);" {if $pageInfo.currentPage!=$pageInfo.lastPage}onclick="getList({u:'{$initData.requestUrl}',sign:'{$initData.sign}'},'{$pageInfo.lastPage}');"{/if}>{$pageInfo.lastPage}</a>
+                    </li>
+                    <!--末页-->
+                    {if $pageInfo.next}
+                    <li class="paginate_button" aria-controls="DataTables_Table_0" tabindex="0" id="DataTables_Table_0_next">
+                        <a href="javascript:void(0);" onclick="getList({u:'{$initData.requestUrl}',sign:'{$initData.sign}'},'{$pageInfo.next}');">下一页</a>
+                    </li>
+                    {/if}
+                    {/if}
+                </ul>
+            </div>
+        </div>
+    </div>
+</script>

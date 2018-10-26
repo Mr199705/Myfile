@@ -1,0 +1,292 @@
+<script type="text/template" charset="utf-8" id="user_editprofile">
+        {{if(ljk){}}
+        <form action="/m/user/profile" method="post" enctype="multipart/form-data" onsubmit="return false;">
+            <input type="hidden" name="action" value="edit" />
+            <input type="hidden" name="uid" value="{{=ljk.uid}}" />
+            <input type="hidden" name="x" id="x" value="{{=ljk.x}}" />
+            <input type="hidden" name="y" id="y" value="{{=ljk.y}}" />
+            <div class="ljk_neirong" style="margin-bottom:50px;">
+            <div class="page__bd">
+                <div class="weui-cells weui-cells_form">
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">客户名称</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="text" name="realname"  value="{{=ljk.realname}}">
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label for="" class="weui-label">客户类型</label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <select class="weui-select" id="tpid" name="tpid">
+                            {{for(var i=0;i<ljk.type.length;i++){}}
+                                <option value="{{=ljk.type[i].id}}" {{if(ljk.tpid===ljk.type[i].id){}}selected="selected"{{}}}>{{=ljk.type[i].title}}</option>
+                            {{}}}
+                            </select>
+                        </div>
+                    </div>
+					<div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label for="" class="weui-label">拜访路线</label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <select class="weui-select" id="visitid" name="visitid">
+                            {{for(var i=0;i<ljk.visit.length;i++){}}
+                                <option value="{{=ljk.visit[i].id}}" {{if(ljk.visitid===ljk.visit[i].id){}}selected="selected"{{}}}>{{=ljk.visit[i].title}}</option>
+                            {{}}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">详细地址</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="text" name="address" value="{{=ljk.address}}"  placeholder="请输入...">
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">客户网址</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="text" name="url" value="{{=ljk.url}}" placeholder="请输入...">
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">公司座机</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="text" name="phone" value="{{=ljk.phone}}" placeholder="请输入...">
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">公司传真</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="text" name="fax" value="{{=ljk.fax}}" placeholder="请输入...">
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">公司联系人</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="text" name="contact" value="{{=ljk.contact}}" placeholder="请输入...">
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label for="" class="weui-label">性别</label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <select class="weui-select" name="gender">
+                                <option value="1" {{if(ljk.gender==1){}}selected="selected"{{}}}>男</option>
+                                <option value="2" {{if(ljk.gender==2){}}selected="selected"{{}}}>女</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label for="" class="weui-label">生日类型</label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <select class="weui-select" name="birthdaytype">
+                                <option value="1" {{if(ljk.birthdaytype==1){}}selected="selected"{{}}}>阳历</option>
+                                <option value="2" {{if(ljk.birthdaytype==2){}}selected="selected"{{}}}>农历</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label for="" class="weui-label">生日</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="date" name="birthday" value="{{=ljk.birthday}}"/>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">联系人手机</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="text" name="mobile" value="{{=ljk.mobile}}" placeholder="请输入...">
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">联系人QQ</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="number" name="qq" value="{{=ljk.qq}}"  placeholder="请输入...">
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">联系人邮箱</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="email" name="email" value="{{=ljk.email}}" placeholder="请输入...">
+                        </div>
+                    </div>
+                  <!--  <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">淘宝帐号</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="text" name="taobao" value="{{=ljk.taobao}}" placeholder="请输入...">
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">支付宝帐号</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="text" name="alipay" value="{{=ljk.alipay}}" placeholder="请输入...">
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">银行开户行</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="text" name="khh" value="{{=ljk.khh}}" placeholder="请输入...">
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">银行帐号</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="number" name="yhzh" value="{{=ljk.yhzh}}" placeholder="请输入...">
+                        </div>
+                    </div>-->
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">客户介绍</label></div>
+                        <div class="weui-cell__bd">
+                            <textarea class="weui-textarea" placeholder="请输入文本" name="summary" rows="2" maxlength="200" oninput="l(this);">{{=ljk.summary}}</textarea>
+                            <div class="weui-textarea-counter"><span style="color:red;">0</span>/200</div>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+					<div class="weui-cell__bd">地理位置</div>
+					{if is_weixin()}
+					<div class="weui-cell__ft">
+					<button class="weui-btn weui-btn_primary weui-btn_mini" onclick="return wxdw();">定位</button>
+					</div>
+					{/if}
+					</div>
+                    <div class="weui-cell">
+                        <div id="editmap" style="height:200px;width:100%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="page__bd page__bd_spacing">
+                <button href="javascript:;" class="weui-btn weui-btn_primary" onclick="return editProfilePost(this.form);">保存</button>
+            </div>
+        </div>
+        </form>
+        {{}}}
+        <script type="text/javascript">
+          $(function(){
+			
+                {{if(ljk.x!=''){}}
+                var t = '{{=ljk.realname}}';
+                var map = new BMap.Map("editmap");
+                map.centerAndZoom(new BMap.Point({{=ljk.y}},{{=ljk.x}}), 14);
+                addMarker({{=ljk.x}},{{=ljk.y}},map,t);
+                {{}}}
+                {{if(ljk.gxy.x!='' && ljk.x==''){}}
+                var t = '';
+                var map = new BMap.Map("editmap");
+                map.centerAndZoom(new BMap.Point({{=ljk.gxy.y}},{{=ljk.gxy.x}}), 12);
+                {{}}}
+                {{if(ljk.gxy.x=='' && ljk.x==''){}}
+                var t = '';
+                var map = new BMap.Map("editmap");
+                map.centerAndZoom("重庆",12); 
+                {{}}}
+                map.enableScrollWheelZoom();                 
+               /* map.addEventListener("click", function(e){
+                    map.clearOverlays();
+                    var t = '{{=ljk.realname}}';
+                    addMarker(e.point.lat,e.point.lng,map,t);
+                    document.getElementById("x").value=e.point.lat;   
+                    document.getElementById("y").value=e.point.lng;
+                });  */
+            });
+			
+			 function wxdw(){
+				  wx.getLocation({
+								type: 'wgs84',
+								success: function (res) {
+										
+										addbddt(res);
+										},
+					            cancel: function (res) {
+					                console.log('用户拒绝授权获取地理位置');
+								},
+					            fail: function (res) {
+					                console.log('定位失败');
+								}
+							});
+					}
+			function addbddt(res){
+				    var t = '{{=ljk.realname}}';
+    				var ggPoint = new BMap.Point(res.longitude,res.latitude);
+					var bm = new BMap.Map("editmap");
+					bm.centerAndZoom(ggPoint, 14);
+			        var convertor = new BMap.Convertor();
+						var pointArr = [];
+						pointArr.push(ggPoint);
+						convertor.translate(pointArr, 1, 5, function (data){
+						  if(data.status === 0) {
+							var marker = new BMap.Marker(data.points[0]);
+							document.getElementById("x").value = data.points[0].lat; 
+							document.getElementById("y").value = data.points[0].lng; 
+							bm.addOverlay(marker);
+							var label = new BMap.Label(t,{offset:new BMap.Size(20,-10)});
+							marker.setLabel(label); 
+							bm.setCenter(data.points[0]);
+						  }
+						});
+				}
+            function l(tobj){
+                $(tobj).parent().find(".weui-textarea-counter span").html($(tobj).val().length);
+            }
+/*            function getuserDetail(){
+                window.pageManager.go('genjinkehu');
+                var uid = $('#uid').html();
+                showLA('/m/user/detail/','userdetail',{uid:uid});
+            }*/
+            function editProfilePost(formObj){
+                $('#dialogs').remove();
+                $.ajax(
+                    {
+                        type:'post',
+                        url:$(formObj).attr('action'),
+                        data:$(formObj).serializeArray(),
+                        dataType:'json',
+                        beforeSend:function (){
+                            var tip = {
+                                type:1,
+                                title:'编辑客户资料',
+                                content:'正在编辑客户资料，请稍后！'
+                            };
+                            var template = doT.template($('#tpldialogs').html());
+                            var t_html = template(tip);
+                            $('.user_editprofile').append(t_html);
+                        },
+                        success:function (data){
+                            if(data['code']==0){
+                                var tip = {
+                                    type:1,
+                                    title:'编辑客户资料',
+                                    content:data['msg'],
+                                    btn:1,
+                                    btnm:1,
+                                    btnmc:'查看详情',
+                                    btnma:'onclick="getuserDetail();window.location.href=\'#genjinkehu\';"',
+                                };
+                                var template = doT.template($('#tpldialogs').html());
+                                var t_html = template(tip);
+                                $('#dialogs').remove();
+                                $('.user_editprofile').append(t_html);
+                                clearImg();
+                                formObj.reset();
+                            }else{
+                                var tip = {
+                                    type:2,
+                                    title:'编辑客户资料',
+                                    content:data['msg'],
+                                    btn:1,
+                                    btnc:'关闭',
+                                };
+                                var template = doT.template($('#tpldialogs').html());
+                                var t_html = template(tip);
+                                $('#dialogs').remove();
+                                $('.user_editprofile').append(t_html);
+                            }
+                        }
+                    }
+                );
+            }
+        </script>
+    </script>

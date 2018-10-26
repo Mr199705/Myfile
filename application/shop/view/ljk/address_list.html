@@ -1,0 +1,364 @@
+    {include file="common/top" /}
+    <title>我的收货地址</title>
+</head>
+<body>
+    <div class="fanhui_cou">
+      <div class="fanhui_1"></div>
+      <div class="fanhui_ding">顶部</div>
+    </div>
+    {include file="common/tip" /}
+    <header class="header">
+      <div class="fix_nav">
+        <div style="max-width:768px;margin:0 auto;background:#FE5400;position: relative;"> <a class="nav-left back-icon" href="javascript:history.back();">返回</a>
+            <div class="tit">我的收货地址</div>
+            <div data-toggle="modal" data-target="#addressAddDialog" style="float:right;margin-top: -3em;margin-right: 1em;cursor: default; color:#fff;" onClick="address_add();">
+                新建
+            </div>
+        </div>
+      </div>
+    </header>
+    <div id="container" class="container" style="padding:0px;">
+    {volist name="addresslist" id="address"}
+      <div class="address_item {if $address.isdefault}check{/if}">
+        <div class="name_and_phone">
+          <div class="name"> {$address.consignee} </div>
+          <div class="phone"> {$address.mobile} </div>
+        </div>
+        <div class="address_con"> {$address.areaname}{$address.address} </div>
+        <div class="cutoff"></div>
+        <div class="checkbox_and_operation">
+          <div class="radio"> {if $address.isdefault==0}
+            <label>
+              <input name="address_default_set" onClick="address_default_set({$address.id});" type="radio"/>
+              设为默认 </label>
+            {else}
+            <label>
+              <input name="address_default_set" onClick="address_default_set({$address.id});" type="radio" checked="checked" />
+              默认地址 </label>
+            {/if} </div>
+          <div class="operation">
+            <button class="but" id="but_edit" data-toggle="modal" data-target="#addressAddDialog" onClick="address_edit({$address.id});">编辑</button>
+            <button class="but" id="but_del" onClick="address_del({$address.id});">删除</button>
+          </div>
+        </div>
+      </div>
+      {/volist} 
+      </div>
+    <div class="clear"></div>
+    {include file="common/footer_nav" /}
+    <script id="interpolationtmpl" type="text/x-dot-template">
+            {{ for(var item in ljk) { }}
+                    {{? !ljk[item].isdefault }}
+    <div class="address_item">
+                    {{?? }}
+    <div class="address_item check">
+                    {{?}}
+            <div class="name_and_phone">
+                    <div class="name">
+                            {{= ljk[item].consignee }}
+                    </div>
+                    <div class="phone">
+                            {{= ljk[item].mobile }}
+                    </div>
+            </div>
+            <div class="address_con">
+                    {{= ljk[item].areaname }}{{= ljk[item].address }}
+            </div>
+            <div class="cutoff"></div>
+            <div class="checkbox_and_operation">
+                    <div class="radio">
+                            {{? !ljk[item].isdefault }}
+                                    <label><input name="address_default_set" onclick="address_default_set({{= ljk[item].id }});" type="radio"/>设为默认 </label>
+                            {{?? }}
+                                    <label><input name="address_default_set" onclick="address_default_set({{= ljk[item].id }});" type="radio" checked="checked" />默认地址 </label>
+                            {{?}}
+                    </div>
+                    <div class="operation">
+                            <button class="but" id="but_edit" data-toggle="modal" data-target="#addressAddDialog" onclick="address_edit({{= ljk[item].id }});">编辑</button>
+                            <button class="but" id="but_del" onclick="address_del( {{= ljk[item].id }} );">删除</button>
+                    </div>
+            </div>
+    </div>
+            {{ } }}
+    </script>
+    <!-- 弹出层 Start --> 
+    <!-- 收货地址 框 -->
+    <div style="display: none;" class="modal fade" id="addressAddDialog" types="1" tabindex="-1" role="dialog" aria-labelledby="addressAdd" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" name="addressAddForm" id="addressAddForm" style="position: relative;">
+                    <div style="position: absolute;height: 40px;width: 100%;top:0px;background: #666;color:#fff;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closeAddr();" style="top: 0px;right:2px;color:white;opacity: 1;font-size:20px;position: absolute;">×</button>
+                        <h4 style="text-align: center;">收货地址</h4>
+                    </div>
+                    <div style="background:#fff;position: absolute;width: 100%;top:40px;">
+                        <div class="dizhi_x"> <span>收货人</span>
+                            <div class="dizhi">
+                                <input type="text" placeholder="请输入收货人！" name="consignee" id="consignee" value="">
+                            </div>
+                        </div>
+                        <div class="dizhi_x"> <span>手机号码</span>
+                            <div class="dizhi">
+                                <input type="text" placeholder="请输入收货人手机号！" name="mobile" id="mobile" value="" >
+                            </div>
+                        </div>
+                        <div class="dizhi_x"> <span>所在地区</span>
+                            <div class="dizhi" id="addressForm"></div>
+                        </div>
+                        <div class="dizhi_x"> <span>详细地址</span>
+                            <div class="dizhi">
+                                <textarea placeholder="请输入详细地址" name="address" id="address"  ></textarea>
+                            </div>
+                        </div>
+                        <div class="dizhi_x"> <span>是否默认</span>
+                            <div class="dizhi">
+                                <label>
+                                    <input type="checkbox" name="isdefault"   style="width:inherit;" id="isdefault" />
+                                    设为默认地址
+                                </label>
+                            </div>
+                        </div>
+                        <a href="javascript:;"  onClick="return corte(this.addressAddForm);" class="btn btn-lg" style="width:100%;background:#FE5400;border-radius: 0px;color:white;">保&nbsp;存</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="text/template" id="addressSelect">
+        <select style="width: 30%;font-size:12px;" class="address address_{{=ljk.level}}" data-level="{{=ljk.level}}" name="areas[{{=ljk.level}}]" onchange="createAddressForm('{{=ljk.id}}',{{=ljk.level + 1}});">
+            <option value="">请选择</option>
+            {{for(var i = 0; i < ljk.data.length; i++){}}
+            <option value="{{=ljk.data[i].code}}:{{=ljk.data[i].code_name}}" {{?ljk.selectedCode && (ljk.selectedCode==ljk.data[i].code)}}selected="selected"{{?}}>{{=ljk.data[i].code_name}}</option>
+            {{?}}
+        </select>
+    </script> 
+<!-- 弹出层 End --> 
+    <script type="text/javascript">
+        var id = {if $addrId}{$addrId}{else}false{/if};
+        console.log(id);
+        {if $autoAct === 'a'}
+        address_add();
+        {elseif $autoAct === 'e'}
+        if(id){
+            address_edit(id);
+        }
+        {elseif $autoAct==='d'}
+        if(id){
+            address_default_set(id);
+        }
+        {/if}
+        //删除地址
+        function address_del(id){
+                console.log('address_del:' + id);
+        //	清空
+                $("#container").html('');
+        //	加载地址列表
+                $.ajax({
+                type : "POST",
+                url : "/shop/address/address_del",
+                dataType: 'json',
+                data: {
+                    id: id
+                },
+                beforeSend:function(){
+                    console.log('正在获取列表');
+                },
+                success : function(res){
+                    if( res.code ){
+                        //	清空 添加表单
+                        var interText = doT.template($("#interpolationtmpl").html());
+                        $("#container").html(interText( res['data'] ) );
+                    }
+                },
+                error: function(res){
+                    console.log('连接服务器失败！');
+                    alert('连接服务器失败！');
+                }
+              });
+        }
+        // 设置默认地址
+        function address_default_set(id){
+            $("#container").html('');
+            $.ajax({
+                type : "POST",
+                url : "/shop/address/address_default_set",
+                dataType: 'json',
+                data: {
+                    id: id
+                },
+                beforeSend:function(){
+                    console.log('正在获取列表');
+                },
+                success : function(res){
+                    if( res.code ){
+                        showTip({msg:'默认地址设置成功'});
+                        var interText = doT.template($("#interpolationtmpl").html());
+                        $("#container").html(interText( res['data'] ) );
+                        setTimeout(function (){closeModal();},1000);
+                    }
+                }
+            });
+        }
+        function corte(form){
+            //
+            var addressDialog = $('#addressAddDialog');
+            var update_id = addressDialog.attr('data-id');
+            form = document.addressAddForm;
+            var consignee = form.consignee.value;
+            var mobile 	= form.mobile.value;
+            var province = $(form).find('.address_1').val();
+            var city = $(form).find('.address_2').val();
+            var area = $(form).find('.address_3').val();
+            var address = form.address.value;
+            var isdefault 	= form.isdefault.checked;	//	默认地址      
+            if( isdefault == true ) {
+                isdefault = 1;
+            }else{
+                isdefault = 0;
+            }
+            var dh=/^1[3456789]\d{9}$/;
+            var zipco=/^\d{6}$/;
+            if(consignee==""){  
+                showTip({msg:'请填写您的正确姓名'});   
+                setTimeout(function (){closeModal();},1000);       
+                return false;
+            }
+            if( !dh.test(mobile) ){
+                showTip({msg:'请正确填写您的手机号码'});  
+                setTimeout(function (){closeModal();},1000);       
+                return false;
+            }
+            if( province=="" ){
+                showTip({msg:'请选择相应的省份!'});   
+                setTimeout(function (){closeModal();},1000);      
+                return false;
+            }
+            if( address == "" ){
+                showTip({msg:'请正确填写您的详细地址'});   
+                setTimeout(function (){closeModal();},1000);              
+                return false;
+            }
+            if( addressDialog.attr('types') == 1 ){
+                //	新增
+                $.ajax({
+                    type : "POST",
+                    url : "/shop/address/add",
+                    dataType: 'json',
+                    data:{
+                        consignee: consignee,
+                        mobile: mobile,
+                        province: province,
+                        city: city,
+                        area: area,
+                        address: address,
+                        isdefault: isdefault
+                    },
+                    success : function(res){
+                        if( res.code == 1 ){
+                            showTip({msg:'添加成功'});
+                            setTimeout(function (){closeModal();},1000);
+                            $("#container").html('');
+                            //	重新显示列表
+                            var interText = doT.template($("#interpolationtmpl").html());
+                            $("#container").html(interText( res['data']) );
+                            //	隐藏新增dialog
+                            $('.close').click();
+                        }else{
+                            showTip({msg:'添加失败，错误信息:' + res.msg});
+                            setTimeout(function (){closeModal();},1000);
+                        }
+                    }
+                });
+            }else if( addressDialog.attr('types') == 2 ){
+                $.ajax({
+                    type : "POST",
+                    url : "/shop/address/address_update",
+                    dataType: 'json',
+                    data: {
+                            id: update_id,
+                            consignee: consignee,
+                            mobile: mobile,
+                            province: province,
+                            city: city,
+                            area: area,
+                            address: address,
+                            isdefault: isdefault
+                    },
+                    success : function(res){
+                        if( res.code ){
+                                console.log('提交更新地址信息成功:' + res['code']);
+                                //	清空 添加表单
+                                var interText = doT.template($("#interpolationtmpl").html());
+                                $("#container").html(interText( res['data'] ) );
+                                        //	隐藏新增dialog
+                                $('.close').click();
+                        }else{
+                        console.log('提交更新信息获取失败，错误信息：' + res.error );
+                        }
+                    }
+                });
+            }
+        }
+        //新建地址
+        $('#addressAddDialog').on('click',function (){ 
+            var target = event.target || event.srcElement;
+            if(target === this){
+                $(this).fadeOut(100);
+            }
+        });
+        function closeAddr(){
+            var addressDialog = $('#addressAddDialog');
+            addressDialog.fadeOut(100);
+        }
+        function address_add(){
+            $('#addressForm').html('');
+            var addressDialog = $('#addressAddDialog');
+            createAddressForm('addressForm');
+            addressDialog.attr('types', 1);
+            addressDialog.find('#consignee').val('');
+            addressDialog.find('#mobile').val('');
+            addressDialog.find('#address').val('');
+            addressDialog.find('#isdefault').attr( 'checked', true);
+            addressDialog.fadeIn(100);
+            addressDialog.css('background','rgba(0,0,0,0.5)');
+            addressDialog.addClass('in');
+            return 0;
+        }
+        //	编辑框
+        function address_edit(id){
+            var addressDialog = $('#addressAddDialog');
+            addressDialog.attr('types', 2);
+            addressDialog.attr('data-id', id );
+            var consignee = addressDialog.find('#consignee');
+            var mobile = addressDialog.find('#mobile');
+            var address = addressDialog.find('#address');
+            var isdefault = addressDialog.find('#isdefault');
+                //加载数据
+            addressDialog.fadeIn(100);
+            addressDialog.css('background','rgba(0,0,0,0.5)');
+            addressDialog.addClass('in');
+            $.ajax({
+                type : "POST",
+                url : "/shop/address/address_get",
+                dataType: 'json',
+                data: {
+                    id: id
+                },
+                success : function(res){
+                    if( res.code == 10 ){
+                        consignee.val( res.data.consignee );
+                        mobile.val( res.data.mobile );
+                        createAddressForm('addressForm', 1, res.data.areaids );
+                        address.val(res.data.address);
+                        if( res.data.isdefault === 1 ){
+                            isdefault.attr("checked", true);
+                        }else{
+                            isdefault.attr("checked", false);
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

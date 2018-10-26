@@ -1,0 +1,110 @@
+<script type="text/javascript">
+{if $conditions.x}
+var map = new BMap.Map("allmap");
+map.centerAndZoom(new BMap.Point({$conditions.y}, {$conditions.x}), 14);
+addMarker({$conditions.x}, {$conditions.y});
+map.panBy(305,165);
+{else/}
+var map = new BMap.Map("allmap");
+map.centerAndZoom(new BMap.Point({$ginfo.y}, {$ginfo.x}), 12);                   // 初始化地图,设置城市和地图级别。
+map.panBy(305,165);
+{/if}
+map.enableScrollWheelZoom();                            //启用滚轮放大缩小
+map.addEventListener("click", function(e){
+    map.clearOverlays();
+    addMarker(e.point.lat,e.point.lng)
+    document.getElementById("xy").value=e.point.lng+','+e.point.lat;  
+ // document.getElementById("x").value=e.point.lat;   
+ // document.getElementById("y").value=e.point.lng; 
+});
+function addMarker(x,y){
+   //marker.hide();
+   var marker = new BMap.Marker(new BMap.Point(y, x));  // 创建标注
+   map.addOverlay(marker);              // 将标注添加到地图中
+   var label = new BMap.Label("{$conditions.realname}",{offset:new BMap.Size(20,-10)});
+   marker.setLabel(label);
+     	//创建信息窗口
+	var infoWindow1 = new BMap.InfoWindow("{$conditions.realname}");
+	marker.addEventListener("click", function(){this.openInfoWindow(infoWindow1);});
+	marker.enableDragging();    //可拖拽
+}
+</script>
+<script type="text/javascript">
+    $(function(){
+        setNation('{$conditions.nation}', '{$conditions.province}', '{$conditions.city}');
+    })
+    function changeHomeNation()
+    {
+        setHomeProvince($("#nation").val());
+    }
+    function changeHomeProvince()
+    {
+        setHomeCity($("#nation").val(), $("#province").val());
+    }
+    function setNation(nationVal, provinceVal, cityVal)
+    {
+        var nation = $("#nation");
+        nation.get(0).options.length = 0;
+        $.getJSON(iwbRoot+"admin/user/getnation/", function(json){
+            if(json!=null){
+                $.each(json, function(i, n){
+                    var option = new Option(n, i);
+                    if (i == nationVal) {
+                        option.selected = true;
+                    }
+                    nation.get(0).options.add(option);
+                });
+                setHomeProvince(nation.val(), provinceVal, cityVal);
+            }
+        });
+    }
+    function setHomeProvince(nationVal, provinceVal, cityVal)
+    {
+        var province = $("#province");
+        var city = $("#city");
+        province.get(0).options.length = 0;
+        city.get(0).options.length = 0;
+        $.getJSON(iwbRoot+"admin/user/getprovince/nation/"+nationVal, function(json){
+            if(json!=null){
+                $.each(json, function(i, n){
+                    var option = new Option(n, i);
+                    if (i == provinceVal) {
+                        option.selected = true;
+                    }
+                    province.get(0).options.add(option);
+                });
+                if(province.val())
+                    province.show();
+                else
+                    province.hide();
+                setHomeCity(nationVal, province.val(), cityVal);
+            }else{
+                province.hide();
+                city.hide();
+            }
+        });
+    }
+    function setHomeCity(nationVal, provinceVal, cityVal)
+    {
+        var city = $("#city");
+        city.get(0).options.length = 0;
+        provinceVal = provinceVal == null ? '' : provinceVal;
+        $.getJSON(iwbRoot+"admin/user/getcity/nation/"+nationVal+"/province/"+provinceVal, function(json){
+            if(json!=null){
+                $.each(json, function(i, n){
+                    var option = new Option(n, i);
+                    if (i == cityVal) {
+                        option.selected = true;
+                    }
+                    city.get(0).options.add(option);
+                });
+                if(city.val())
+                    city.show();
+                else
+                    city.hide();
+            }else{
+                city.hide();
+            }
+        });
+    }
+</script>

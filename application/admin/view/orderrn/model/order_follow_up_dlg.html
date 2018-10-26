@@ -1,0 +1,31 @@
+<div class="modal inmodal in" id="orderFollowUpDialog" tabindex="-1" role="dialog" aria-hidden="false" style="display: none; padding-left: 0px;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"> <span aria-hidden="true">×</span> <span class="sr-only">Close</span> </button>
+                <h4 class="modal-title">订单跟进</h4>
+            </div>
+            <form name="cpform" class="form-horizontal" method="post" action="/admin/order/addPost" id="cpform" enctype="multipart/form-data" onsubmit="return false;">
+                <div class="modal-body">
+                    <input type="hidden" name="oid" value="87162">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">上传图片:</label>
+                        <div class="col-sm-9">
+                            <input type="file" class="form-control" name="thumb">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">备注:</label>
+                        <div class="col-sm-9">
+                            <textarea name="content" class="form-control" style="height:100px;max-height: 100px;" cols="60" rows="8"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" value="提交" class="btn btn-sm btn-primary" onclick="addpost(this.form, '', '正在提交跟进信息，请稍候！');">
+                    <button type="button" class="btn btn-sm btn-white" data-dismiss="modal">返回</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,36 @@
+<!--回访记录-->
+{include file="header" /}
+<body ontouchstart>
+<div class="weui-toptips weui-toptips_warn js_tooltips">错误提示</div>
+<div class="container" id="container"> 
+  <!--底部---> 
+  {include file="footer" /}
+  <!--底部--->
+</div>
+<script type="text/html" id="tpl_home">
+<div class="page">
+ <!--顶部--->
+    <div class="weui-flex js_category db_ljkdb" >
+        <a class="js_item" data-id="genjinkehu"  href="javascript:;">
+		<i class="fa fa-angle-left fa-2x db_xinxi"></i>
+        </a>
+        <p class="weui-flex__item db_ljk_1">回访记录</p>
+    </div>
+  <!---顶部--> 
+    
+  <!--内容-->
+<div class="ljk_neirong">
+        <div class="weui-cells weui-cells_form">
+            <div class="weui-cell">
+                <div class="weui-cell__bd">
+                    <textarea class="weui-textarea" placeholder="请输入工作记录" rows="3"></textarea>
+                    <div class="weui-textarea-counter"><span>0</span>/200</div>
+                </div>
+            </div>
+        </div>
+  <!--内容-->
+</div>
+</div>
+</script>
+{include file="bottom" /}
+</body>

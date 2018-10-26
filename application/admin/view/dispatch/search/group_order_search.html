@@ -1,0 +1,59 @@
+<div class="row wrapper white-bg page-heading" style="margin-top:15px">
+    <div class="row">
+        <div class="col-sm-2" style="width:135px;">
+            <div class="input-group">
+                <select name="dispatch" class="input-sm form-control" onchange="getList({sign:'{$initData.sign}'},1);">
+                    <option value="">配送状态</option>
+                    <option value="0">未配送</option>
+                    <option value="1">配送中</option>
+                    <option value="2">已配送</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-3" style="margin: 0px 5px 0px 0px;padding:0px;width: 165px;">
+            <div class="input-group">
+                <input type="text"class="laydate-input input-sm form-control" name="sdate" onchange="getList({sign:'{$initData.sign}'},1);" placeholder="开始时间"/>
+            </div>
+        </div>
+        <div class="col-sm-1" style="margin: 0px 5px 0px 0px;padding:0px;width: 33px;">
+            <div class="input-group">
+                <span class="input-sm form-control" style="text-align: center;">-</span>
+            </div>
+        </div>
+        <div class="col-sm-3" style="margin: 0px 5px 0px 0px;padding:0px;width: 165px;">
+            <div class="input-group">
+                <input type="text" class="laydate-input input-sm form-control" onchange="getList({sign:'{$initData.sign}'},1);" name="edate" placeholder="结束时间"/>
+            </div>
+        </div>
+        <div class="col-sm-1" style="margin: 0px 5px 0px 5px;padding:0px;width:110px;">
+            <div class="input-group">
+                <select name="keytype" class="input-sm form-control" onchange="getList({sign:'{$initData.sign}'});">
+                    <option value="number">订单编号</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-3" style="margin: 0px 5px 0px 0px;padding:0px;width: 178px;">
+            <div class="input-group" style="position: relative;">
+                <input type="text" style="width: calc(100% - 9px);" name="keyword" placeholder="输入关键词搜索" value="" class="input-sm form-control searchOrderKeyword" onkeydown="if(event.keyCode == 13){ this.form.button.click(); }" oninput="getList({sign:'{$initData.sign}'},1);">
+                <a style="position: absolute;height: 30px;z-index: 100;line-height: 30px;top:0px;right:0px;" href="javascript:;" onclick="$('input[name=keywords]').val('');">X</a>
+            </div>
+        </div>
+        <div class="col-sm-1"  >
+            <div class="input-group">
+                    <span class="input-group-btn">
+                        <button type="button" name="button" class="btn btn-sm btn-primary" onclick="getList({sign:'{$initData.sign}'},1);"> 搜索</button>
+                    </span>
+            </div>
+        </div>
+        <div class="col-sm-1" style="margin: 0px 5px 0px 0px;padding:0px;width: 78px;">
+            <div class="input-group">
+                <a class="btn btn-sm btn-success" href="javascript:void(0);" data-mid="orderSearchBackdrop" data-id="choseGroup" data-json="1" onclick="loadModal(this);">配送小组</a>
+            </div>
+        </div>
+        <div class="col-sm-1" style="margin: 0px 5px 0px 5px;padding:0px;width: 78px;">
+            <div class="input-group">
+                <a href="javascript:void(0)" class="btn btn-sm btn-success btn-open-modal" data-id="#DispatchGroupDetail" onclick="GetDispatchGroupDetail();">汇总</a>
+            </div>
+        </div>
+    </div>
+</div>

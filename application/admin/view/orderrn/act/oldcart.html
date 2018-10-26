@@ -1,0 +1,112 @@
+<script type="text/template" id="cartBoxModal">
+    <div class="modal inmodal in" style="background: rgba(0, 0, 0, 0.498039);display:block;overflow-y:scroll;">
+        <div class="modal-dialog" style="width: 70%;margin:0px auto;">
+            <div class="modal-content animated fadeIn" style="width:100%;height:500px;">
+                <div class="modal-header" style="padding-top:0px;padding-bottom:0px;position:relative">
+                    <a href="javascript:void(0)" style="position: absolute;top: 0px;right:10px;color:#666;"onclick="$('#modalBackdropBox').html('');$('#modalBackdropBox').hide();"><i class="fa fa-close fa-2x" aria-hidden="true"></i></a>
+                    <h4 class="modal-title">购物车</h4>
+                </div>
+                <div class="modal-body" id="userCartItems" style="position:relative;height:410px;padding:0px;"></div>
+                <div class="fixed-foot" style="padding:0px 10px;">
+                    <div class="fixed_inner" style="background:#fff;">
+                        <div style="display:flex;display:-webkit-flex;flex-direction: row;flex-wrap: nowrap;align-items: center;height:49px;">
+                            <div id="checkAll" data-sign="" style="display:flex;display:-webkit-flex;flex-direction: row;flex-wrap: nowrap;align-items: center;width: 80px;" onclick="checkAll(this);">
+                                <div class="cart-item unchecked-item" style="width:30px;height:30px;"></div>
+                                <div class="tip-text">全选</div>
+                            </div>
+                            <div style="width: 200px;">合计：¥<span id="total" style="font-weight: bold;font-size:18px;color:red;">00.00</span></div>
+                            <div class="btn btn-lg btn-primary" style="width: calc(100% - 280px);" id="goToAddOrder">下一步</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/template" id="cartBox">
+    {{?ljk && ljk.length}}
+    {{for(var item in ljk){}}
+    {{   
+        var subTotal = ljk[item].goods_price * ljk[item].goods_number;
+        if(ljk[item].checked === 1){
+            checkedItems.push(ljk[item].id);
+            if(ljk[item].type === 1){
+                total += subTotal;
+            }
+        }
+        if(ljk[item].type === 1){
+            allTotal += subTotal;
+        }
+        allItems.push(ljk[item].id);
+    }}
+    <div id="cartItem_{{=ljk[item].id}}" style="display:flex;display:-webkit-flex;flex-direction:row;flex-wrap:nowrap;align-items:center;margin:5px;padding:5px;border:1px solid #ccc;{{?a++%2}}background:#fffeff;{{??}}background:#fff;{{?}}">
+        <div class="cart-item {{?ljk[item].checked === 1}}checked-item{{??}}unchecked-item{{?}}" onclick="checkItems({{=ljk[item].id}},{{=ljk[item].type}});"></div>
+        <div style="width:80px;height:70px;text-align: center;">
+            <img src="{{=ljk[item].goodsThumb}}" style="width: 70px;height: 70px;" />
+        </div>
+        <div style="display:flex;display:-webkit-flex;flex-direction:column;width: calc(100% - 160px);">
+            <div style="font-size:14px;font-weight:bold;color:#000;margin:1px 0px;">{{?ljk[item].type===1}}<span style="color:darkgreen;">【销售】</span>{{??}}<span style="color:red;">【赠送】</span>{{?}}{{=ljk[item].goods_name}}</div>
+            {{?ljk[item].avs.length}}<div style="font-size:10px;color:#f00;margin:1px 0px;">{{=ljk[item].avs}}</div>{{?}}
+            <div style="display:flex;display:-webkit-flex;flex-direction:row;align-items: flex-start;margin:1px 0px;">
+                <div style="width:40px;">单价:</div>
+                <div style="width:calc(100% - 40px);">
+                    ¥{{=ljk[item].goods_price}} / {{=ljk[item].unit}}
+                </div>
+            </div>
+            <div style="display:flex;display:-webkit-flex;flex-direction:row;align-items: center;margin:1px 0px;">
+                <div style="width:40px;">数量:</div>
+                <div style="width:calc(100% - 40px);display:flex;display:-webkit-flex;flex-direction:row;align-items:center;">
+                    <button style="width: 30px;height:30px;"  onclick="changeCartNum('{{=ljk[item].id}}',-1,{{=ljk[item].goods_price}},{{=ljk[item].type}});">-</button>
+                        <input data-num="{{=parseInt(ljk[item].goods_number)}}" data-price="{{=ljk[item].goods_price}}" data-cartid="{{=ljk[item].id}}" data-type="{{=ljk[item].type}}" onblur="inputCartNum(this);" style="line-height:30px;width: 60px;height:30px;text-align: center;" type="text" id="gn_{{=ljk[item].id}}" name="goods_number[{{=ljk[item].id}}]" value="{{=parseInt(ljk[item].goods_number)}}"/>
+                    <button style="width: 30px;height:30px;" onclick="changeCartNum('{{=ljk[item].id}}',1,{{=ljk[item].goods_price}},{{=ljk[item].type}});">+</button>
+                </div>
+            </div>
+            {{?ljk[item].type===1}}
+            <div style="display:flex;display:-webkit-flex;flex-direction:row;align-items: flex-start;margin:2px 0px;">
+                <div style="width:40px;">小计:</div>
+                <div style="color:red;width:calc(100% - 40px);">
+                    ¥<span id="subTotal_{{=ljk[item].id}}">{{=subTotal.toFixed(2)}}</span>
+                </div>
+            </div>
+            {{??}}
+            <div style="display:flex;display:-webkit-flex;flex-direction:row;align-items: flex-start;margin:2px 0px;">
+                <div style="width:40px;">小计:</div>
+                <div style="color:red;width:calc(100% - 40px);">
+                    ¥<span id="subTotal_{{=ljk[item].id}}" style="text-decoration:line-through;">{{=subTotal.toFixed(2)}}</span>
+                </div>
+            </div>
+            {{?}}
+        </div>
+        <div style="width:50px;height:30px;">
+            <button class="btn btn-warning btn-sm" onclick="removeCartItem({{=ljk[item].id}},{{=subTotal}},{{=ljk[item].type}});">移除</button>
+        </div>
+    </div>
+    {{}}}
+    {{
+        $('#total').html(total.toFixed(2));
+        if(checkedItems.length === 0){
+            $('#goToAddOrder').removeAttr('onclick');
+            $('#goToAddOrder').removeClass('btn-success').addClass('btn-default');
+            $('#checkAll').attr('data-sign','-1');
+            $('#checkAll').find('.cart-item').addClass('unchecked-item').removeClass('checked-item');
+            $('#checkAll').find('.tip-text').html('全选');
+        }else{
+            $('#goToAddOrder').attr('onclick','goToAddOrder();');
+            $('#goToAddOrder').removeClass('btn-default').addClass('btn-success');
+            $('#checkAll').attr('data-sign','0');
+            $('#checkAll').find('.cart-item').addClass('checked-item').removeClass('unchecked-item');
+            $('#checkAll').find('.tip-text').html('全不选');
+        }
+    }}
+    {{??}}
+    <div style="height:100%;position:absolute;width:100%;color:red;line-height:100px;text-align:center;display:flex;display:-webkit-flex;flex-direction:row;align-items:center;justify-content:center;">
+        <span>购物车为空！</span>
+    </div>
+    {{
+        $('.dropload-down').remove();
+        $('#goToAddOrder').removeAttr('onclick');
+        $('#goToAddOrder').removeClass('btn-success').addClass('btn-default');
+    }}
+    {{?}}
+</script>
+<!-- 购物车end -->

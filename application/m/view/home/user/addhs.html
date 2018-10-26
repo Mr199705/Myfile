@@ -1,0 +1,151 @@
+<script type="text/html" id="tpl_huishou">
+    <div class="page">
+        <div class="ljk_top">
+            <a class="top_left js_item backtodetail" data-id="genjinkehu">
+                <i class="fa fa-angle-left fa-2x"></i>
+            </a>
+            <p class="weui-flex__item top_center">回收</p>
+        </div>
+        <!---顶部--> 
+        <!--内容-->
+        <div class="ljk_neirong2" id="addHsContent">
+            <form action="/m/user/addhs" method="post" enctype="multipart/form-data" onsubmit="return false;" style="background:#fff;">
+                <!--顶部--->
+                <input type="hidden" name="action" value="add" />
+                <div class="page__bd" id="hsProjectList" data-request="0"></div>
+                <div class="page__bd" id="chosedHsProjects"></div>
+                <div style="display: none;" id="hsAddedContents">
+                    <div id="hsUploadImgsBox"></div>
+                    <div class="weui-form-preview__ft" style="background:#FFF;">
+                        <button type="button" class="post_form_btn weui-form-preview__btn weui-form-preview__btn_primary" onclick="$('#hsProjectList').css('display','block');">添加更多</button>
+                        <button type="button" id="submit_addhs" class="post_form_btn weui-form-preview__btn weui-form-preview__btn_primary" data-wx="{if is_weixin()}1{else}0{/if}" onclick="return hspost(this);">提交保存</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        dianji();
+        goSys('{$m_index_home.url_name}');
+        initHsForm('/m/user/addhs');
+        $("#{$m_user_index.url_name}").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+    </script>
+</script>
+<script type="text/template" id="chosedHsProjectsTemplate">
+    {{?ljk}}
+    <div class="weui-cells chosed_hs_project" id="chosedHsProject_{{=ljk.hsid}}" style="border:1px dashed #000;">
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <i class="weui-icon-cancel" onclick="removeChosedHsProject('{{=ljk.hsid}}');"></i>
+            </div>
+            <div class="weui-cell__bd" style=" text-align:right;">
+                <input type="hidden" value="{{=ljk.hsid}}" name="hsid[]">
+                <p style="color: #999999;"><span style="color:darkgreen;"><strong>{{=ljk.sname}}</strong></span>&nbsp;&nbsp;{{=ljk.goods_name}}</p>
+            </div>  
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label" style="width: 60px;">数量</label>
+            </div>
+            <div class="weui-cell__bd" style=" text-align:right;">
+                <span class="input-number-decrement" onclick="decre(this);">–</span>
+                <input style="width: 30px;" class="input-number" type="text" value="1" maxlength="4" name="num[{{=ljk.hsid}}]">
+                <span class="input-number-increment" onclick="incre(this);">+</span>
+            </div>                
+        </div>
+    </div>
+    {{?}}
+</script>
+<script type="text/template" id="hsProjectListTemplate">
+    <div class="js_dialog" style="display: block;">
+        <div class="weui-mask" style="top:50px;"></div>
+        <div class="weui-dialog" style="max-width:95%;width:95%;">
+            <div class="weui-dialog__hd" style="padding: 0px;height: 30px;font-size: 20px;line-height: 30px;background:#4fb234;color:#fff;">
+                <span>回收项目列表</span>
+            </div>
+            {{?ljk}}
+            <div class="weui-dialog__bd" style="max-height:300px;overflow: scroll;padding:0px 10px;">
+                <div class="weui-cells">
+                    <div class="weui-cell" style="padding: 0;">
+                        <div class="weui-cell__bd">
+                            <div class="weui-search-bar__box">
+                                <i class="weui-icon-search" style=" margin-top:5px;"></i>
+                                <input type="text" class="weui-search-bar__input hsProjectSearchInput" placeholder="请输入回收项目关键词" required  style="height:30px;" />
+                                <a href="javascript:" class="weui-icon-clear hsProjectClear" style=" margin-top:5px;"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-cells weui-cells_checkbox" id="hsProjectListContent">
+                    {{for(var item in ljk){}}
+                    <lable class="weui-cell weui-check__label hs_project_item" id="hsProjectItem_{{=ljk[item].id}}" data-fullname="{{=ljk[item].sname}}{{=ljk[item].goods_name}}" data-sname="{{=ljk[item].sname}}" data-goodsname="{{=ljk[item].goods_name}}" data-hsid="{{=ljk[item].id}}" onclick="choseHsProject(this);" data-chosed="0">
+                        <div class="weui-cell__hd">
+                            <i class="weui-icon-circle" id="chose_icon_{{=ljk[item].id}}"></i>
+                        </div>
+                        <div class="weui-cell__bd" style="text-align:left;">
+                            <p><span style="color:darkgreen;">{{=ljk[item].sname}}</span>&nbsp;{{=ljk[item].goods_name1}}</p>
+                        </div>
+                    </lable>
+                    {{}}}
+                </div>
+            </div>
+            {{  
+                $(function (){
+                    var $p = $('<p style="color:red;text-align:center;height:40px;line-height:40px;">没有匹配项，请更换其他关键词搜索！</p>');
+                    setTimeout(function (){
+                    var t = false;
+                    var lock =false;
+                    $('.hsProjectClear').on('click',function (){
+                        $('.hsProjectSearchInput').val('');
+                        $p.remove();
+                        $('#hsProjectListContent').children('.hs_project_item').show();
+                    });
+                    $('.hsProjectSearchInput').off().on('compositionstart',function (){
+                        lock = true;
+                    }).on('compositionend',function (){
+                        lock = false;
+                    }).on('input',function (){
+                        var that = this;
+                        if(t){
+                            clearTimeout(t);
+                        }
+                        t = setTimeout(function (){
+                            clearTimeout(t);
+                            if(!lock){
+                                var keywords = $(that).val().trim();
+                                var mt = 0;
+                                $('#hsProjectListContent').children('.hs_project_item').each(function (){
+                                    var fullName = $(this).data('fullname');
+                                    if(fullName.indexOf(keywords) >= 0){
+                                        mt++ ;
+                                        $(this).show();
+                                    }else{
+                                        $(this).hide();
+                                    }
+                                });
+                                if(mt === 0){
+                                    $('#hsProjectListContent').append($p);
+                                }else{
+                                    $p.remove();
+                                }
+                            }
+                        },300);
+                    });
+                },50);
+                });
+            }}
+            {{??}}
+            <div class="page__bd" id="chosedHsProjectContent">
+                <div style="text-align:center; color:#CBCBCB; padding-top:2em;">
+                    <i class="fa fa-file-text-o fa-5x"></i><br>
+                    <span>未设置回收项目！</span>
+                </div>
+            </div>
+            {{?}}
+            <div class="weui-dialog__bd" id="hsOperatorBtn" style="padding:0px;margin:0px;display:none;">
+                <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_warn" onclick="closeHsProjectList();">关闭</a>
+                <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary" onclick="closeHsProjectList();">确定</a>
+            </div>
+        </div> 
+    </div> 
+</script>

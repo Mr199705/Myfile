@@ -1,0 +1,52 @@
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>规则标题</th>
+                <th>路段规则</th>
+                <th style="width: 100px;">适用商品</th>
+                <th>创建时间</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+        	{if condition="$pageInfo.t neq 0"}
+        	{volist name="$disData" id="vo" }
+            <tr>
+                <td>{$vo.title}</td>
+                <td>
+                    {if condition="!empty($vo.rules)"}
+                    {volist name="$vo.rules" id="rvo" }
+                    {$rvo.min }-{$rvo.max } : ￥{$rvo.total }<br>
+                    {/volist}
+                    {/if}
+                </td>
+                <td>
+                    {volist name="$vo.baojia_ids" id="bjsvo" empty="未绑定商品"}
+                    <p><label class="label label-info">{$bjsvo.goodsName}</label></p>
+                    {/volist}
+                </td>
+                <td>{:date( 'Y-m-d H:i:s', $vo.ctime); }</td>
+                <td>
+                    {if condition="$vo.status eq 1"}
+                    正常
+                    {elseif condition="$vo.status eq 0"}
+                    <font color="red">禁用</font>
+                    {else/}
+                    未知
+                    {/if}
+                </td>
+                <td>
+                    <button class="btn btn-success btn-sm" data-id="ruleDialog" onclick="dlgDotAjax(this, '/admin/dispatch/rule', {action: 'edit',id:{$vo.id }});">编辑</button>
+                    <button class="btn btn-warning btn-sm" onclick="return ajaxAct2('/admin/dispatch/rule','您真的要删除规则“{$vo.title}”吗？','正在删除规则“{$vo.title}”，请稍后！', {action: 'del', id: {$vo.id } });">删除</button>
+                </td>
+            </tr>
+            {/volist}
+            {else/}
+            <tr><td colspan="6" style="text-align: center;color:red;">没有找到符合条件的记录！</td></tr>
+            {/if}
+        </tbody>
+    </table>
+</div>
+{include file="common/page"}

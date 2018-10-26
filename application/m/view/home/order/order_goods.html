@@ -1,0 +1,378 @@
+<script type="text/template" charset="utf-8" id='ordergoods'>
+    <div class="ljk_top">
+        <a class="top_left js_item" href="javascript:;" data-id="dingdanxiangqing">
+            <i class="fa fa-angle-left fa-2x"></i>
+        </a>
+        <p class="weui-flex__item top_center">修改商品</p>
+    </div>
+    <div class="ljk_neirong" style="overflow: hidden;overflow-y: scroll;">
+        <form action="/m/order/editgoods" method="post" onsubmit="return false;">
+            <!---顶部-->
+            <div class="weui-cells page__category-content">
+                <div class="weui-cell">
+                    <div class="weui-cell__hd" style="position: relative;margin-right: 10px;">
+                        {{? ljk.goods.goods_thumb}}
+                        <img style="border-radius: 10px;width: 50px;display: block" src="{{=ljk.goods.goods_thumb}}" alt="">
+                        {{??}}
+                        <img style="border-radius: 10px;width: 50px;display: block" src="{{=ljk.goods.goods_img}}" alt="">
+                        {{?}}
+                    </div>
+                    <div id="sto_num" {{?ljk.order_goods.sku!=null}} data-value="1"{{??}}data-value="-1"{{?}} class="weui-cell__bd">
+                        <p>{{=ljk.order_goods.name}}</p>
+                        {{?ljk.order_goods.sku!=null}}<p class="weui-media-box__desc" style="font-size:12px" >属性：<span style="color:#;">{{=ljk.order_goods.sku.attrs_value}}</span></p>{{??}}{{?}}
+                        <p style="font-size: 13px;color: #888888;">{{=ljk.order_goods.goods_type}} &nbsp;&nbsp;{{=ljk.order_goods.price}}*{{=parseFloat(ljk.order_goods.num)}} {{=ljk.order_goods.unit}}=<span style="color:#FF0000;">{{=ljk.order_goods.amount}}</span> 元</p>
+                        {{?ljk.order_goods.sku!=null}}<p class="weui-media-box__desc" style="font-size:12px">库存：<span id="storage_num"  ></span><span id="sto_coefficient"  style="display: none;" >{{=ljk.order_goods.unitid}}</span></p>{{??}}{{?}}
+                    </div>
+                </div>
+                <div class="weui-form-preview__bd" style="padding: 0px 16px 10px 16px;margin-top: 0px;">
+                    <div class="weui-form-preview__item">
+                        <label class="weui-form-preview__label">订单编号：</label>
+                        <span class="weui-form-preview__value">{{=ljk.number}}</span>
+                    </div>
+                    <div class="weui-form-preview__item">
+                        <label class="weui-form-preview__label">订货人：</label>
+                        <span class="weui-form-preview__value">{{=ljk.dhr.realname}}</span>
+                    </div>
+                </div>
+                <div class="weui-cells weui-cells_form">
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label for="" class="weui-label">类型</label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <select class="weui-select" id="type" name="type" onChange="setZpPrice(this);">
+                                {{ for (var i in ljk.order_goods_status) { }}
+                                <option value="{{=i}}" {{? ljk.order_goods.type==i}}selected="selected"{{?}} >{{=ljk.order_goods_status[i]}}</option>
+                                {{}}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label for="" class="weui-label">单位</label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <select class="weui-select" id="unitid" name="unitid" onChange="setPrice(this);">
+                                {{ for (var i=0;i<ljk.unitlist.length;i++) { }}
+                                <option value="{{=ljk.unitlist[i].id}}" data-coefficient="{{=ljk.unitlist[i].coefficient}}" {{? ljk.unitlist[i].tuanprice}}data-tuanprice="{{=ljk.unitlist[i].tuanprice}}"{{??}}data-tuanprice="0"{{?}} {{? ljk.unitlist[i].id==ljk.order_goods.unitid}}selected='selected'{{?}} >{{=ljk.unitlist[i].uname}}</option>
+                                {{}}}
+                            </select>
+
+                            <input type="hidden" name="id" value="{{=ljk.order_goods.id}}" />
+                            {{? ljk.order_goods.goods}}<input type="hidden" id="unitprice" value="{{=ljk.order_goods.goods.tuanprice}}" />{{??}}{{?}}
+                            <input type="hidden" id="unit" name="unit" value="{{=ljk.order_goods.unit}}" />
+                            {{ for (var i=0;i<ljk.unitlist.length;i++) { }}
+                            <input type="hidden" id="uname_{{=ljk.unitlist[i].id}}" value="{{=ljk.unitlist[i].uname}}" />
+                            <input type="hidden" id="coefficient_{{=ljk.unitlist[i].id}}" value="{{=ljk.unitlist[i].coefficient}}" />
+                            {{}}}
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">单价</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="number" name="price" id="price" pattern="[0-9]*" value="{{=ljk.order_goods.price}}"/>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">数量</label></div>
+                        <div class="weui-cell__bd" style="text-align:right;">
+                            <span class="input-number-decrement">–</span>
+                            <input style="width: 3.3em;" autocomplete="off" class="input-number" autocomplete="off" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" oninput="checksto();" type="text" id="num" name="num" value="{{=parseFloat(ljk.order_goods.num)}}" min="1"  {{?ljk.order_goods.sku!=null}} max="" {{??}}max="1000"{{?}}>
+                            <span class="input-number-increment">+</span>
+                        </div>
+                        <input type="hidden" id="backnum" name="backnum" value="0">
+                    </div>
+                    <div class="weui-cells__title">备注</div>
+                    <div class="weui-cells">
+                        <div class="weui-cell">
+                            <div class="weui-cell__bd">
+                                <input name="desc" class="weui-input" type="text" autocomplete="off" placeholder="请输入备注信息" value="{{=ljk.order_goods.desc}}"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="page__bd page__bd_spacing">
+                <button type="submit" id="baocun" class="weui-btn weui-btn_primary" onclick="return postdata(this.form);">保存</button>
+            </div>
+            <a class="weui-media-box weui-media-box_appmsg">
+                <div class="weui-media-box__hd"></div>
+                <div class="weui-media-box__bd"></div>
+            </a>
+        </form>
+    </div>
+    <script type="text/javascript">
+        $(function(){
+            dianji();
+            var sto_num=Number($('#sto_num').data('value'));
+            if(sto_num==1){
+                checksku();
+            }
+        });
+        function postdata(formObj){
+            $('#dialogs').remove();
+            $.ajax(
+                {
+                    type:'post',
+                    url:$(formObj).attr('action'),
+                    data:$(formObj).serializeArray(),
+                    dataType:'json',
+                    beforeSend:function (){
+                        var tip = {
+                            type:1,
+                            title:'修改商品',
+                            content:'正在修改商品信息，请稍后！'
+                        };
+                        var template = doT.template($('#tpldialogs').html());
+                        var t_html = template(tip);
+                        $('.ordergoods').append(t_html);
+                    },
+                    success:function (data){
+                        if(data['code']==1){
+                            var tip = {
+                                type:1,
+                                title:'修改商品',
+                                content:data['msg'],
+                                btn:1,
+                                btns:0,
+                                btnsc:'继续上报',
+                                btnm:1,
+                                btnmc:'查看',
+                                btnma:'onclick="editbackorderdetail()"'
+                            };
+                            var template = doT.template($('#tpldialogs').html());
+                            var t_html = template(tip);
+                            $('#dialogs').remove();
+                            $('.ordergoods').append(t_html);
+                            formObj.reset();
+                        }else{
+                            var tip = {
+                                type:2,
+                                title:'修改商品',
+                                content:data['msg'],
+                                btn:1,
+                                btnc:'关闭',
+                            };
+                            var template = doT.template($('#tpldialogs').html());
+                            var t_html = template(tip);
+                            $('#dialogs').remove();
+                            $('.ordergoods').append(t_html);
+                        }
+                    }
+                }
+            );
+        }
+        function editbackorderdetail() {
+            var oid=Number('{{? ljk.oid!=0}}{{=ljk.oid}}{{??}}0{{?}}');
+            if(oid==0){
+                var msg='订单不存在';
+                errorMsgBack(msg,'orderdetail');
+                return false;
+            }
+            ShowOrderViewTpl(this,'orderdetail',oid);
+            window.pageManager.go('dingdanxiangqing');
+        }
+        function setPrice(obj){
+            var sto_num=Number($('#sto_num').data('value'));
+            if(sto_num==1){
+                $("#unitid option[value='"+obj.value+"']").siblings().removeAttr("selected");
+                $("#unitid option[value='"+obj.value+"']").attr("selected","selected");
+                checksku();
+            }else{
+                var unitPrice = document.getElementById('unitprice').value;
+                var coefficient = document.getElementById('coefficient_' + obj.value).value;
+                var uname = document.getElementById('uname_' + obj.value).value;
+                var price = unitPrice * coefficient;
+                if($(obj.form.type).val()==2){
+                    price = 0;
+                }
+                $('#unit').val(uname);
+                $('#price').val(price.toFixed(2));
+            }
+        }
+        function checksku() {
+            var uname='';
+            var sto='{{?ljk.order_goods.sku!=null}}{{=ljk.order_goods.sku.storage_num}}{{??}}{{?}}';
+            var sto_num2=Number('{{?ljk.order_goods!=null}}{{=ljk.order_goods.num}}{{?}}');
+            var price='';
+            var coe='';
+            var s1='';
+            var s2='';
+            $('#type').find('option').each(function () {
+                if($(this).attr('selected')){
+                    var type=Number($(this).val());
+                    var sto_coefficient=$('#sto_coefficient').text();
+                    coe=Number($("#unitid option[value='"+sto_coefficient+"']").data('coefficient'));
+                    if(type==1){
+                        $('#unitid').find('option').each(function () {
+                            if($(this).attr('selected')){
+                                price=$(this).data('tuanprice');
+                            }
+                        });
+                    }else if(type==2){
+                        price=Number(0).toFixed(2);
+                    }
+                    $('#unitid').find('option').each(function () {
+                        if($(this).attr('selected')){
+                            var  coee=$(this).data('coefficient');
+                            uname=$(this).text();
+                            s1=Math.floor(sto/coee);
+                            s2=Math.floor(sto_num2*coe/coee);
+                            var n1=Math.floor(sto%coee);
+                            var n2=Math.floor(sto_num2%coee);
+                            var n3=Math.floor((n1+n2)/coee);
+                            if(n3>0){
+                                s2=s2+n3;
+                            }
+                        }
+                    });
+                }
+            });
+            $('#storage_num').text(s1);
+            $('#num').attr('max',s1+s2);
+            $('#num').attr('value',s2);
+            $('#num').text(s2);
+            $('.input-number').val(s2);
+            $('#unit').val(uname);
+            $('#price').val(price);
+            var s3=s2+s1;
+            if(s2>s3 || s2==0){
+                $('#baocun').css('background','#7F7F7F').attr('disabled','disabled');
+            }else{
+                $("#backnum").val(Number($('.input-number').val())-Number($('#num').text()));
+                $('#baocun').css('background','#1AAD19').removeAttr('disabled','disabled');
+            }
+        }
+        function setZpPrice(obj){
+            var sto_num=Number($('#sto_num').data('value'));
+            var price = '';
+            $("#type option[value='"+obj.value+"']").siblings().removeAttr("selected");
+            $("#type option[value='"+obj.value+"']").attr("selected","selected");
+            if(sto_num==1){
+                $(obj).find('option').each(function () {
+                    if($(this).attr('selected')){
+                        var type=Number($(this).val());
+                        if(type==1){
+                            $('#unitid').find('option').each(function () {
+                                if($(this).attr('selected')){
+                                    price=$(this).data('tuanprice');
+                                }
+                            });
+                        }else if(type==2){
+                            price=Number(0).toFixed(2);
+                        }
+                        $('#price').val(price);
+                    }
+                });
+            }else{
+                var unitPrice = document.getElementById('unitprice').value;
+                if(obj.value==1){
+                    var unitid = $(obj.form.unitid).val();
+                    var coefficient = $('#coefficient_' + unitid).val();
+                    console.log(unitPrice);
+                    console.log(coefficient);
+                    $('#price').val((unitPrice * coefficient).toFixed(2));
+                }
+                if(obj.value==2){
+                    document.getElementById('price').value = '0.00';
+                }
+            }
+
+        }
+        function checksto() {
+            var num=Number($("#num").val());
+            var num1=$('#num').attr('max');
+            if(num>0){
+                if(num>num1){
+                    $('#baocun').css('background','#7F7F7F').attr('disabled','disabled');
+                }else{
+                    $("#backnum").val(Number($('.input-number').val())-Number($("#num").attr('value')));
+                    $('#baocun').css('background','#1AAD19').removeAttr('disabled','disabled');
+                }
+            }else{
+                if(Number($('#num').val())==0){
+                    $("#backnum").val(Number($('.input-number').val())-Number($("#num").attr('value'))+1);
+                }else{
+                    $("#backnum").val(Number($('.input-number').val())-Number($("#num").attr('value')));
+                }
+
+                $('#num').attr('min',Number('1'));
+                $('#num').val(Number('1'));
+            }
+        }
+        (function() {
+            window.inputNumber = function(el) {
+                var num=Number('{{?ljk.order_goods.sku!=null}}{{=ljk.order_goods.sku.storage_num}}{{??}}{{?}}');
+                var sto_num=$("#sto_num").data('value');
+                var min=0;
+                var max=0;
+                if(sto_num===1){
+                    var coe='';
+                    var sto=Number('{{?ljk.order_goods.sku!=null}}{{=ljk.order_goods.sku.storage_num}}{{??}}{{?}}');
+                    var sto_num2=Number('{{?ljk.order_goods!=null}}{{=ljk.order_goods.num}}{{?}}');
+                    $('#unitid').find('option').each(function () {
+                        if($(this).attr('selected')){
+                            coe=$(this).data('coefficient');
+                            var s1=Math.floor(sto/coe);
+                            var s2=Math.floor(sto_num2);
+                            var uname=$(this).text();
+                            $('#unit').val(uname);
+                            $('#storage_num').text(s1);
+                            $('#num').attr('max',s1+s2);
+                            $('#num').attr('value',s2);
+                            $('#num').text(s2);
+                            $('.input-number').val(s2);
+                        }
+                    });
+                    max=Number($('#num').attr('max'));
+                    min = Math.floor((Number(el.attr('min'))-num)/coe) || false;
+                }else if(sto_num===-1){
+                    max = (Number(el.attr('max'))+num) || false;
+                    min = Number(el.attr('min')) || false;
+                }
+                var els = {};
+                els.dec = el.prev();
+                els.inc = el.next();
+                el.each(function() {
+                    init($(this));
+                });
+                function init(el) {
+                    var sto_num=$("#sto_num").data('value');
+                    els.dec.on('click', decrement);
+                    els.inc.on('click', increment);
+                    function decrement() {
+                        var value = el[0].value;
+                        value--;
+                        if(!min || value >= min) {
+                            el[0].value = value;
+                            if(sto_num===1){
+                                checksto();
+                            }
+                        }
+                    }
+                    function increment() {
+                        var sto_num=$("#sto_num").data('value');
+                        if(sto_num===1){
+                            var coe='';
+                            $('#unitid').find('option').each(function () {
+                                if($(this).attr('selected')){
+                                    max=Number($('#num').attr('max'));
+                                }
+                            });
+                        }
+                        var value = el[0].value;
+                        value++;
+                        if(!max || value <= max) {
+                            el[0].value = value++;
+                            if(sto_num===1){
+                                checksto();
+                            }
+                        }
+                    }
+                }
+            }
+        })();
+        inputNumber($('.input-number'));
+</script>
+</script>

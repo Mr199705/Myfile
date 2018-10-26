@@ -1,0 +1,104 @@
+{include file="common/header"}
+<style type="text/css">
+    .btn-dpg{
+        overflow: hidden;
+        text-align: center;
+        height:24px;
+        word-break: keep-all;
+        word-wrap: normal;
+        white-space: nowrap;
+        line-height: 24px;
+        border:1px solid #ccc;
+        background: #fff;
+        margin:2px;
+        outline: 0px;
+        padding: 0px 5px;
+    }
+    .btn-dpg-checked{
+        background: darkgreen;
+        color:white;
+    }
+    .dpg_list_box{
+        height: 220px;
+        overflow: hidden;
+        overflow-y: scroll;
+    }
+    .dpg_list_box::-webkit-scrollbar{
+        width: 1px;
+        height: 1px;
+    }
+</style>
+</head>
+<body>
+    {include file="common/warning" /}
+    {include file="common/tips" /}
+    <div class="modal-backdrop" style="display: none;background: rgba(0,0,0,0.5);z-index: 99990 !important;" id="modalBackdropBox"></div>
+    {if isset($vo.dispatch ) && $vo.dispatch== 0}
+    <script type="text/template" id="dpgsList">
+        <div onclick="if(event.target === this){$('#modalBackdropBox').hide();$('#modalBackdropBox').html('');}" style="position: fixed;width:100%;height: 100%;display: flex;flex-direction: row;flex-wrap: nowrap;align-items: center;justify-content: center;">
+            <form method="post" onsubmit="return false" action="/admin/order/authdpg" style="width: 80%;height:400px;background:rgba(255,255,255,0.9);border:1px solid #ccc;overflow: hidden;">
+                <div style="background: #00f;color: #fff;text-align: center;height: 35px;line-height: 35px;font-weight:bold;font-size:18px;">选择配送小组</div>
+                <div><input style="height: 26px;" class="form-control" type="text" value="" placeholder="请输入配送小组关键词搜索！" id="dpgKeywords" /></div>
+                <input type="hidden" name="dpgid" value="{{=ljk.dpgid}}" />
+                <input type="hidden" name="action" value="authdpg" />
+                <input type="hidden" name="oid" value="{{=ljk.oid}}" />
+                <div class="dpg_list_box" style="height:calc(100% - 96px);">
+                    <div id="dpgsListBox" style="display: flex;flex-direction: row;flex-wrap: wrap;align-items: flex-start;">
+                        {foreach name="dpgs" item="dpg"}
+                        <button data-dpgid="{$dpg.id}" data-title="{$dpg.title}" class="btn-dpg {{?ljk.dpgid=={$dpg.id}}}btn-dpg-checked{{?}}">{$dpg.title}</button>
+                        {/foreach}
+                        <button data-dpgid="0" data-title="取消分配" class="btn-dpg {{?ljk.dpgid==0}}btn-dpg-checked{{?}}">取消分配</button>
+                    </div>
+                </div>
+                <div style="display: flex;flex-direction: row;flex-wrap: nowrap;align-items: center;justify-content: flex-end;">
+                    <a href="javascript:void(0);" class="btn btn-sm btn-warning modal-close" style="margin-right:15px;">关闭</a>
+                    <input type="submit" name="authDpgSubmit" value="确定" class="btn btn-sm btn-success" />
+                </div>
+            </form>
+        </div>
+        {{
+        setTimeout(function (){plfpdpg();},50);
+        }}
+    </script>
+    {/if}
+    <div id="wrapper">
+        <div  class="gray-bg dashbard-1">
+            <!--头部-->
+            <div class="row wrapper border-bottom white-bg page-heading" style="padding-bottom:0">
+                <div class="col-sm-7">
+                    <h2>配送组订单</h2>
+                </div>
+                <div class="col-sm-5">
+                    <br>
+                    <a class="btn btn-primary btn-sm" href="javascript:location.reload();">刷新</a>
+                </div>
+            </div>
+            <!--头部 end-->
+            <div class="wrapper wrapper-content animated fadeInRight">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-content">
+                            	<form method="post" id='{$initData.sign}SearchForm' action="{$initData.requestUrl}" onSubmit="return false;">
+                                    <input type="hidden" name="action" value="showlist" />
+                                    <input type="hidden" id="dpgids" name="dpgid" value="0" />
+                                    {include file="/dispatch/search/group_order_search"}
+                                </form>
+                                <div id="countInfo"></div>
+                                <div id="{$initData.sign}List"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {include file="dispatch/model/group_order_dlg_htm"}
+        {include file="dispatch/model/group_order_group"}
+        {include file="dispatch/model/group_dispatch"}
+    </div>
+    {include file="common/footerjs"}
+    <script type="text/javascript">
+        getList({sign:'{$initData.sign}'});
+    </script>
+</body>
+</html>

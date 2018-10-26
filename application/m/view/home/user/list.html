@@ -1,0 +1,84 @@
+<script type="text/template" charset="utf-8" id='userlists'>
+{{if( ljk && ljk.length>0 ){ }}
+{{for(var i=0; i<ljk.length; i++){ }}
+    <div class="weui-cells opacity" style="font-size: 1.1em;">
+        <a  data-id="genjinkehu" onClick="getuserDetail(this,'{{=ljk[i].uid}}');" href="javascript:;" style="padding: 13px 15px 0px 15px;display: flex;">
+        <div class="weui-cell__bd  sy_kh">
+            <p>{{=ljk[i].realname}}</p>
+        </div>
+        {{if(ljk[i].weixin.length===0){}}
+        <div style="color: red;" >
+            微信未绑定
+        </div>
+        {{}}}
+        {{if(ljk[i].weixin.length!==0){}}
+        <div style="color: dodgerblue;" >
+            微信已绑定
+        </div>
+        {{}}}
+        </a>
+        <div class="weui-form-preview__bd" style="padding: 0px 16px 10px 16px;margin-top: 0px;">
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">电话：</label>
+            <span class="weui-form-preview__value"><a href="tel:{{=ljk[i].mobile}}" style="color:#999999">{{=ljk[i].mobile}}</a></span>
+        </div>
+        <!--
+		 <div class="weui-form-preview__item"><label class="weui-form-preview__label">积分：</label>
+            <span class="weui-form-preview__value">0</span>
+        </div>
+       <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">认证状态：</label>
+            <span class="weui-form-preview__value">{{if(ljk[i].trust==0){}}未认证{{}}}{{if(ljk[i].trust==1){}}已认证{{}}}</span>
+        </div>
+        {{if(ljk[i].osn){}}
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">来自：</label>
+            <span class="weui-form-preview__value">{{=ljk[i].osn}}</span>
+        </div>
+        {{}}}
+		-->
+        {{if(ljk[i].rn){}}
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">等级：</label>
+            <span class="weui-form-preview__value">{{=ljk[i].rn}}</span>
+        </div>
+        {{}}}
+        {{if(ljk[i].address){}}
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">地址：</label>
+            <span class="weui-form-preview__value">{{=ljk[i].address}}</span>
+        </div>
+        {{}}}
+		{{if(ljk[i].bftime!='wuxiao'){}}
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">拜访：</label>
+            <span class="weui-form-preview__value">{{=ljk[i].bftime}}天未拜访</span>
+        </div>
+		{{}}}
+		{{if(ljk[i].otime!='wuxiao'){}}
+        <div class="weui-form-preview__item">
+            <label  class="weui-form-preview__label">下单：</label>
+            <span class="weui-form-preview__value">{{=ljk[i].otime}}天未下单</span>
+        </div>
+		{{}}}
+    </div>
+    <div style="line-height: 50px;display: flex;border-top: 1px solid #D9D9D9;">
+        {{?ljk[i].guid}}
+        <button class="weui-form-preview__btn" data-id="genjinkehu" onClick="getuserDetail(this,'{{=ljk[i].uid}}');">详情</button>
+        <button class="weui-form-preview__btn" onClick="initAddOrderGoodsTpl('{{=ljk[i].uid}}');">下单</button>
+        <button class="weui-form-preview__btn" data-id="addgj" onClick="return addVisit(this,{{=ljk[i].uid}});">拜访</button>
+        {{??}}
+        <button class="weui-form-preview__btn" data-id="usercreate" onClick="createProfile(this,{{=ljk[i].uid}});">创建</button>
+        {{?}}
+    </div>
+</div>
+{{}}}
+{{}else{}}
+<div style="text-align:center; color:#CBCBCB; padding-top:2em;">
+    <i class="fa fa-file-text-o fa-5x"></i><br>
+    <span>未查询到符合条件的客户信息！</span>
+</div>
+{{}}}
+</script>
+{include file="home/user/detail"}
+{include file="home/order/order_add"}

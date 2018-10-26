@@ -1,0 +1,55 @@
+{if $follows}
+<div class="feed-activity-list">
+   <div class="ibox-content " id="followlist">
+    {foreach name="follows" item="follow"}
+    <div class="timeline-item">
+        <div class="row">
+            <div class="col-xs-3 date">
+                <i class="fa fa-coffee"></i>
+                {$follow.adate|date="Y-m-d H:i:s",###}
+                <br>
+            </div>
+            <div class="col-xs-9 content">
+                <p class="m-b-xs"><strong>{$follow.host_realname}</strong>
+                </p>
+                {if $follow.xm_title}
+                 <p>
+                    <div style="border:1px solid #ccc;margin-top:5px;display: inline-block;padding:1px;border-radius: 3px;">{$follow.xm_title}</div>   
+                </p>{/if}
+                <p style="word-wrap: break-word;">
+                    {$follow.contentr}{if $admin_user_editpost}{if $follow.t==1}<a data-sign='0' data-postid='{$follow.id}' href="javascript:void(0);" class="btn btn-xs btn-primary" style="margin-left: 5px;" data-id="editpost" onclick="getOnePost(this);">修改</a>{/if}{/if}
+                </p>
+                {if $follow.thumb}
+                 <p>
+                    {foreach name="follow.thumb" item="thumb"}
+                    {if $thumb}
+                    <a href="javascript:void(0);" onClick="showImg(this,'{$thumb}');">附件：{$thumb|filename}文件</a>
+                    {/if}
+                    {/foreach}
+                    {foreach $follow.imgsurl as $k=>$imgsurl}
+                    {if $imgsurl}
+                    <a href="{$imgsurl}" target="_blank"><!--onclick="showImg(this,'{$imgsurl}');"-->
+                        <img  src="{$imgsurl}" style="width:50px;height:50px;cursor: pointer; border:0" title="点击查看大图" />
+                    </a>
+                    {/if}
+                    {/foreach}
+                </p>
+                {/if}  
+                 {if $follow.address}
+                 <p>
+                    工作地址:<a href="#">{$follow.address}</a>  {if $follow.juli}&nbsp;&nbsp;客户距离：({$follow.juli}) {/if}
+                </p>
+                <p>
+                    地图坐标:{$follow.y},{$follow.x}
+                </p>
+                {/if}
+            </div>
+        </div>
+    </div>
+    {/foreach}
+    {include file="common/page"}
+</div>
+</div>
+{else/}
+<p style="color:red;border-top: 1px solid #e7eaec;text-align: center;background: #f9f9f9;;height: 35px;line-height:35px;">该时间段无跟进记录信息，您可以重新设置时间段再查询！</p>
+{/if}

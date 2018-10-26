@@ -1,0 +1,118 @@
+    <input type='hidden' id='submitType' value='搜索' name='searchsubmit'/>
+    <div class="row">
+    <div class="col-sm-1" style=" padding-right:0px; width:150px;margin-right: 10px;">
+        <div class="input-group">
+            <select name="psid" class="input-sm form-control" style="width:150px;" value="" onchange="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);">
+                <option value="0">配送商</option>
+                {foreach name="$pslist" item="ps}
+                <option value="{$ps.id}" {if $conditions.psid == $ps.id}selected{/if}>{$ps.sname}				</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-1" style=" padding-right:0px; width:110px;">
+        <div class="input-group">
+            <select name="guid" class="input-sm form-control" style="width:103px;" value="" onchange="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);">
+                <option value="0">员工</option>
+                {foreach name="$members" item="member}
+                <option value="{$member.uid}" {if $conditions.guid == $member.uid}selected{/if}>{$member.realname}				</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-1" style=" padding-right:0px; width:110px;">
+         <div class="input-group">
+            <select name="type" class="input-sm form-control" style="width:103px;" onchange="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);">
+                <option value="o.number" {if $conditions.type == 'o.number'}selected{/if}>订单号</option>
+                <option value="m.phone" {if $conditions.type == 'm.phone'}selected{/if}>收货人电话</option>
+                <option value="m.address" {if $conditions.type == 'm.address'}selected{/if}>收货人地址</option>
+                <option value="u.realname" {if $conditions.type == 'u.realname'}selected{/if}>订货客户</option>
+                <option value="u.mobile" {if $conditions.type == 'u.mobile'}selected{/if}>订货人电话</option>
+            </select>
+         </div>
+    </div>
+    <div class="col-sm-3"  >
+    <div class="input-group">
+    <input type="text" value="" name="keyword" placeholder="请输入关键词" value="{if $conditions.keyword}{$conditions.keyword}{else/}{/if}" class="input-sm form-control" oninput="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);"> <span class="input-group-btn">
+    <button type="button" class="btn btn-sm btn-primary" onclick="setSubmitType('0');{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);"> 搜索</button> </span>
+    </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <span class="col-sm-1" style="text-align: right;width: 110px; line-height:30px;">
+    订单时间：从
+    </span>
+    <div class="col-sm-2" style="padding: 0px; "  >
+        <div class="input-group">
+            <input type="text" value="{$conditions.csdate}" name="csdate" onclick="laydate({max:laydate.now(),istime: true, format: 'YYYY-MM-DD hh:mm:ss'});" class="input-sm form-control" oninput="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);">
+        </div>
+    </div>
+    <span class="col-sm-1" style="text-align: center;width: 20px; padding: 0px;line-height:30px;">
+        到
+    </span>
+    <div class="col-sm-2" style="padding: 0px; ">
+        <div class="input-group">
+            <input type="text" value="{$conditions.cedate}" name="cedate" onclick="laydate({max:laydate.now(),istime: true, format: 'YYYY-MM-DD hh:mm:ss'});" class="input-sm form-control" oninput="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);">
+        </div>
+    </div>
+    {if $more<> '0'}
+    <div class="col-sm-2 m-b-xs">
+    <button type="button" class="btn btn-sm btn-primary" id="genduo"> 更多</button>
+    </div>
+    {/if}
+</div>
+{if $more<> '0'}
+<div class="row" id="saixuan" style=" display:none;">
+              <ul class="select">
+                <li class="select-list">
+			<dl id="select1">
+                            <dt>订单状态：</dt>
+                            <dd {if $conditions.confirm == 'all'}class="select-all selected"{/if}>
+                                <label><input type="radio" value="all" name="confirm" {if $conditions.confirm == 'all'}checked="checked"{/if} onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" />全部</label>
+                            </dd>
+                            <dd {if $conditions.confirm == '0'}class="select-all selected"{/if}>
+                                <label><input type="radio" value="1" name="confirm" {if $conditions.confirm == '1'}checked="checked"{/if} onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" />已经确认</label>
+                            </dd>
+                            <dd {if $conditions.confirm == '-1'}class="select-all selected"{/if}>
+                                <label><input type="radio" value="-1" name="confirm"  {if $conditions.confirm == '-1'}checked="checked"{/if} onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" />无效订单</label>
+                            </dd>
+                        </dl>
+		</li>
+                <li class="select-list">
+			<dl id="select1">
+                            <dt>付款状态：</dt>
+                            <dd {if $conditions.pay == 'all'}class="select-all selected"{/if}>
+                                <label><input type="radio" value="all" name="pay" {if $conditions.pay == 'all'}checked="checked"{/if} onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" />全部</label>
+                            </dd>
+                            <dd {if $conditions.pay == '0'}class="select-all selected"{/if}>
+                                <label><input type="radio" value="1" name="pay" {if $conditions.pay == '1'}checked="checked"{/if} onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" />已付款</label>
+                            </dd>
+                            <dd {if $conditions.pay == '-1'}class="select-all selected"{/if}>
+                                <label><input type="radio" value="0" name="pay"  {if $conditions.pay == '0'}checked="checked"{/if} onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" />未付款</label>
+                            </dd>
+                        </dl>
+		</li>
+                <li class="select-list">
+			<dl id="select1">
+                            <dt>订单来源：</dt>
+                            <dd {if $conditions.otype == 'all'}class="select-all selected"{/if}>
+                                <label><input type="radio" value="all" name="otype" {if $conditions.otype == 'all'}checked="checked"{/if} onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" />全部</label>
+                            </dd>
+                            <dd {if $conditions.otype == '0'}class="select-all selected"{/if}>
+                                <label><input type="radio" value="0" name="otype" {if $conditions.otype == '0'}checked="checked"{/if} onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" />微信</label>
+                            </dd>
+                            <dd {if $conditions.otype == '2'}class="select-all selected"{/if}>
+                                <label><input type="radio" value="2" name="otype"  {if $conditions.otype == '2'}checked="checked"{/if} onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" />业务员</label>
+                            </dd>
+                            <dd {if $conditions.otype == '1'}class="select-all selected"{/if}>
+                                <label><input type="radio" value="1" name="otype"  {if $conditions.otype == '1'}checked="checked"{/if} onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" />呼叫中心</label>
+                            </dd>
+                            <dd {if $conditions.otype == '5'}class="select-all selected"{/if}>
+                                <label><input type="radio" value="5" name="otype"  {if $conditions.otype == '5'}checked="checked"{/if} onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" />PC端</label>
+                            </dd>
+                        </dl>
+		</li>
+	</ul>
+</div>
+{/if}

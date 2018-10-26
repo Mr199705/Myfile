@@ -1,0 +1,39 @@
+{include file="common/top" /}
+<title>客户经理</title>
+<link rel="stylesheet" href="__CSS__/m.css" type="text/css">
+<style type="text/css"></style>
+</head><body>
+<div class="fanhui_cou">
+  <div class="fanhui_1"></div>
+  <div class="fanhui_ding">顶部</div>
+</div>
+<header class="header">
+  <div class="fix_nav">
+    <div style="max-width:768px;margin:0 auto;background:#FE5400;position: relative;">
+    <a class="nav-left back-icon" href="/shop/user/index">返回</a>
+      <div class="tit">客户经理</div>
+    </div>
+  </div>
+</header>
+<div class="container "  style="background:#fff;">
+  <div class="row rowcar" >
+  		<div style="width:120px; height:120px; margin:16px auto; background:#fff; border-radius:65px;">
+        	<img src="{$manInfo.img }" style=" border-radius:65px; width:100%; height:100%; ">
+        </div>
+          <div >
+      <div class="dizhi_x" style=" border-top: 1px #eee solid;" > <span>姓名：</span>
+        <div class="dizhi">
+          <span>{$manInfo.realname}</span>
+        </div>
+      </div>
+      <div class="dizhi_x"> <span>手机：</span>
+        <div class="dizhi">
+          <span><a href="tel:{$manInfo.mobile}">{$manInfo.mobile}</a></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="common/footer_nav" /}
+</body>
+</html>

@@ -1,0 +1,208 @@
+<form method="post" action="/admin/{$_controllerName|strtolower}/{$_actionName|strtolower}search" onsubmit="return false;" id="userSearchForm">
+{if $psid}
+<input type="hidden" name="id" value="{$psid}" />
+{/if}
+    <div class="row">
+    {if $authSearch=='show'}
+    <div class="col-sm-1" style=" padding-right:0px; width:110px;">
+        <div class="input-group">
+            <select name="psid" class="input-sm form-control" style="width:103px; padding-left: 2px;padding-right: 0px;" value="">
+                <option value="" {if $conditions.psid == 'all'}selected{/if}>授权状态</option>
+                <option value="{$px.psid}" {if $conditions.psid == $px.psid}selected{/if}>已授权</option>
+                <option value="0" {if $conditions.psid == '0'}selected{/if}>未授权</option>
+            </select>
+        </div>
+    </div>
+    {/if}
+    {if $shopidSearch<> '0'}
+    <div class="col-sm-1" style=" padding-right:0px; width:110px;">
+        <div class="input-group">
+            <select class="input-sm form-control" style="width:103px;padding-left: 2px;padding-right: 0px;" value="0" name="shopid" onchange="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" >
+                <option >来自</option> 
+                {foreach name="$shops" item="shop} 
+                <option value="{$shop.id}"  {if $conditions.shopid == $shop.id}selected="selected"{/if}>{$shop.name}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    {/if}
+     {if $rankSearch<> '0'}
+    <div class="col-sm-1" style=" padding-right:0px; width:110px;">
+         <div class="input-group">
+             <select class="input-sm form-control" style="width:103px;padding-left: 2px;padding-right: 0px;" value="0" name="rankid" onChange="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" >
+                 <option  >客户等级</option>
+                  {foreach key=rankid" item="rank from=$Ranks}
+                 <option value="{$rankid}" {if $conditions.rankid == $rankid}selected="selected"{/if}>{$rank.rank_name}</option>
+                 {/foreach}
+             </select>
+         </div>
+    </div>
+    {/if}
+       {if $tpidSearch<> '0'}
+     <div class="col-sm-1" style=" padding-right:0px; width:110px;">
+         <div class="input-group">
+             <select class="input-sm form-control" style="width:103px;padding-left: 2px;padding-right: 0px;" value="" name="tpid" onChange="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);">
+             	 <option >客户类型</option>
+                 {foreach name="$types" item="type}     
+                 <option value="{$type.id}" {if $conditions.tpid == $type.id}selected="selected"{/if}>{$type.title}</option>
+                 {/foreach}
+             </select>
+         </div>
+    </div>
+    {/if}
+     <div class="col-sm-1" style=" padding-right:0px; width:110px;">
+         <div class="input-group">
+             <select class="input-sm form-control" style="width:103px;padding-left: 2px;padding-right: 0px;" value="" name="guid" onChange="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);">
+                 <option value="all"  {if $conditions.guid == 'all'}selected="selected"{/if}>跟进状态</option>
+                 <option value="0"  {if $conditions.guid == '0'}selected="selected"{/if}>无人跟进</option>
+                  {foreach name="$members" item="member}
+                    <option  value="{$member.uid}" {if $conditions.guid == $member.uid}selected="selected"{/if}>{$member.realname}</option>
+                  {/foreach}
+             </select>
+         </div>
+    </div>
+  
+    <div class="col-sm-1" style=" padding-right:0px; width:110px;">
+         <div class="input-group">
+             <select class="input-sm form-control" style="width:103px;padding-left: 2px;padding-right: 0px;" value="" name="type">
+                 <option value="realname" {if $conditions.type == 'realname'}selected{/if}>客户名称</option>
+                 <option value="address" {if $conditions.type == 'address'}selected{/if}>客户地址</option>
+                 <option value="contact" {if $conditions.type == 'contact'}selected{/if}>联系人</option>
+                 <option value="mobile" {if $conditions.type == 'mobile'}selected{/if}>联系手机</option>
+             </select>
+         </div>
+    </div>
+    <!--style=" padding-left:0px; margin-right:0px;"-->
+    <div class="col-sm-3"  >
+    <div class="input-group">
+        <input type="text" value="" name="keyword" placeholder="请输入关键词" value="{if $conditions.keyword}{$conditions.keyword}{else/}{/if}" class="input-sm form-control" oninput="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);">
+        <span class="input-group-btn">
+            <button type="button" class="btn btn-sm btn-primary" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);"> 搜索</button>
+        </span>
+    </div>
+    </div>
+    {if $more<> '0'}
+    <div class="col-sm-1">
+    <button type="button" class="btn btn-sm btn-primary" id="genduo">更多</button>
+    </div>
+    {/if}
+</div>
+
+{if $more<> '0'}
+            <div class="row" id="saixuan" style=" display:none;">
+              <ul class="select">
+                {if $visitidSearch<> '0'}
+		<li class="select-list">
+			<dl id="select1">
+                            <dt>拜访路线：</dt>
+                            <dd {if $conditions.visitid == ""}class="select-all selected"{/if}>
+                                <label><input type="radio" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" value="0" name="visitid"  {if $conditions.visitid == ""}checked="checked"{/if} />全部</label>
+                            </dd>
+                            {foreach name="$Visits" item="visit}
+                            {if $visit.title != ''}
+                            <dd {if $conditions.visitid == $visit.id}class="select-all selected"{/if}>
+                                <label><input type="radio" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" value="{$visit.id}" name="visitid"  {if $conditions.visitid == $visit.id}checked="checked"{/if} />{$visit.title}</label>
+                            </dd>
+                            {/if}
+                            {/foreach}
+                        </dl>
+		</li>
+                {/if}
+                {if $trustSearch<> '0'}
+		<li class="select-list">
+                    <dl id="select5">
+                            <dt>认证状态：</dt>
+                            <dd {if $conditions.trust == '' or $conditions.trust == 'all'}class="select-all selected"{/if}>
+                                <label><input type="radio" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" value="" name="trust"  {if $conditions.trust == '' or $conditions.trust == 'all'}checked="checked"{/if} />全部</label>
+                            </dd>
+                            <dd {if $conditions.trust == "0"}class="select-all selected"{/if}>
+                                <label><input type="radio" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" value="0" name="trust"  {if $conditions.trust == "0"}checked="checked"{/if} />未认证</label>
+                            </dd>
+                            <dd {if $conditions.trust == "1"}class="select-all selected"{/if}>
+                                <label><input type="radio" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" value="1" name="trust"  {if $conditions.trust == "1"}checked="checked"{/if} />已认证</label>
+                            </dd>
+                    </dl>
+		</li>
+                {/if}
+                {if $mapSearch<> '0'}
+		<li class="select-list">
+			<dl id="select5">
+				<dt>地图标注：</dt>
+				<dd {if $conditions.x == ''}class="select-all selected"{/if}>
+                                    <label><input type="radio" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" value="" name="x"  {if $conditions.x == ''}checked="checked"{/if} />全部</label>
+                                </dd>
+                                <dd {if $conditions.x == "1"}class="select-all selected"{/if}>
+                                    <label><input type="radio" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" value="1" name="x"  {if $conditions.x == "1"}checked="checked"{/if} />未标注</label>
+                                </dd>
+                                <dd {if $conditions.x == "2"}class="select-all selected"{/if}>
+                                    <label><input type="radio" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" value="2" name="x"  {if $conditions.x == "2"}checked="checked"{/if} />已标注</label>
+                                </dd>
+			</dl>
+		</li>
+                {/if}
+                {if $lastvisitSearch<> '0'}
+		<li class="select-list">
+			<dl id="select4">
+				<dt>客户资料更新：</dt>
+                                <dd {if $conditions.lastvisit == '0'}class="select-all selected"{/if}>
+                                    <label><input type="radio" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" value="0" name="lastvisit"  {if $conditions.lastvisit == '0'}checked="checked"{/if} />全部</label>
+                                </dd>
+				<dd {if $conditions.lastvisit == '1'}class="select-all selected"{/if}>
+                                    <label><input type="radio" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" value="1" name="lastvisit"  {if $conditions.lastvisit == '1'}checked="checked"{/if} />一周内</label>
+                                </dd>
+				<dd {if $conditions.lastvisit == '2'}class="select-all selected"{/if}>
+                                    <label><input type="radio" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" value="2" name="lastvisit"  {if $conditions.lastvisit == '2'}checked="checked"{/if} />两周内</label>
+                                </dd>
+				<dd {if $conditions.lastvisit == '3'}class="select-all selected"{/if}>
+                                    <label><input type="radio" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" value="3" name="lastvisit"  {if $conditions.lastvisit == '3'}checked="checked"{/if} />一月内</label>
+                                </dd>
+				<dd {if $conditions.lastvisit == '4'}class="select-all selected"{/if}>
+                                    <label><input type="radio" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" value="4" name="lastvisit"  {if $conditions.lastvisit == '4'}checked="checked"{/if} />半年内</label>
+                                </dd>
+				<dd {if $conditions.lastvisit == '5'}class="select-all selected"{/if}>
+                                    <label><input type="radio" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" value="5" name="lastvisit"  {if $conditions.lastvisit == '5'}checked="checked"{/if} />一年内</label>
+                                </dd>
+				<dd {if $conditions.lastvisit == '6'}class="select-all selected"{/if}>
+                                    <label><input type="radio" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" value="6" name="lastvisit"  {if $conditions.lastvisit == '6'}checked="checked"{/if} />一年前</label>
+                                </dd>
+			</dl>
+		</li>
+                {/if}
+                {if $weixinSearch<> '0'}
+		<li class="select-list">
+			<dl id="select6">
+				<dt>微信绑定状态：</dt>
+                                <dd class="select-all selected">
+                                    <label><input type="radio" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" value="0" name="weixin"  {if $conditions.weixin == ''}checked="checked"{/if} />全部</label>
+                                </dd>
+				<dd {if $conditions.weixin == 1}class="select-all selected"{/if}>
+                                    <label><input type="radio" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" value="1" name="weixin"  {if $conditions.weixin == 1}checked="checked"{/if} />未绑定</label>
+                                </dd>
+                                <dd {if $conditions.weixin == 2}class="select-all selected"{/if}>
+                                    <label><input type="radio" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);" value="2" name="weixin"  {if $conditions.weixin == 2}checked="checked"{/if} />已绑定</label>
+                                </dd>
+			</dl>
+		</li>
+                {/if}
+                {if $regTimeSearch<> '0'}
+                <li class="select-list">
+			<dl id="select6">
+                            <dt style=" line-height: 30px;">注册时间：</dt>
+                            <dd  style=" line-height: 30px;">开始：</dd>
+                            <dd>
+                                <input type="text" class="form-control" onclick="laydate({istime: true,max:laydate.now(),min:'1900-01-01',format: 'YYYY-MM-DD hh:mm:ss'});" name="csdate" value="" placeholder="请选择一个开始时间" />
+                            </dd>
+                            <dd  style=" line-height: 30px;">结束</dd>
+                            <dd>
+                                <input type="text" class="form-control" onclick="laydate({istime: true,max:laydate.now(),min:'1900-01-01',format: 'YYYY-MM-DD hh:mm:ss'});" name="cedate" value="" placeholder="请选择一个结束时间" />
+                            </dd>
+                            <dd style="margin-top: 2px;">
+                                <span><button type="button" class="btn btn-sm btn-primary" onclick="{$_controllerName|strtolower}{if $actName}{$actName|ucfirst}{else/}{$_actionName|ucfirst}{/if}Search(1);">确定</button></span>
+                            </dd>
+			</dl>
+		</li>
+                {/if}
+                {/if}
+	</ul>
+</div>
+</form>

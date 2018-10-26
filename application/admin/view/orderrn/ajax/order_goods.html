@@ -1,0 +1,48 @@
+<table class="table invoice-total">
+    <tbody>
+        <tr>
+            <td style="width:200px;"><b>总金额：<span style="color: #f00;font-size: 16px;">¥{$orderInfo.total}</span></b></td> 
+        </tr>
+    </tbody>
+</table>
+<div class="table-responsive">
+    <table class="table table-striped dindan">
+        <thead>
+            <tr>
+                <th>商品名称</th>
+                <th>属性</th>
+                <th>单价</th>
+                <th>数量</th>
+                <th>类型</th>
+                <th>金额</th>
+            </tr>
+        </thead>
+        <tbody>
+            {volist name="$orderInfo.goods" id="gvo"}
+            <tr>
+                <td>{$gvo.name}</td>
+                <td>{$gvo.attrs_value}</td>
+                <td>{$gvo.price}</td>
+                <td>{$gvo.num}*{$gvo.unit}</td>
+                <td>
+                    {if $gvo.type eq 1}
+                    销售
+                    {else/}
+                    赠品
+                    {/if}
+                </td>
+                <td>{$gvo.amount}</td>
+                <td>
+                    {if $orderInfo.confirm == 0}
+                    <a href="javascript:void(0);" class="btn-sm btn-primary" data-toggle="modal" data-target="#orderGoodsEditDialog" onclick="showLA('/admin/orderrn/orderInfo', 'dotOrderGoodsEdit', {id: '{$gvo.id}', oid: '{$gvo.oid}',uid: '{$orderInfo.uid}', action: 'ordergoodsedit'});">修改</a>
+                    {/if}
+                </td>        
+            </tr>
+            {/volist}
+            <script>
+                $('#ordergoodsnum').html({:$pageInfo.total;});
+            </script>
+        </tbody>
+    </table>
+</div>
+{include file="common/page"}

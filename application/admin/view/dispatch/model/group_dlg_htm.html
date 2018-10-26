@@ -1,0 +1,248 @@
+<script type="text/template" id="groupDialog">
+    {{ 
+        sms = {};
+        gms = {};
+        jms = [];
+        itemIndex = 0;
+        if(typeof ljk.groups !== 'undefined'){
+            sms = {};
+            for(var m in ljk.groups){
+                sms[ljk.groups[m].id] = ljk.groups[m];
+                if(ljk.groups[m].type !== 0){
+                    jms.push(ljk.groups[m].t_name);
+                }
+            }
+        }
+    }}
+    <div class="modal inmodal in" tabindex="-1" role="dialog" aria-hidden="false" style="display: block; overflow-y:scroll;">
+        <div class="modal-dialog" style="width: 720px;">
+            <div class="modal-content animated fadeIn">
+                <div class="modal-header">
+                    <button type="button" class="close modal-close"> <span aria-hidden="true">×</span> <span class="sr-only">Close</span> </button>
+                    <h4 class="modal-title">{{? ljk.id != null }}编辑{{??}}添加{{?}}配送小组</h4>
+                </div>
+                <form class="form-horizontal groupDialogForm" action="/admin/dispatch/group" method="post" enctype="multipart/form-data" onsubmit="return false;">
+                    <input type="hidden" name="action" value="{{?ljk.action != null }}{{=ljk.action }}{{?}}">
+                    <input type="hidden" name="editid" value="{{?ljk.id != null }}{{=ljk.id }}{{?}}">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">标题：</label>
+                            <div class="col-sm-6">
+                                <input id="edit_title" type="text" class="form-control" name="title" value="{{? ljk.title != null }}{{=ljk.title }}{{?}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">配送车：</label>
+                            <div class="col-sm-6 form-inline">
+                                <select class="form-control" name="carid">
+                                    <option value="0">请选择</option>
+                                    {{if( typeof ljk.carList !== "undefined" && ljk.carList.length > 0 ){}}
+                                    {{for( var i = 0; i < ljk.carList.length; i++ ){ }}
+                                        {{ if( ljk.carList[i].id === ljk.carid ){ }}
+                                        <option value="{{=ljk.carList[i].id }}" selected="selected">{{=ljk.carList[i].cartype }} {{=ljk.carList[i].carnum }}</option>
+                                        {{}else{}}
+                                        <option value="{{=ljk.carList[i].id }}">{{=ljk.carList[i].cartype }}{{=ljk.carList[i].carnum }}</option>
+                                        {{}}}
+                                    {{}}}
+                                    {{}}}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">小组成员：<br /><span style="color:red;font-size:12px;font-weight:normal;">点击非记名成员设置组长</span></label>
+                            <div class="col-sm-9 form-inline">
+                                <ul id="groupContainer">
+                                    {{?sms}}
+                                    {{for(var smid in sms){}}
+                                    {{ 
+                                        if(sms[smid].type === 0){
+                                            if(!gms){
+                                                gms = {};
+                                            }
+                                            gms[sms[smid].t_guid] = itemIndex;
+                                        }
+                                    }}
+                                    <li style="display: inline-block;margin-right: 5px;margin-bottom: 5px;" id="itemIndex_{{=itemIndex}}">
+                                        <input type="hidden" name="itemid[]" value="{{=itemIndex}}">
+                                        <input type="hidden" name="type[{{=itemIndex}}]" value="{{=sms[smid].type}}">
+                                        <input type="hidden" name="tguid[{{=itemIndex}}]" value="{{=sms[smid].t_guid}}">
+                                        <input type="hidden" class="leader_val" name="leader[{{=itemIndex}}]" value="{{=sms[smid].leader}}">
+                                        <input type="hidden" name="tname[{{=itemIndex}}]" value="{{=sms[smid].t_name}}">
+                                        {{?sms[smid].type===0}}
+                                        <button class="label label-success t_leader" style="cursor:pointer;border:0;outline:0;" data-index="{{=itemIndex}}" onclick="groupUserSetLeader(this);">{{=sms[smid].t_name}}{{?sms[smid].leader}}<span class="is_leader">【<span  style="color:yellow;">组长</span>】</span>{{?}}</button>
+                                        {{??}}
+                                        <label class="label label-info">{{=sms[smid].t_name}}</label>
+                                        {{?}}
+                                        <a data-tguid="{{=sms[smid].t_guid}}" data-tname="{{=sms[smid].t_name}}" data-index="{{=itemIndex}}" data-type="{{=sms[smid].type}}" onclick="checkm(this);">x</a>
+                                    </li>
+                                    {{itemIndex++;}}
+                                    {{}}}
+                                    {{?}}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">员工账号：</label>
+                            <div class="col-sm-9 form-inline">
+                                <input type="text" id="guidSearchKeywords" class="form-control" style="width: 100%;" placeholder="搜索：员工姓名">
+                                <div id="selectGuidList">
+                                    {{ if( typeof ljk.groupMember !== "undefined" && ljk.groupMember.length > 0 ) { }}
+                                    {{ for( var i = 0; i < ljk.groupMember.length; i++ ){ }}
+                                    <a id="guid_{{=ljk.groupMember[i].uid }}" onclick="checkm(this);" {{?typeof gms[ljk.groupMember[i].uid] !== 'undefined'}}class="guidSelect"{{?}} data-type="0" data-tname="{{=ljk.groupMember[i].realname }}" data-tguid="{{=ljk.groupMember[i].uid }}">{{=ljk.groupMember[i].realname}}</a>
+                                    {{}}}
+                                    {{}}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">记名添加：</label>
+                            <div class="col-sm-6 form-inline">
+                                <input class="form-control" type="text" name="sign_name" />
+                                <button data-index="-1" type="button" data-type="1" data-tname="" data-tguid="0" class="btn btn-sm btn-primary" onclick="$(this).attr('data-tname',$(this.form.sign_name).val());checkm(this);$(this.form.sign_name).val('');">添加</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" name="editsubmit" value="提交" class="btn btn-primary" tabindex="3" onclick="return formAct2(this.form,'','正在提交司机团队信息！');">
+                        <button type="button" class="btn btn-white modal-close">返回</button>
+                    </div>
+                    <script type="text/javascript">
+                        function checkm(btn){
+                            var type = $(btn).data('type');
+                            if(type === 0){
+                                var guid = $(btn).data('tguid');
+                                if(typeof gms[guid] !== 'undefined'){ 
+                                    var iindex = gms[guid];
+                                    $('#guid_' + guid).removeClass('guidSelect');
+                                    $('#itemIndex_' + iindex).remove();
+                                    delete(gms[guid]);
+                                }else{
+                                    var tname = $(btn).data('tname');
+                                    gms[guid] = itemIndex;
+                                    $('#guid_' + guid).addClass('guidSelect');
+                                    var s = '<li style="display: inline-block;margin-right: 5px;margin-bottom: 5px;" id="itemIndex_' + itemIndex + '">';
+                                    s += '<input type="hidden" name="itemid[]" value="' + itemIndex + '">';
+                                    s += '<input type="hidden" name="type[' + itemIndex + ']" value="0">';
+                                    s += '<input type="hidden" name="tname[' + itemIndex + ']" value="' + tname + '">';
+                                    s += '<input type="hidden" name="tguid[' + itemIndex + ']" value="' + guid + '">';
+                                    s += '<input class="leader_val" type="hidden" name="leader[' + itemIndex + ']" value="' + 0 + '">';
+                                    s += '<button class="label label-success t_leader" style="cursor:pointer;border:0;outline:0;" data-index="' + itemIndex + '" onclick="groupUserSetLeader(this);">' + tname + '</button>';
+                                    s += '<a data-tguid="' + guid + '" data-tname="' + tname + '" data-index="' + itemIndex + '" data-type="0" onclick="checkm(this);">x</a>';
+                                    s += '</li>';
+                                    $('#groupContainer').append(s);
+                                    itemIndex++;
+                                }
+                            }else{ 
+                                var tname = $(btn).attr('data-tname').trim();
+                                var iindex =  $(btn).data('index');
+                                var guid = $(btn).data('tguid');
+                                if(iindex === -1){ 
+                                    if(!tname.trim().length){ 
+                                        alert('请填写正确的成员姓名！');
+                                        return false;
+                                    }
+                                    if(jms.indexOf(tname) !== -1){
+                                        alert('您已经添加过该姓名，请不要重复添加！');
+                                    }else{
+                                        jms.push(tname);
+                                        var s = '<li style="display: inline-block;margin-right: 5px;margin-bottom: 5px;" id="itemIndex_' + itemIndex + '">';
+                                        s += '<input type="hidden" name="itemid[]" value="' + itemIndex + '">';
+                                        s += '<input type="hidden" name="type[' + itemIndex + ']" value="1">';
+                                        s += '<input type="hidden" name="tname[' + itemIndex + ']" value="' + tname + '">';
+                                        s += '<input type="hidden" name="tguid[' + itemIndex + ']" value="' + guid + '">';
+                                        s += '<input type="hidden" name="leader[' + itemIndex + ']" value="' + 0 + '">';
+                                        s += '<label class="label label-info">' + tname + '</label>';
+                                        s += '<a data-tguid="' + guid + '" data-tname="' + tname + '" data-index="' + itemIndex + '" data-type="1" onclick="checkm(this);">x</a>';
+                                        s += '</li>';
+                                        $('#groupContainer').append(s);
+                                        itemIndex++;
+                                    }
+                                }else{
+                                    var ji = jms.indexOf(tname);
+                                    $('#itemIndex_' + iindex).remove();
+                                    jms.splice(ji,1);
+                                }
+                            }
+                        }
+                        $('#guidSearchKeywords').bind('input propertychange', function(){
+                            var inpval = $(this).val();
+                            $('#selectGuidList').find('a').each(function(index,e){ 
+                                if( $(e).html().indexOf(inpval) !== -1 ){
+                                    $(e).fadeIn(200);
+                                }else{
+                                    $(e).fadeOut( 200 );
+                                }
+                            });
+                        });
+                    </script>
+                </form>
+            </div>
+        </div>
+    </div>
+</script>
+<script>                                                                                                                                                                                                                                
+    var liItemId = 0;
+    function couriersAdd( val, type, name = '' ){
+        if( type === 0 ){
+            if( val == 0 ){
+                toashShow('请选择员工账号！');
+                return false;
+            }
+            else if( existGroupUser( val, 0 ) !== null ){
+                toashShow('该账号已存在！');
+                return false;
+            }
+            var liItem = '<li style="display: inline-block;margin-right: 5px;margin-bottom: 5px;"><input type="hidden" name="itemid[]" value="'+liItemId+'"><input type="hidden" name="type['+liItemId+']" value="0"><input type="hidden" name="val['+liItemId+']" value="'+val+'"><label class="label label-success">'+name+'</label><a onclick="$(this).parent().remove();selectGuidListRefresh();">x</a></li>';
+            $('#groupContainer').append( liItem );
+        }else{
+            name = val;
+            if( val.length === 0 ){
+                toashShow('请输入记名信息！');
+                return false;
+            }
+            else if(val.length > 10 ){
+                toashShow('记名信息不能超过10个字！');
+                return false;
+            }
+            else if( existGroupUser( val, 1 ) !== null ){
+                toashShow('该记名已存在！');
+                return false;
+            }
+            var liItem = '<li style="display: inline-block;margin-right: 5px;margin-bottom: 5px;"><input type="hidden" name="itemid[]" value="'+liItemId+'"><input type="hidden" name="type['+liItemId+']" value="1"><input type="hidden" name="val['+liItemId+']" value="'+val+'"><label class="label label-info">'+name+'</label><a onclick="$(this).parent().remove();">x</a></li>';
+            $('#groupContainer').append( liItem );
+        }
+        liItemId++;
+    }
+    //  存在返回elemt
+    function existGroupUser( val, type){
+        var existLi = null;
+        $('#groupContainer').find('li').each(function(index,e){
+            var i = $(e).find('input[name="itemid[]"]').val();
+            if( $(e).find('input[name="type['+i+']"]').val() == type && $(e).find('input[name="val['+i+']"]').val() == val ){
+                existLi = e;
+            }
+        });
+        return existLi;
+    }
+    //  提示
+    function groupUserSetLeader(btn){
+        var iindex  = $(btn).data('index');
+        var $item = $('#itemIndex_' + iindex);
+        $item.siblings('li').children('.t_leader').find('.is_leader').remove();
+        $item.siblings('li').children('.leader_val').val(0);
+        if(!$item.find('.is_leader').length){ 
+            $item.children('.leader_val').val(1);
+            $item.children('.t_leader').append('<span class="is_leader">【<span  style="color:yellow;">组长</span>】</span>');
+        }
+    }
+    function toashShow(msg){
+        var tip = {
+            tip_backdrop:true,
+            tip_msg:{
+                sign:true,
+                content: msg
+            }
+        };
+        setTip(tip);
+    } 
+</script>

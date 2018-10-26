@@ -1,0 +1,601 @@
+<!--购物车-->
+<script type="text/html" id="tpl_cartdata">
+    {{if( ljk.goodslist && ljk.goodslist.length>0 ){}}
+    <div id="address_status" data-status="{{? ljk.useraddress==null}} 0 {{??}} 1 {{?}}"></div>
+    <div id="aaa">
+        <form action="/m/order/addorder" method="post" onsubmit="return false;">
+            <input type="hidden" name="address_id" value="{{? ljk.useraddress==null}} -1 {{??}} {{=ljk.useraddress.id}} {{?}}">
+            <div id="goodspannal">
+                {{for(var i=0; i<ljk.goodslist.length; i++){ }}
+                <div class="weui-panel weui-panel_access" id="goods_{{=ljk.goodslist[i].id}}">
+                    <a href="javascript:;" class="weui-media-box weui-media-box_appmsg" style="padding-bottom: 7px;" >
+                        <div class="weui-media-box__hd" style="width: 80px;height: 80px;">
+                            <img class="weui-media-box__thumb" src="{{=ljk.goodslist[i].info.goods_img}}" alt="">
+                        </div>
+                        <div style="position:relative;display: flex;align-items: center;" class="weui-media-box__bd">
+                            <div  style="margin:0 auto;width:158px;float:left;" >
+                                <p style="font-size:14px;word-break:normal; width:auto; display:block; white-space:pre-wrap;word-wrap : break-word ;overflow: hidden ;" class="weui-media-box__title">{{=ljk.goodslist[i].goods_name}}</p>
+                                <p class="weui-media-box__desc">{{? ljk.goodslist[i].avs}}属性：{{=ljk.goodslist[i].avs}}{{??}}{{?}}{{if( ljk.goodslist[i].type===1 ){ }}<span style="color:green;">【销售】</span>{{??}}<span style="color:red;">【赠品】</span>{{?}}</p>
+                                <p class="weui-media-box__desc">单位：{{=ljk.goodslist[i].unit}}</p>
+                                <p class="weui-media-box__desc">单价：{{=ljk.goodslist[i].goods_price}}元</p>
+                                <p class="weui-media-box__desc">数量：
+                                    <span class="input-number-decrement" onclick="decre_cart(this,'{{=ljk.goodslist[i].id}}');">–</span>
+                                    <input id="cart_{{=ljk.goodslist[i].id}}" autocomplete="off" class="input-number" type="text" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" oninput="checkstonum(this,'{{=ljk.goodslist[i].id}}');"data-storagenum="{{if(ljk.goodslist[i].baojia_sku.length>0){}}  {{=ljk.goodslist[i].baojia_sku[0].storage_num}} {{}else{}}-1 {{}}}"  data-unit="{{if(ljk.goodslist[i].units.length>0){}}  {{=ljk.goodslist[i].units[0].coefficient}} {{}else{}}0 {{}}}" style="width: 30px;" value="{{=parseFloat(ljk.goodslist[i].goods_number)}}" maxlength="4" />
+                                    <span class="input-number-increment" onclick="incre_cart(this,'{{=ljk.goodslist[i].id}}');">+</span>
+                                    <span id="div-sto-msg-{{=ljk.goodslist[i].id}}" style="display: none;font-size: 8px;" class="weui-cell__bd"></span>
+                                </p>
+                            </div>
+                            <ul class="weui-media-box__info"  style="float:left;" onclick="deleteCartItem('{{=ljk.goodslist[i].id}}');">
+                                <li class="weui-media-box__info__meta " ><i class="fa fa-trash-o fa-2x " style="color: cornflowerblue;"></i></li>
+                            </ul>
+                        </div>
+                    </a>
+                </div>
+                {{}}}
+            </div>
+            <div id="cart_address" data-addrtype="cart">
+                <input type="hidden" name="uid" value="{{? ljk.user}}{{=ljk.user.uid}}{{??}}{{?}}">
+                {{?ljk.useraddress!=null}}
+                <div class="weui-cells" style="color:#838B8B;">
+                    <a class="weui-cell weui-cell_access addressadd" href="javascript:;" data-id="address" data-uid="{{=ljk.useraddress.uid}}" data-type="1" >
+                        <div id="address_cart_select" class="weui-cell__bd">
+                            <div class="weui-cell__bd">
+                                <span >收货人：</span>
+                                <span style="word-wrap: break-word; word-break: normal;">{{?ljk.useraddress.consignee}}{{=ljk.useraddress.consignee}} {{??}} {{?}}</span>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+                                <span style="word-wrap: break-word; word-break: normal;">{{?ljk.useraddress.mobile}}{{=ljk.useraddress.mobile}} {{??}} {{?}}</span>
+                            </div>
+                            <div class="weui-cell__bd">
+                                <label class="weui-form-preview__label">收货地址</label>
+                                <span class="weui-form-preview__value" style="word-wrap: break-word; word-break: normal;">{{?ljk.useraddress.address || ljk.useraddress.areaname}}{{=ljk.useraddress.areaname}}{{=ljk.useraddress.address}}{{??}}无默认地址{{?}}</span>
+                            </div>
+                        </div>
+                        <div class="weui-cell__ft"></div>
+                    </a>
+                </div>
+                {{?? ljk.useraddress2!=null}}
+                <div id="addreashtml" style="color:#838B8B;" class="weui-cells">
+                    <a class="weui-cell weui-cell_access addressadd" href="javascript:;" data-type="2" data-id="address" data-uid="0">
+                        <div class="weui-cell__bd">选择收货地址</div>
+                        <div class="weui-cell__ft"></div>
+                    </a>
+                </div>
+                <div style="display: none;color:#838B8B;" class="weui-cells">
+                    <a class="weui-cell weui-cell_access addressadd" href="javascript:;" data-id="address" data-uid="" data-type="1" >
+                        <div id="address_cart_select2" class="weui-cell__bd">
+                            <div class="weui-cell__bd">
+                                <span >收货人：</span>
+                                <span style="word-wrap: break-word; word-break: normal;"></span>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+                                <span style="word-wrap: break-word; word-break: normal;"></span>
+                            </div>
+                            <div class="weui-cell__bd">
+                                <label class="weui-form-preview__label">收货地址</label>
+                                <span class="weui-form-preview__value" style="word-wrap: break-word; word-break: normal;"></span>
+                            </div>
+                        </div>
+                        <div class="weui-cell__ft"></div>
+                    </a>
+                </div>
+                {{??}}
+                <div id="addreashtml1" style="color:#838B8B;" class="weui-cells">
+                    <a class="weui-cell weui-cell_access addressadd" href="javascript:;" data-type="-1" data-id="address" data-uid="0">
+                        <div class="weui-cell__bd">&emsp;设置收货地址</div>
+                        <div class="weui-cell__ft"></div>
+                    </a>
+                </div>
+                <div style="display: none;color:#838B8B;" class="weui-cells">
+                    <a class="weui-cell weui-cell_access addressadd" href="javascript:;" data-type="1"  data-id="address" data-uid="">
+                        <div id="address_cart_select3" class="weui-cell__bd">
+                            <div class="weui-cell__bd">
+                                <span >收货人：</span>
+                                <span style="word-wrap: break-word; word-break: normal;"></span>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+                                <span style="word-wrap: break-word; word-break: normal;"></span>
+                            </div>
+                            <div class="weui-cell__bd">
+                                <label class="weui-form-preview__label">收货地址</label>
+                                <span class="weui-form-preview__value" style="word-wrap: break-word; word-break: normal;"></span>
+                            </div>
+                        </div>
+                        <div class="weui-cell__ft"></div>
+                    </a>
+                </div>
+                {{?}}
+            </div>
+            {if $cx_index_index}
+            <div style="display: none;color:#838B8B;" class="weui-cell weui-cell_select weui-cell_select-after">
+                <div class="weui-cell__hd">
+                    <label class="weui-cells__title">订单类型：</label>
+                </div>
+                <div  class="weui-cell__bd">
+                    <select class="weui-select" name="car_sale_order">
+                        <option value="1">预售订单</option>
+                        <option value="0">车销订单</option>
+                    </select>
+                </div>
+            </div>
+            {/if}
+            <div class="weui-cell weui-cell_select">
+                <div class="weui-cell__hd">
+                    <label class="weui-cells__title">配送日期：</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input type="text" class="weui-input" autocomplete="off" style="width:50%;height:44px;float: left;color:#838B8B;" placeholder="请选择日期" name="psdate" id="psdate">
+                    <select class="weui-select" style="width:35%;float: left;color:#838B8B;" name="pstime" id="pstime">
+                        <option value="0">全天</option>
+                        <option value="1">上午</option>
+                        <option value="2">下午</option>
+                    </select>
+                </div>
+            </div>
+            <div class="weui-cell weui-cell_select">
+                <div class="weui-cell__hd">
+                    <label class="weui-cells__title">配送方式：</label>
+                </div>
+                <div  class="weui-cell__bd">
+                    <select class="weui-select" style="width:70%;color:#838B8B;" name="pstype" id="pstype" onchange="changepstype(this)">
+                        <option value="0" selected="selected">物流配送</option>
+                        <option value="1">上门自提</option>
+                    </select>
+                </div>
+                <input type="hidden" id="freight_config" name="freight_config"  data-min="{{=ljk.freight_config.min}}" data-ltfee="{{=ljk.freight_config.ltfee}}" value="">
+            </div>
+            <div class="weui-cell weui-cell_select">
+                <div class="weui-cell__hd">
+                    <label class="weui-cells__title">修正金额：</label>
+                </div>
+                <div  class="weui-cell__hd" style="width: 70%;">
+                    <input type="number" id="money"  name="money" class="weui-input" placeholder="0.00" required onblur="GetValue(this);" oninput="if(value.length>10)value=value.slice(0,10);changeMoney(this);">
+                </div>
+            </div>
+            <div class="weui-cell weui-cell_select">
+                <div class="weui-cell__hd">
+                    <label class="weui-cells__title">修正备注：</label>
+                </div>
+                <div  class="weui-cell__hd" style="width: 70%;">
+                    <textarea id="moneydesc" name="moneydesc" placeholder="不填按默认备注"  class="weui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="weui-cell weui-cell_select">
+                <div class="weui-cell__hd"><label class="weui-cells__title">备&emsp;&emsp;注：</label></div>
+                <div class="weui-cell__hd" style="width: 70%;">
+                    <textarea class="weui-textarea" placeholder="订单备注" name="pssj" rows="2" maxlength="200" oninput="l(this);"></textarea>
+                </div>
+            </div>
+            <div class="weui-cell" id="fre_desc">
+                <div class="weui-cell__bd">
+                    <span class="" style="color:#FF0000;">&emsp;{{=ljk.freight_config.desc}}</span>
+                </div>
+            </div>
+            <div class="weui-form-preview__ft">
+                <a class="weui-form-preview__btn" style=" color:#000000;" href="javascript:;">商品数量：<strong style="color:#0C9C01; font-size:16px;" id="cartNum">{{=ljk.goodsnum}}</strong></a>
+                <a class="weui-form-preview__btn" style=" color:#000000;" href="javascript:;">商品总额：¥<strong style="color:#FF0000; font-size:16px;"  id="totalPrice">{{=ljk.totalPrice}}</strong></a>
+                <input type="hidden" id="total" name="total" value="">
+            </div>
+            <label style="margin-left:25%;color:#000000;font-size:12px;">（商品总额+配送费用+修正金额=订单金额）</label>
+            <div  class="weui-panel weui-panel_access">
+                <a class="weui-form-preview__btn" style="color:#000000;">
+                    订单金额：<strong id="ordertotalmoney" style="color:#FF0000; font-size:22px;"></strong>
+                </a>
+            </div>
+            <div class="page__bd page__bd_spacing" style="position: relative;margin-top: 10px;">
+                <button id="postcart" class="weui-btn weui-btn_primary" onclick="return postaddorder(this.form);">提交订单</button>
+            </div>
+        </form>
+    </div>
+    <div id="bbb" name="bbb" style="display:none">
+        <div class="weui-cell"> 购物车为空！</div>
+        <div class="weui-cell"><button data-id="xiadingdan" class="weui-btn weui-btn_primary xiadingdan_js_item" >选购商品</button>
+        </div>
+        {{ }else{ }}
+        <div class="weui-cell"> 购物车为空！</div>
+        <div class="weui-cell">
+            <button data-id="xiadingdan" class="weui-btn weui-btn_primary xiadingdan_js_item" >选购商品</button>
+        </div>
+        {{ } }}
+        <script type="text/javascript">
+            $(function(){
+                $("#m_user_index").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+                goSys('m_index_home');
+                var totalPrice=Number($('#totalPrice').text());
+                getChange(totalPrice);
+                $('.addressadd').on('click', function(){
+                    $('#psdate').hide();
+                    var id = $(this).data('id');
+                    var uid =$(this).data('uid');
+                    window.pageManager.go(id);
+                    ShowaddressTpllistbyID('address','address',uid);
+                });
+                laydate.render({
+                    elem: '#psdate'
+                    ,min: 0
+                    ,value:getNowFormatDate()
+                });
+                var totalPrice=Number($('#totalPrice').text());
+                getChange(totalPrice);
+            });
+            function getNowFormatDate() {
+                var date = new Date();
+                var seperator1 = "-";
+                var year = date.getFullYear();
+                var month = date.getMonth() + 1;
+                var strDate = date.getDate()+1;
+                if (month >= 1 && month <= 9) {
+                    month = "0" + month;
+                }
+                if (strDate >= 0 && strDate <= 9) {
+                    strDate = "0" + strDate;
+                }
+                var currentdate = year + seperator1 + month + seperator1 + strDate;
+                return currentdate;
+            }
+            function changepstype(obj) {
+                $("#pstype option[value='"+obj.value+"']").siblings().removeAttr("selected");
+                $("#pstype option[value='"+obj.value+"']").attr("selected","selected");
+                var totalPrice=Number($('#totalPrice').text());
+                getChange(totalPrice);
+            }
+            function GetValue(obj) {
+                var val=changeTwoDecimal_f($(obj).val());
+                $(obj).val(val);
+            }
+            function changeMoney() {
+                var totalPrice=Number($('#totalPrice').text());
+                getChange(totalPrice);
+            }
+            $('.xiadingdan_js_item').on('click',function (){
+                var id = $(this).data('id');
+                var uid =$('#uid').html();
+                window.pageManager.go(id);
+                GetUserCartNum(uid);
+            });
+            function postaddorder(formObj){
+                var address=$("#address_status").data('status');
+                var psdate=$("#psdate").val();
+                var pstype=Number($("#pstype").val());
+                var $viewhtml=$('.listcart');
+                var msg='';
+                if(address!=1){
+                    msg='请选择收货地址';
+                    iosDialog2Msg(msg,$viewhtml);
+                    return false;
+                }else if(psdate==''){
+                    msg='请选择配送日期';
+                    iosDialog2Msg(msg,$viewhtml);
+                    return false;
+                }else if(pstype==undefined){
+                    msg='请选择配送方式';
+                    iosDialog2Msg(msg,$viewhtml);
+                    return false;
+                }
+                var money=$('#money').attr('value');
+                if(money==''){
+                    $('#money').attr('value',Number(0).toFixed(2));
+                }
+                $.ajax({
+                    type:'post',
+                    url:$(formObj).attr('action'),
+                    data:$(formObj).serializeArray(),
+                    dataType:'json',
+                    beforeSend:function (){
+                        var tip = {
+                            type:1,
+                            title:'提交订单',
+                            content:'正在提交订单，请稍后！'
+                        };
+                        var template = doT.template($('#tpldialogs').html());
+                        var t_html = template(tip);
+                        $('#aaa').append(t_html);
+                        $('#iosDialog1').fadeOut(1000);
+                    },
+                    success:function (data) {
+                        var ordertotalmoney=Number($('#ordertotalmoney').text()).toFixed(2);
+                        var price="<span style='color:#FF0000;'>￥"+ordertotalmoney+"</span>";
+                        var order_num="<span>"+data['number']+"</span>";
+                        var htmls="<div style='font-size: 6px;'>需支付金额："+price+"<br>待支付订单号："+order_num+"<br>请确认是否支付~</div>";
+                        $('#dialogs').remove();
+                        if(data['mcard_um'] !=null){
+                            var tip = {
+                                type:3,
+                                title:'订单确认',
+                                content:htmls,
+                                btn:1,
+                                btns:1,
+                                btnsa:1,
+                                btnsc:'取消',
+                                btnm:1,
+                                btnma:1,
+                                btnmc:'确认'
+                            };
+                            var template = doT.template($('#tpldialogs').html());
+                            var t_html = template(tip);
+                            $('.listcart').append(t_html);
+                            $('#href1').on('click',function () {
+                                showLA('/m/order/detail','orderdetail',{id:data['oid']});
+                                setTimeout('window.pageManager.go(\'dingdanxiangqing\')',600);
+                                $('#dialogs').remove();
+                                return false;
+                            });
+                            $('#href2').on('click',function () {
+                                $('#androidDialog1').fadeOut(100);
+                                $('#dialogs').remove();
+                                var money=$('#money').val();
+                                var moneydesc=$('#moneydesc').val();
+                                ajAxformSubmit(data['oid'],data['uid'],money,moneydesc);
+                            });
+                        }else{
+                            var tip = {
+                                type:5,
+                                content:'下单成功！即将返回订单详情！'
+                            };
+                            var template = doT.template($('#tpldialogs').html());
+                            var t_html = template(tip);
+                            $('#dialogs').remove();
+                            $('.listscart').html('<div class="listcart"></div>');
+                            $('.listcart').append(t_html);
+                            showLA('/m/order/detail','orderdetail',{id:data['oid']});
+                            setTimeout('window.pageManager.go(\'dingdanxiangqing\')',600);
+                        }
+                    }
+                });
+            }
+            function ajAxformSubmit(oid,uid,money,moneydesc) {
+                $.ajax({
+                    type:'post',
+                    url:'/m/order/orderpay',
+                    data:{oid:oid,uid:uid,money:money,moneydesc:moneydesc},
+                    dataType:'json',
+                    beforeSend:function (){
+                        var tip = {
+                            type:1,
+                            title:'提交订单',
+                            content:'正在提交订单，请稍后！'
+                        };
+                        var template = doT.template($('#tpldialogs').html());
+                        var t_html = template(tip);
+                        $('#aaa').append(t_html);
+                        $('#iosDialog1').fadeOut(1000);
+                    },
+                    success:function (data){
+                        if(data['code']==1){
+                            var tip = {
+                                type:5,
+                                content:'下单成功！即将返回订单详情！'
+                            };
+                            var template = doT.template($('#tpldialogs').html());
+                            var t_html = template(tip);
+                            $('#dialogs').remove();
+                            var urlstr="/m/order/cartinfo";
+                            var uid=$('#uid').html();
+                            $('.listscart').html('<div class="listcart"></div>');
+                            $('.listcart').append(t_html);
+                            setTimeout(function (){
+                                var order_detail = $('.orderdetail');
+                                if(order_detail){
+                                    showLA('/m/order/detail','orderdetail',{id:oid});
+                                }
+                                window.pageManager.go('dingdanxiangqing');
+                                $('#toast').fadeOut(100);
+                                $('#oid').html(oid);
+                            },600);
+                        }else if(data['code']==0){
+                            var tip = {
+                                type:2,
+                                content:data['msg'],
+                                btn:1,
+                                btnc:'关闭'
+                            };
+                            var template = doT.template($('#tpldialogs').html());
+                            var t_html = template(tip);
+                            $('.listcart').append(t_html);
+                            $('#iosDialog2').find('a').on('click',function () {
+                                $('#iosDialog2').fadeOut(100);
+                                $('#dialogs').remove();
+                            });
+                        }
+                    }
+                });
+            }
+</script>
+</script>
+{include file="home/order/address_list"}
+<!--购物车-->
+<script type="text/html" id="tpl_cart">
+    <div class="page">
+    <!---顶部-->
+    <div class="ljk_top">
+    <a class="top_left backcart" data-id="xiadingdan"  href="javascript:;">
+    <i class="fa fa-angle-left fa-2x"></i>
+    </a>
+    <a class="top_right js_item" href="javascript:;" data-id="xiadingdan" style=" border: 1px solid #fff;padding: 0.2em 0.6em 0.1em;border-radius: 13px;margin: 11px 7px;font-size: 0.7em;">继续购物 </a>
+    <p class="weui-flex__item top_center">购物车</p>
+    </div>
+    <!---顶部-->
+    <!--底部--->
+    <!--内容-->
+    <div class="ljk_neirong" style="position: relative;margin:0px;top:49px;width: 100%;height: calc(100% - 100px);">
+    <div class="listcontent listscart" style="padding-bottom: 0px;">
+    <div class="listcart">
+    </div>
+    </div>
+    </div>
+    <!--内容-->
+    </div>
+    <script type="text/javascript">
+    $(function(){
+        var uid = $('#uid').html();
+        backcart();
+        $("#m_user_index").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+        goSys('m_index_home');
+        var urlstr = "/m/order/cartinfo";
+        ShowTplDataList(urlstr,'cart',{id:uid,limit:10,p:1});
+        laydate.render({
+            elem: '#psdate'
+            ,min: 0
+            ,value:getNowFormatDate()
+        });
+    });
+// ios
+$(function(){
+    var $iosActionsheet = $('#iosActionsheet');
+    var $iosMask = $('#iosMask');
+    function hideActionSheet() {
+        $iosActionsheet.removeClass('weui-actionsheet_toggle');
+        $iosMask.fadeOut(200);
+    }
+    $iosMask.on('click', hideActionSheet);
+    $('#iosActionsheetCancel').on('click', hideActionSheet);
+    $("#showIOSActionSheet").on("click", function(){
+        $iosActionsheet.addClass('weui-actionsheet_toggle');
+        $iosMask.fadeIn(200);
+    });
+});
+// android
+$(function(){
+    var $androidActionSheet = $('#androidActionsheet');
+    var $androidMask = $androidActionSheet.find('.weui-mask');
+    $("#showAndroidActionSheet").on('click', function(){
+        $androidActionSheet.fadeIn(200);
+        $androidMask.on('click',function () {
+            $androidActionSheet.fadeOut(200);
+        });
+    });
+});
+function decre_cart(obj,sku){
+    var sl=$(obj).next('input').val();
+    if(isNaN(sl) || sl=='' || sl=='undefined'){
+        $(obj).next('input').val(0);
+        return false;
+    }
+    var num = parseInt(sl) - 1;
+    var storage_num=Number($(obj).siblings('input').data('storagenum'));
+    var danwei=Number($(obj).siblings('input').attr('data-unit'));
+    num < 1 ? num = 1 : null;
+    if(storage_num!==-1) {
+        if (Number(num * danwei) > storage_num) {
+            $('#postcart').css('background','#7F7F7F').attr('disabled','disabled');
+            $("#div-sto-msg-" + sku).text('库存不足，无法下单！');
+            $("#div-sto-msg-" + sku).css('display', 'block');
+            return false;
+        } else {
+            $('#postcart').css('background','#1AAD19').removeAttr('disabled','disabled');
+            $("#div-sto-msg-" + sku).css('display', 'none');
+        }
+    }
+    upateNum(sku,num);
+    $(obj).next('input').val(num);
+}
+function incre_cart(obj,sku){
+    var num = parseInt($(obj).prev('input').val()) + 1;
+    var storage_num=Number($(obj).siblings('input').data('storagenum'));
+    var danwei=Number($(obj).siblings('input').attr('data-unit'));
+    if(storage_num!==-1){
+        if(Number(num*danwei)>storage_num){
+            $('#postcart').css('background','#7F7F7F').attr('disabled','disabled');
+            $("#div-sto-msg-"+sku).text('库存不足，无法下单！');
+            $("#div-sto-msg-"+sku).css('display','block');
+            return false;
+        }else{
+            $('#postcart').css('background','#1AAD19').removeAttr('disabled','disabled');
+            $("#div-sto-msg-"+sku).css('display','none');
+        }
+    }
+    num >9999 ? num = 9999 : null;
+    $(obj).prev('input').attr('value',num);
+    upateNum(sku,num);
+    $(obj).prev('input').val(num);
+}
+function checkstonum(obj,sku) {
+    var num=Number($(obj).val());
+    if(num ==0){
+        num=1;
+        $(obj).val(num);
+    }
+    $(obj).attr('value',num);
+    var storage_num=Number($(obj).data('storagenum'));
+    var danwei=Number($(obj).attr('data-unit'));
+    upateNum(sku,num);
+    if(storage_num !=-1){
+        if(Number(num*danwei)>storage_num  || num==0){
+            $(obj).prev().css('color','brown');
+            $(obj).next().css('color','brown');
+            $('#postcart').css('background','#7F7F7F').attr('disabled','disabled');
+            $("#div-sto-msg-"+sku).text('库存不足，无法下单！');
+            $("#div-sto-msg-"+sku).css('display','block');
+            return false;
+        }else{
+            $(obj).prev().css('color','');
+            $(obj).next().css('color','');
+            $('#postcart').css('background','#1AAD19').removeAttr('disabled','disabled');
+            $("#div-sto-msg-"+sku).css('display','none');
+            return true;
+        }
+    }else{
+        if($(obj).attr('value')==0){
+            $(obj).prev().css('color','brown');
+            $(obj).next().css('color','brown');
+            $('#postcart').css('background','#7F7F7F').attr('disabled','disabled');
+            $("#div-sto-msg-"+sku).text('库存不足，无法下单！');
+            $("#div-sto-msg-"+sku).css('display','block');
+            return false;
+        }else{
+            $(obj).prev().css('color','');
+            $(obj).next().css('color','');
+            $('#postcart').css('background','#1AAD19').removeAttr('disabled','disabled');
+            $("#div-sto-msg-"+sku).css('display','none');
+            return true;
+        }
+    }
+}
+function deleteCartItem(cart_id) {
+    $.post("/m/order/deletecartitem",{id:cart_id},function(res){
+        if( res.code==1){
+            var totalPrice = res.data.TotalPrice;
+            $("#totalPrice").html(totalPrice);
+            $("#goods_" + cart_id).remove();
+            getChange(Number(res.data.TotalPrice));
+        }
+    });
+    var TotalNum=$('#goodspannal').children().length;
+    TotalNum--;
+    $("#cartNum").html(TotalNum);
+    if(TotalNum <= 0){
+        $("#aaa").remove();
+        $("#bbb").show();
+    }
+}
+function upateNum(sku, sl) {
+    $.post("/m/order/updatecartitem",{sku: sku, num: sl },function(res){
+        if( res.code==1){
+            getChange(Number(res.data.TotalPrice));
+        }
+    });
+}
+function getChange(TotalPrice) {
+    var youfei='';
+    var pstype=Number($("#pstype").val());
+    var money=Number($('#money').val());
+    var ltfee=Number($('#freight_config').data('ltfee'));
+    var min=Number($('#freight_config').data('min'));
+    if(pstype==0){
+        if(TotalPrice < min){
+            youfei=ltfee;
+            $('#fre_desc').show();
+        }else{
+            youfei=0;
+            $('#fre_desc').hide();
+        }
+    }else{
+        youfei=0;
+        $('#fre_desc').hide();
+    }
+    $('#freight_config').val(Number(youfei).toFixed(2));
+    var total=Number(TotalPrice+youfei+money).toFixed(2);
+    $('#totalPrice').text(Number(TotalPrice).toFixed(2));
+    if(total <=0){
+        $('#ordertotalmoney').text(Number(0).toFixed(2));
+    }else{
+        $('#ordertotalmoney').text(total);
+    }
+    $("#total").val(TotalPrice);
+}
+</script>
+</script>

@@ -1,0 +1,208 @@
+<!--修改-->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>编辑客户的详细信息<small></small></h5>
+            </div>
+            <div class="ibox-content">
+                <form class="form-horizontal" enctype="multipart/form-data" method="post" onsubmit="return false;">
+                    <input type="hidden" name="action" value="edit">
+                    <input type="hidden" name="uid" value="{$Request.param.uid}">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">客户名称:</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="客户名称"  class="form-control" name="realname" value="{$user.realname}">
+                        </div>
+                        {if !empty($types)}
+                        <div class="col-sm-2">
+                            <select class="form-control" name="tpid">
+                                <option value="0" {if $user.tpid==0}selected="selected"{/if}>客户类型</option>
+                                {foreach name="types" key="k" item="ty"}
+                                <option value="{$ty.id}" {if condition="$user.tpid eq $ty.id"}selected=="selected"{/if}>{$ty.title}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                        {/if}
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">门头照:</label>
+                        <div class="col-sm-4">
+                            <input type="file" class="form-control" name="mtzimg" accept="{$user.mtz}">
+                        </div>
+                    </div>
+                    {if !empty($ranks)}
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">客户等级:</label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="rankid">
+                                <option value="0" {if $user.rankid==0}selected="selected"{/if}>客户等级</option>
+                                {foreach name="ranks" item="ra"}
+                                <option value="{$ra.id}"  {if condition="$user.rankid eq $ra.id"}selected=="selected"{/if}>{$ra.rank_name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                    {/if}
+                    {if !empty($visits)}
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">拜访路线:</label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="visitid">
+                                <option value="0" {if condition="$user.visitid eq 0"}selected="selected"{/if}>拜访路线</option>
+                                {foreach name="visits" item="vi"}
+                                <option value="{$vi.id}" {if condition="$user.visitid eq $vi.id"}selected=="selected"{/if}>{$vi.title}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                    {/if}
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">客户联系人:</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="contact" value="{$user.contact}">
+                        </div>
+                    </div>
+                    {if $user.is_check_mobile || $user.trust}
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">联系人手机:</label>
+                        <div class="col-sm-4">
+                            <input type="text" style="" placeholder="请在此填写手机号码！" autocomplete="off"  class="form-control" name="mobile" value="{$user.mobile}">
+                        </div>
+                    </div>
+                    {else}
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">联系人主电话:</label>
+                        <div class="col-sm-4">
+                            <input type="text" placeholder="请在此填写手机号码！" onblur="lxrdh(this)" class="form-control" name="mobile" value="{$user.mobile}">
+                        </div>
+                    </div>
+                    {/if}
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">联系人多电话:</label>
+                        <div class="col-sm-4">
+                            <a href="javascript:void(0);" data-tpl="contactModal" class="btn btn-sm btn-primary" data-datas='{$contact}' onclick="openModalcontact(this,'{$user.uid}');">添加多个</a>
+                            当前联系人已有<span id="contact_count" style="color:red;height:34px;line-height:34px;">{notempty name="$contact_count"}{$contact_count}{/notempty}</span>个预留号码
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">联系人QQ:</label>
+                        <div class="col-sm-4">
+                            <input type="text" placeholder="" onblur="lxrqq(this)"  class="form-control" name="qq" value="{$user.qq}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">联系人Email:</label>
+                        <div class="col-sm-4">
+                            <input type="text" placeholder="" onblur="lxremail(this)" class="form-control" name="email" value="{$user.email}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">详细地址:</label>
+                        <div class="col-sm-4">
+                            <div id="addressForm"></div>
+                            <input type="text" class="form-control" name="address" value="{notempty name='$user.address'}{$user.address}{/notempty}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">公司电话:</label>
+                        <div class="col-sm-4">
+                            <input type="text" placeholder="请填写该客户公司座机"  class="form-control" name="phone" value="{$user.phone}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">传真:</label>
+                        <div class="col-sm-4">
+                            <input type="text" placeholder="" onblur="lxrfax(this)" class="form-control" name="fax" value="{$user.fax}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">客户网址:</label>
+                        <div class="col-sm-4">
+                            <input placeholder="" type="text" onblur="khwz(this)" class="form-control" name="url" value="{$user.url}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">性别:</label>
+                        <div class="col-sm-4">
+                            <div class="radio i-checks">
+                                <label onmouseover="radiohovers(this)" onmouseout="radioouts(this)" onclick="radiochecks(this);" class="">
+                                    <div id="div1" class="iradio_square-green {if condition='$user.gender eq 1'}checked{/if}" style="position: relative;"><input type="radio" style="position: absolute; opacity: 0;" name="gender" value="1" ><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div><i></i>男
+                                </label>
+                                <label onmouseover="radiohovers(this)" onmouseout="radioouts(this)" onclick="radiochecks(this);"  class="">
+                                    <div id="div2" class="iradio_square-green {if condition='$user.gender eq 2'}checked{/if}" style="position: relative;"><input type="radio" style="position: absolute; opacity: 0;" name="gender" value="2"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div><i></i> 女
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">生日:</label>
+                        <div class="col-sm-6">
+                            <div class="col-sm-4 m-l-n">
+                                <select class="form-control" name="birthdaytype">
+                                    <option value="1" {if condition="$user.birthdaytype eq 1"}selected=="selected"{/if} selected="">公历生日</option>
+                                    <option value="2" {if condition="$user.birthdaytype eq 2"}selected=="selected"{/if}>农历生日</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-4 m-l-n">
+                                <input type="text" class="form-control" readonly="readonly" style="cursor:pointer;background:#ccc;" onclick="laydate({max:laydate.now(),min:'1900-01-01'});" name="birthday" value="{if condition='$user.birthdaytype eq 1'}{$user.birthday}{elseif condition='$user.birthdaytype eq 2'}{$user.birthday}{/if}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">客户介绍：</label>
+                        <div class="col-sm-4">
+                            <textarea name="summary" maxlength="650o" id="summary"oninput="summarylength()" class="form-control" cols="60" rows="8">{$user.summary}</textarea>
+                            <p class="text-count"><span id="summaryCount">0</span>/650（此处填写公司介绍）</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"></label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">地图坐标：</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="xy" name="xy" value="{$user.x},{$user.y}">说明：点击地图获取地图坐标，或者使用<a href="http://api.map.baidu.com/lbsapi/getpoint/" target="_blank" style="color: red;text-decoration: underline;">百度坐标拾取工具</a>获取坐标后复制到地图坐标框
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">位置：</label>
+                        <div class="col-sm-8">
+                            <div id="allmap" style="width:100%;height:300px"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">认证状态:</label>
+                        <div class="col-sm-4">
+                            <div class="radio i-checks">
+                                <label onmouseover="radiohovers(this)" onmouseout="radioouts(this)" onclick="radiochecks(this);" class="">
+                                    <div id="div3"  class="iradio_square-green {if condition='$user.trust eq 1'}checked{/if}" style="position: relative;"><input type="radio" style="position: absolute; opacity: 0;" name="trust" value="1" ><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div><i></i> 已认证
+                                </label>
+                                <label onmouseover="radiohovers(this)" onmouseout="radioouts(this)" onclick="radiochecks(this);"  class="">
+                                    <div id="div4" class="iradio_square-green {if condition='$user.trust eq 0'}checked{/if}" style="position: relative;"><input type="radio" style="position: absolute; opacity: 0;" name="trust" value="0"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div><i></i> 未认证
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <div class="col-sm-4 col-sm-offset-2">
+                            <input type="submit" id="editBtn" value="保存" class="btn btn-primary" onclick="formAct3(this.form,'','正在修改客户信息，请稍后！');">
+                        </div>
+                    </div>
+                    <div class="contact-box"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="text/template" id="addressSelect">
+        <select style="width: 30%;" id="selectareas2" class="input-sm address address_{{=ljk.level}}" data-level="{{=ljk.level}}" name="areas[{{=ljk.level}}]" onchange="createAddressForm('{{=ljk.id}}',{{=ljk.level+1}});">
+            <option value="">请选择</option>
+            {{for(var i = 0; i < ljk.data.length; i++){}}
+            <option value="{{=ljk.data[i].code}}:{{=ljk.data[i].code_name}}" {{?ljk.selectedCode && (ljk.selectedCode==ljk.data[i].code)}}selected="selected"{{?}}>{{=ljk.data[i].code_name}}</option>
+            {{?}}
+        </select>
+    </script>
+</div>
+<!--修改-->

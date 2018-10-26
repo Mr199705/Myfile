@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<title>支付订单{$params['out_trade_no']}</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<script type="text/javascript" src="__JS__/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="__COMMON__/js/dot.js"></script>
+<style type="text/css">
+    *{ margin:0; padding:0}
+    .wihe-ee{ background:#FFF; padding:25px; color:#666; font-family:song,arial; font-size:14px; margin:0 auto; text-align:center}
+    .wihe-ee p{text-align:center}
+    .fail-I-success{margin-top:30px;border-bottom:1px solid #d8d8d8; padding-bottom:30px}
+    .co999{color:#999}
+    .fo-si-18{font-size:18px}
+    .fail-fasu{ text-align:center; border-bottom:1px solid #d8d8d8; padding-bottom:30px}
+    .success-fasu{margin-top:30px;  text-align:center}
+    .fail-fasu a:hover{ background-color:#ee9775}
+    .fail-fasu a{padding:8px 24px; background-color:#f8a584; display:table; margin:0 auto; color:#fff; text-decoration:none; margin-top:10px}
+    .re-qtzfgg a,.success-fasu a{padding:8px 24px; background-color:#eee; display:table; margin:0 auto; color:#999; text-decoration:none; margin-top:10px}
+    .re-qtzfgg a:hover,.success-fasu a:hover{background-color:#ddd;}
+</style>
+</head>
+<body style=" max-width:640px; min-width:320px; margin:0 auto">
+      <div id="tipModal" onclick="closeModal('tipModal');" style="z-index: 9999;position: fixed; width: 100%; height: 100%;background: rgba(102,102,102,0.5);z-index: 10;display: none;"></div>
+        <script type="text/template" id="tipModalTpl">
+            <div style="border-radius:10px;position:absolute;top:calc(50% - 40px);left:20%;padding:0px 10px;width:60%;background:#fff;">
+                <h3 style="text-align:center;height:30px;line-height:40px;border-bottom:1px solid #000;">{{?ljk && ljk.msgTitle}}{{=ljk.msgTitle}}{{??}}提示信息{{?}}</h3>
+                <p style="text-align:center;height:60px;line-height:30px;">{{?ljk && ljk.msg}}{{=ljk.msg}}{{??}}{{?}}</p>
+                {{?ljk.btns}}
+                <p style="text-align:center;height:30px;line-height:30px;">
+                    {{for(var i = 0,l = ljk.btns.length; i < l; i++){}}
+                    <a href="javascript:void(0);" {{?ljk.btns[i].e && ljk.btns[i].a}}{{=ljk.btns[i].e}}="{{=ljk.btns[i].a}}"{{?}} style="background: #f00;color:white;padding: 5px 15px;">{{=ljk.btns[i].t}}</a>
+                    {{}}}
+                </p>
+                {{?}}
+            </div>
+        </script>
+	<div class="tac-sd">
+    	<div class="wihe-ee">
+        	<p>
+            	<span class="fo-si-18">单号：&nbsp;&nbsp;{$params['out_trade_no']}<br/>订单金额：&nbsp;&nbsp;<b>{$total_fee}</b>&nbsp;<b>元</b></span>
+                <br>
+                <span class="co999">付款完成前请不要关闭此窗口。完成付款后请根据您的情况点击下面的按钮。</span>
+            </p>
+            <br>
+            <br>
+           
+            	<div class="fail-fasu">
+                	<img src="__STATIC__/images/suc_cg.png"/>
+                	<p class='paybutton'>支付中</p>
+                    <br>
+                    <a onclick="callpay();" class='paybutton'>支付中..</a>
+                </div>
+                <div class="fail-I-success" >
+                    {$code_str}
+                </div>
+        </div>
+    </div>
+    <script>
+	function showTip(data){
+            if(typeof data === 'undefined'){
+                data = {};
+            }
+            var $tpl = $('#tipModalTpl');
+            var template = doT.template($tpl.html());
+            var _html = template(data);
+            $('#tipModal').css('display','block');
+            $('#tipModal').html(_html);
+	}
+        function closeModal(modalId){
+            if(typeof modalId !== 'undefined' && modalId){
+                $('#' + modalId).css('display','none');
+                $('#' + modalId).html('');
+            }else{
+                if($(event.target).hasClass('my-modal')){
+                    $(event.target).css('display','none');
+                    $(event.target).html('');
+                }
+            }
+        }
+	{if $is_pay==1}
+        $('.paybutton').html('支付成功');
+        showTip({msg:"订单已经支付成功！"});
+        setTimeout(function (){
+            window.location.href='/shop/order/detail/oid/{$params.oid}';
+        },1000);
+	{else}
+	 //$('#paybutton').val('支付中请稍等..');
+	//调用微信JS api 支付
+	function jsApiCall(){
+            WeixinJSBridge.invoke(
+                'getBrandWCPayRequest',
+                {$jsApiParameters},
+                function(res){
+                    if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+                        $.ajax({
+                            type: "post", 
+                            url:'/shop/payment/check_weixin_order',
+                            data:'paytype={$params.paytype}&out_trade_no={$params.out_trade_no}&timestamp={$params.timestamp}&sign={$params.sign}',
+                            beforeSend: function (){},
+                            dataType:'json',
+                            success: function (data){
+                                if(data.code!=1){
+                                    showTip({msg:"订单支付失败！" + data.msg});
+                                    setTimeout(function (){
+                                        window.location.href='/shop/order/detail/oid/' + data.oid;
+                                    },1000);
+                                    return false;
+                                }else{
+                                    $('.paybutton').html('支付成功');
+                                    showTip({msg:"订单支付成功！"});
+                                    setTimeout(function (){
+                                        window.location.href='/shop/order/detail/oid/' + data.oid;
+                                    },1000);
+                                }
+                                return false;
+                            }
+                        });
+                    }
+                    if(res.err_msg == "get_brand_wcpay_request:cancel" ){
+                        WeixinJSBridge.log(res.err_msg);
+                        showTip({msg:"已取消支付,点击重新支付"});
+                        $('.paybutton').html('重新支付');
+                    }
+                    if(res.err_msg == "get_brand_wcpay_request:fail" ){
+                        var msg = '';
+                        for(var item in res){
+                            msg += item + ':' + res[item] + '<br />';
+                        }
+                        showTip({msg:"支付失败" + msg});
+                        $('.paybutton').html('重新支付');
+                    }
+                }
+            );
+	}
+	function callpay(){ 
+            if (typeof WeixinJSBridge == "undefined"){
+                if( document.addEventListener ){
+                    document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+                }else if (document.attachEvent){
+                    document.attachEvent('WeixinJSBridgeReady', jsApiCall); 
+                    document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+                }
+            }else{
+                jsApiCall();
+            }
+	}
+	{if $pay.return_code=='FAIL'}
+        showTip({msg:"支付失败,{$pay.return_msg}"});
+	{else}
+        callpay(); //发起支付
+	{/if}
+	{/if}
+    </script>
+</body>
+</html>

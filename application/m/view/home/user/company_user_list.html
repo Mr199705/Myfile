@@ -1,0 +1,56 @@
+<script type="text/template" charset="utf-8" id='user_companyuserlist'>
+{{if( ljk && ljk.length>0 ){ }}
+{{for(var i=0; i<ljk.length; i++){ }}
+    <div class="weui-cells opacity">
+        <a class="weui-cell weui-cell_access js_item" data-id="uploader" href="javascript:;" style="padding: 13px 10px 0px 10px;">
+        <div class="weui-cell__bd  sy_kh">
+            <p>{{=ljk[i].realname}}</p>
+        </div>
+        {{if(ljk[i].weixin.length===0){}}
+        <div style="color: red;" >
+            微信未绑定
+        </div>
+        {{}}}
+        {{if(ljk[i].weixin.length!==0){}}
+        <div style="color: dodgerblue;" >
+            微信已绑定
+        </div>
+        {{}}}
+        </a>
+        <div class="weui-form-preview__bd" style="padding: 0px 16px 10px 16px;margin-top: 0px;">
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">联系电话：</label>
+            <span class="weui-form-preview__value">{{=ljk[i].mobile}}</span>
+        </div>
+        <div class="weui-form-preview__item"><label class="weui-form-preview__label">积分：</label>
+            <span class="weui-form-preview__value">0</span>
+        </div>
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">认证状态：</label>
+            <span class="weui-form-preview__value">{{if(ljk[i].trust==0){}}未认证{{}}}{{if(ljk[i].trust==1){}}已认证{{}}}</span>
+        </div>
+        {{if(ljk[i].osn){}}
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">来自：</label>
+            <span class="weui-form-preview__value">{{=ljk[i].osn}}</span>
+        </div>
+        {{}}}
+        {{if(ljk[i].rn){}}
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">等级：</label>
+            <span class="weui-form-preview__value">{{=ljk[i].rn}}</span>
+        </div>
+        {{}}}
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">客户地址：</label>
+            <span class="weui-form-preview__value">{{=ljk[i].address}}</span>
+        </div>
+    </div>
+    <div class="weui-form-preview__ft">
+        <a class="weui-form-preview__btn js_item" href="javascript:;" data-id="usercreate" onClick="createProfile(this,{{=ljk[i].uid}});">创建</a>
+    </div>
+</div>
+{{}}}
+{{}else{}}
+{{}}}
+</script>

@@ -1,0 +1,89 @@
+<p>说明：客户订单指我的客户产生的订单。</p>
+<div class="table-responsive">
+    <form  id="orderPLUpdate" class="form-horizontal" method="post" action="/admin/order/authnextgroup" onsubmit="return false;">
+    <input type="hidden" name="action" value="auth" /> 
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>选择</th>
+                <th>#</th>
+                <th>订单号</th> 
+                <!--th>业务员</th--> 
+                <th>订单金额</th>
+                <th>订货客户</th>
+                <th>联系电话</th>
+                <th>订单状态</th>
+                <th>订单时间</th>
+                <th>配送商</th>
+                <th>来源</th>
+            </tr>
+        </thead>
+        <tbody>
+            {if $orders}
+            {foreach($orders as $k=>$order)}
+            <tr>
+                <td>
+                    {if $order.confirm == 1 && $order.trade !=1 && !$order.outside}
+                    <div class="icheckbox_square-green" style="position: relative;" onclick="setCheck(this);">
+                        <input type="checkbox" class="i-checks" name="oid[]" value="{$order.oid}" style="position: absolute; opacity: 0;">
+                        <ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins>
+                    </div>
+                    {else}
+                    <div class="icheckbox_square-green" style="text-align: center;position: relative;background: rgba(170, 170, 170,0.1);cursor: default;">
+                    </div>
+                    {/if}
+                </td>
+                <td>
+                    <span class="i-checks">{$pageInfo.currentPage * $pageInfo.listRows - $pageInfo.listRows + $k + 1}</span>
+                </td>
+                <td><a href="/admin/order/detail/oid/{$order.oid}" onclick="return c(this);" data-index="_order_detail_oid_{$order.oid}"><span style="display: none;">订单:</span>{$order.number}</a></td>
+                <td>{$order.total}</td>
+                <td>{$order.host.realname|mb_substr=###,0,5,'UTF-8'}</td>
+                <td>{$order.host.mobile}</td>
+                <td>{$order.status_desc}</td>
+                <td>{$order.adate|date="Y-m-d H:i:s",###}</td>
+                <td>{if @$order.pssname}{$order.pssname}{else}未分配{/if}</td>
+                <td>{$order.ly}</td>
+            </tr>
+            {/foreach}
+            {if $ispss eq 1}
+            <tr>
+                <td>
+                    <a class="btn btn-sm btn-success" onclick="checkA(this,'orderPLUpdate','oid[]');" href="javascript:void(0);">√</a>
+                </td>
+                <td colspan="4">
+                <div style=" width: 79px;float: left;line-height: 32px;">配送商列表：</div>        
+                    <div class="input-group nextgrouplists"></div>
+                </td>
+                <td>
+                    <input type="submit" name="submit" value="批量分配配送商" class="btn btn-sm btn-success" onclick="return formAct2(this.form,'','正在分配配送商！');" />
+                </td>
+                <td colspan="4">&nbsp;</td>
+            </tr>
+            <script type="text/template" id="nextgrouplists">
+            {{?ljk && ljk.length}}
+            <select name="psid" class="form-control m-b">
+                <option value="0">请选择配送商</option>
+                {{for(var i in ljk){}}
+                <option value="{{=ljk[i].psid}}">{{=ljk[i].sname}}</option>
+                {{}}}
+            </select>
+            {{}else{}}
+            <div class="col-sm-6">您目前还没有配送商可用，请先绑定配送商后进行操作！</div>
+            {{?}}
+            </script>
+            {/if}
+            {else}
+            <tr><th colspan="7" style="color:red;text-align: center;">未找到符合条件的订单</th></tr>
+            {/if}
+        </tbody>
+    </table>
+    </form>
+</div>
+{include file="common/page"}
+{if $ispss eq 1}
+<script type="text/javascript">
+    showLA('/admin/order/authnextgroup','nextgrouplists',{action:'show'});
+</script>
+{/if}
+

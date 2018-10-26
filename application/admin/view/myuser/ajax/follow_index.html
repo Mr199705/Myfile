@@ -1,0 +1,53 @@
+<div class="feed-activity-list">
+    <div class="ibox-content " id="followlist">
+        {if $follows && count($follows)}
+        {foreach name="follows" item="fo"}
+        <div class="timeline-item">
+            <div class="row">
+                <div class="col-xs-3 date">
+                    <i class="fa fa-coffee"></i>
+                    {$fo.adate|date="Y-m-d H:i:s",###}<br>
+                </div>
+                <div class="col-xs-9 content">
+                    <p style="word-wrap: break-word;">
+                        {$fo.contentr}{if $admin_user_editpost}{if $fo.t==1}<a data-postid='{$fo.id}' data-sign='1' href="javascript:void(0);" class="btn btn-xs btn-primary" style="margin-left: 5px;" data-id="editpost" onclick="getOnePost(this);">修改</a>{/if}{/if}
+                    </p>
+                    {if $fo.imgsurl && count($fo.imgsurl)}
+                    <p>
+                        {foreach name="$fo.imgsurl" item="img"}
+                        <a href="{$img}" target="_blank">
+                            <img src="{$img}" style="width:50px;height:50px;cursor: pointer; border:0" title="点击查看大图">
+                        </a>
+                        {/foreach}
+                    </p>
+                    {/if}
+                    {if $fo.address}
+                    <p>
+                        工作地址:<a href="#">{$fo.address}</a>  &nbsp;&nbsp;客户距离：(
+                        {if !empty($fo.juli)}<font color="#FF0000">{$fo.juli}</font>
+                        {else}<font color="#FF0000"></font>{/if} )
+                    </p>
+                    {/if}
+                    {if $fo.address}
+                    <p>
+                        地图坐标:
+                        {if !empty($fo.x)} {$fo.x} {else}  {/if},{if !empty($fo.y)} {$fo.y} {else}  {/if}
+                    </p>
+                    {/if}
+                </div>
+            </div>
+        </div>
+        {/foreach}
+        {else}
+        <div class="timeline-item">
+            <div class="row">
+                <table>
+                    <div style="text-align:center;color:red;">该时间段无拜访记录，您可以重新设置时间段再查询！</div>
+                </table>
+            </div>
+        </div>
+        {/if}
+        {include file="common/page"}
+    </div>
+</div>
+

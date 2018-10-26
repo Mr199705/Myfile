@@ -1,0 +1,458 @@
+<script type="text/template" charset="utf-8" id='orderdetail'>
+    <!--顶部--->
+    <div class="ljk_top">
+        <a class="top_left js_item" data-id="m_order_index" href="javascript:;">
+            <i class="fa fa-angle-left fa-2x"></i>
+        </a>
+        <a class="top_right" href="javascript:;"  data-id="genjinkehu" onclick="getuserDetail(this,'{{=ljk.dhr.uid}}');" style=" border: 1px solid #fff;padding: 0.2em 0.6em 0.1em;border-radius: 13px;margin: 11px 7px;font-size: 0.7em;">
+            返回客户
+        </a>
+        <p class="weui-flex__item top_center" style="padding-left: 4em;">订单详情</p>
+    </div>
+    <!---顶部-->
+    <div style="overflow: hidden;overflow-y: scroll;" class="ljk_neirong" >
+        <!--内容--->
+        <div class="weui-cells">
+            <div class="weui-media-box ">
+                <div class="weui-form-preview__bd" style="font-size:0.9em; padding:0px;">
+                    <p>
+                        <label class="weui-form-preview__label">订单号码</label>
+                        <span class="weui-form-preview__value"><strong>{{=ljk.number}}</strong></span>
+                    </p>
+                    <p>
+                        <label class="weui-form-preview__label">下单时间</label>
+                        <span class="weui-form-preview__value">{{=ljk.adate}}</span>
+                    </p>
+                    <p>
+                    <div class="weui-form-preview__item">
+                        {{if(ljk.trade_desc!=''){}}
+                        <label class="weui-form-preview__label Order_status" style=" color:#6DC710; border:1px solid #6DC710; margin:0px 2px;float:right">{{=ljk.trade_desc}}</label>
+                        {{}}}
+                        {{if(ljk.pay_desc!=''){}}
+                        <label class="weui-form-preview__label Order_status" style=" color:#6DC710; border:1px solid #6DC710; margin:0px 2px;float:right">{{=ljk.pay_desc}}</label>
+                        {{}}}
+                        {{if(ljk.dispatch_desc!=''){}}
+                        <label class="weui-form-preview__label Order_status" style=" color:#F9AF35; border:1px solid #F9AF35; margin:0px 2px;float:right">{{=ljk.dispatch_desc}}</label>
+                        {{}}}
+                        {{if(ljk.confirm_desc!=''){}}
+                        <label class="weui-form-preview__label Order_status" style="color:#4498FC; border:1px solid #4498FC; margin:0px 2px;float:right">{{=ljk.confirm_desc}}</label>
+                        {{}}}
+                    </div>
+                    </p>
+                </div>
+            </div>
+            {{?ljk.shr}}
+            <a class="weui-cell weui-cell_access js_item"  href="tel:{{=ljk.shr.phone}}" style="padding-bottom:0px; font-size:0.9em;">
+                <div class="weui-cell__bd">
+                    <p><label class="weui-form-preview__label">收货人</label>
+                        <span class="weui-form-preview__value" style="color: #2E8B57;">{{? ljk.shr.realname}}{{=ljk.shr.realname}}{{??}}&nbsp;{{?}}</span></p>
+                        <p><label class="weui-form-preview__label">电  话</label><span class="weui-form-preview__value" style="color: #2E8B57;">{{? ljk.shr.phone}}{{=ljk.shr.phone}}{{??}}&nbsp;{{?}}</span>
+                    </p>
+                    <p>
+                        <label class="weui-form-preview__label">收货地址</label>
+                        <span class="weui-form-preview__value" style="color: #2E8B57;">{{? ljk.address }}{{=ljk.address}}{{??}}&nbsp;{{?}}</span>
+                    </p>
+                    {{?}}
+                    <p>
+                        <label class="weui-form-preview__label">配送日期</label>
+                        <span class="weui-form-preview__value" style="color: #2E8B57;">{{? ljk.order}}{{=ljk.order.pd}}【{{if(ljk.order.pt==0){}}全天{{}else if(ljk.order.pt==1){}}上午{{}else{}}下午{{}}}】{{??}}&nbsp;{{?}}</span>
+                    </p>
+                    <p>
+                        <label class="weui-form-preview__label">配送方式</label>
+                        <span id="dtype" data-dtype="{{= ljk.order.dtype}}}" class="weui-form-preview__value" style="color: #2E8B57;">{{? ljk.order}}{{if(ljk.order.dtype==0){}}物流配送{{}else{}}上门自取{{}}}{{??}}&nbsp;{{?}} </span>
+                    </p>
+                    <p>
+                        <label class="weui-form-preview__label">邮费</label>
+                        <span class="weui-form-preview__value" style="color: #2E8B57;" id="youfei"></span>
+                        <span id="fre_desc" data-min="{{=ljk.freight_config.min}}" data-ltfee="{{=ljk.freight_config.ltfee}}" class="weui-form-preview__value" style="display:none;color: #2E8B57;">&emsp;&emsp;&emsp;&emsp;（{{=ljk.freight_config.desc}}）</span>
+                    </p>
+                    <p>
+                        <label class="weui-form-preview__label">订单备注</label>
+                        <span class="weui-form-preview__value" style="color: #2E8B57;">{{? ljk.content }}{{=ljk.content}}{{??}}&nbsp;{{?}}</span>
+                    </p>
+                    <p>
+                        <label class="weui-form-preview__label">金额修正</label>
+                        <span id="coerrct" class="weui-form-preview__value" style="color: #2E8B57;">{{? ljk.order.correct!=0}}{{=ljk.order.correct}}{{??}}&nbsp;{{?}}</span>
+                    </p>
+                </div>
+            </a>
+            <!--<div class="weui-form-preview__bd" style="">
+                <img src="images/onqwe.png" width="100%;" style=" display:none;"id="ditu1">
+             </div>-->
+            <div class="weui-panel__bd">
+                <div class="weui-panel__hd " style=" padding: 11px;" id="dhxx">
+                    <h4 class="weui-media-box__title" style="width: 50%; float: left; color:#000000;">商品信息</h4>
+                    <div class="Commodity_hiding">
+                        <i class="fa fa-eye" aria-hidden="true" id="eye"></i>
+                        <i class="fa fa-eye-slash" aria-hidden="true" id="eye-slash" style="display:none;"></i>
+                    </div>
+                </div>
+                <div class="weui-panel__bd dinhuo11" id="order_list" style=" padding:0px;">
+                    {{ for (var i=0;i<ljk.goods.length;i++) { }}
+                    <div id="goods_{{=ljk.goods[i].id}}" style="width:100%; padding:5px; background:#FFFFFF;  border-bottom:1px solid #dddddd;">
+                        <a class="weui-media-box weui-media-box_appmsg" href="javascript:;" style="padding:1px; line-height:27px;">
+                            <div class="weui-media-box__hd" style="width: 60px;height: 60px;">
+                                {{? ljk.goods[i].goods_thumb}}
+                                <img class="weui-media-box__thumb" src="{{=ljk.goods[i].goods_thumb}}" alt="">
+                                {{??}}
+                                <img class="weui-media-box__thumb" src="{{=ljk.goods[i].goods_img}}" alt="">
+                                {{?}}
+                            </div>
+                            <div class="weui-media-box__bd">
+                                <div style="width:80%;float: left;">
+                                    <p style="font-weight: initial; ">{{=ljk.goods[i].name}}</p>
+                                    {{? ljk.goods[i].sku!=null}}<p class="weui-media-box__desc" style="font-size:12px" >属性：<span style="color:#;">{{=ljk.goods[i].sku.attrs_value}}</span></p>{{??}}{{?}}
+                                    <p class="weui-media-box__desc" style="font-size:12px"> 【{{=ljk.goods[i].goods_type}}】 &nbsp;&nbsp;{{=ljk.goods[i].price}}*<span style="color:#FF0000;">{{=parseFloat(ljk.goods[i].num)}}</span>({{=ljk.goods[i].unit}})=<span style="color:#FF0000;">{{=ljk.goods[i].amount}}</span> 元</p>
+                                    {{? ljk.goods[i].desc }}
+                                    <p class="weui-media-box__desc" style="font-size:12px">
+                                        备注：{{=ljk.goods[i].desc}}
+                                    </p>
+                                    {{?}}
+                                </div>
+                                {if $m_order_editgoods}
+                                <ul style="height: 76px;float: left;">
+                                    {{?(ljk.confirm==0 || ljk.pay==0)}}
+                                    <li data-id="dingdanxiangqing" onclick="deleteOrderItem(this,'{{=ljk.goods[i].id}}','{{=ljk.goods[i].uid}}','{{=ljk.oid}}');" style="height: 50%;width: 40px;">
+                                        <i class="fa fa-trash-o fa-1x " style="color: cornflowerblue;margin-left: 50%;"></i>
+                                    </li>
+                                    {{?}}
+                                    {{?(ljk.confirm==0 || ljk.pay==0 )}}
+                                    <li style="width: 40px;" data-id="shangpinxiugai" onClick="ShowOrderViewTpl(this,'ordergoods','{{=ljk.goods[i].id}}');">
+                                        <i class="fa fa-edit fa-1x " style="color: cornflowerblue;margin-left: 50%;"></i>
+                                    </li>
+                                    {{?}}
+                                </ul>
+                                {/if}
+                            </div>
+                        </a>
+                    </div>
+                    {{}}}
+                    <div style="width:auto;">
+                        <div class="weui-form-preview__ft">
+                            <a class="weui-form-preview__btn" style=" color:#000000;" href="javascript:;">商品数量：
+                                <strong style="color:#0C9C01; font-size:16px;"  id="orderNum1" >{{=ljk.goodsnum}}</strong>
+                            </a>
+                            <a class="weui-form-preview__btn" style=" color:#000000;"  href="javascript:;">商品金额：￥
+                                <strong style="color:#FF0000; font-size:16px;" id="totalPrice1">{{= ljk.total}}</strong>
+                            </a>
+                        </div>
+                        <p style="margin-left:25%;color:#000000;font-size:12px;">（商品总额+配送费用+修正金额=订单金额）</p>
+                        <div class="weui-panel weui-panel_access">
+                            <a class="weui-form-preview__btn" style="color:#000000;">订单金额：
+                                <strong style="color:#FF0000; font-size:22px;" id="ordertotal">{{= ljk.ordertotal}}</strong>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="weui-grids" style="background:#FFF;margin-top: 0.4em;height:335px;">
+            {{if(ljk.confirm!=-1 && ljk.trade==0){}}
+            {{
+            /**将订单详情关键数据提取，这样进行退货操作就不再需要查询数据库**/
+            /*var orderDetail = {
+            oid:ljk.oid,
+            adate:ljk.adate,
+            number:ljk.number,
+            total:ljk.total,
+            confirm:ljk.confirm,
+            trade:ljk.trade,
+            dispatch:ljk.dispath,
+            pay:ljk.pay,
+            confirm_desc:ljk.confirm_desc,
+            trade_desc:ljk.trade_desc,
+            dispatch_desc:ljk.dispatch_desc,
+            pay_desc:ljk.pay_desc,
+            ogs:ljk.goods
+            };
+            localStorage.setItem('mOrderDetail',JSON.stringify(orderDetail));*/
+            }}
+            <a href="javascript:;" class="weui-grid" style="position:inherit;" onclick="editStatus({{=ljk.oid}});">
+                <div class="weui-grid__icon" style="text-align:center;">
+                    <i class="fa fa-file-text weui-tabbar__icon" style="color:#017EFF;" ></i>
+                </div>
+                <p class="weui-grid__label">修改状态</p>
+            </a>
+            {{?ljk.pay_desc!='已付款'}}
+            <a href="javascript:;" aa++ class="weui-grid" style="position:inherit;" onclick="initOrderAddGoodsTpl();">
+                <input type="hidden" id="useruid" value="{{=ljk.uid}}">
+                <div class="weui-grid__icon" style="text-align:center;">
+                    <i class="fa fa-cart-plus weui-tabbar__icon" style="color:#FF00D4;"  ></i>
+                </div>
+                <p class="weui-grid__label">添加商品</p>
+            </a>
+            {{??}}
+            {{?}}
+            <a href="javascript:;" class="weui-grid " data-id="dingdancaozuo"  style="position:inherit;" onclick="return orderOperate(this);">
+                <div class="weui-grid__icon" style="text-align:center;">
+                    <i class="fa fa-cog weui-tabbar__icon" style="color:#F54805;"  ></i>
+                </div>
+                <p class="weui-grid__label">操作</p>
+            </a>
+            {{}}}
+            <a href="javascript:;" class="weui-grid" data-id="" onClick="showdaohangtpl(this,'{{=ljk.oid}}');">
+                <div class="weui-grid__icon" style="text-align:center;">
+                    <i class="fa fa-location-arrow weui-tabbar__icon" style="color:#07BB7D;"></i>
+                </div>
+                <p class="weui-grid__label">导航</p>
+            </a>
+            <!--<a href="javascript:;" class="weui-grid js_item" data-id="Inform_teammates" >
+                <div class="weui-grid__icon" style="text-align:center; position:inherit;" >
+                    <i class="fa fa-snapchat-ghost weui-tabbar__icon" style="color:#FF00D4;" ></i>
+                </div>
+                <p class="weui-grid__label">通知队友</p>
+            </a>-->
+            <a class="weui-grid" data-id="fuwu" href="javascript:" onclick="getfwList({oid:'{{=ljk.oid}}'},'fuwu');">
+                <span class="weui-badge" style="position: absolute;top: 1em;right:1em;">{{=ljk.postnum}}</span>
+                <div class="weui-grid__icon" style="text-align:center; position:inherit;" >
+                    <i class="fa fa-cogs weui-tabbar__icon" style="color:#FF9900;" ></i>
+                </div>
+                <p class="weui-grid__label">操作记录</p>
+            </a>
+            {if $m_rg_index && $m_rg_org}
+            {{?ljk.confirm!=-1}}
+            <a href="javascript:;" class="weui-grid" style="position:inherit;" onclick="/*mResetChosedOrg();*/initorg({{=ljk.oid}},'rg_org');">
+                <div class="weui-grid__icon" style="text-align:center;">
+                    <i class="fa fa-recycle weui-tabbar__icon" style="color:#FF0004;"  ></i>
+                </div>
+                <p class="weui-grid__label">退货</p>
+            </a>
+            {{?}}
+            {{?ljk.rstatus}}
+            <a href="javascript:;" class="weui-grid" style="position:inherit;" onclick="mRgList({orderid:{{=ljk.oid}}},'{$m_rg_index.url_name}',1);">
+                <span class="weui-badge" style="position: absolute;top: 1em;right:1em;">{{=ljk.rstatus}}</span>
+                <div class="weui-grid__icon" style="text-align:center;">
+                    <i class="fa fa-sign-in weui-tabbar__icon" style="color:#FF0004;"  ></i>
+                </div>
+                <p class="weui-grid__label">退货记录</p>
+            </a>
+            {{?}}
+            {/if}
+            <a class="weui-grid" href="javascript:;" data-click="orderList({uid:'{{=ljk.dhr.uid}}'},'m_order_index');" onclick="isRequest(this);">
+                <div class="weui-grid__icon" style="text-align:center;">
+                    <i class="fa fa-files-o weui-tabbar__icon" style="color:#09bb07;"></i>
+                </div>
+                <p class="weui-grid__label">所有订单</p>
+            </a>
+            {{?(ljk.ppsid!=0)}}
+            <a href="javascript:;" class="weui-grid" data-id="peisongshang" onClick="ShowOrderTpl(this,'peisongshang','{{=ljk.oid}}');">
+                <div class="weui-grid__icon" style="text-align:center;">
+                    <i class="fa fa-truck weui-tabbar__icon" style="color:#B007BB;"></i>
+                </div>
+                <p class="weui-grid__label">配送商信息</p>
+            </a>
+            {{?}}
+            <a class="weui-grid" href="javascript:;" data-id="genjinkehu" onclick="getuserDetail(this,'{{=ljk.dhr.uid}}');">
+                <div class="weui-grid__icon" style="text-align:center;">
+                    <i class="fa fa-user-secret weui-tabbar__icon" style="color:#FD9914;"></i>
+                </div>
+                <p class="weui-grid__label">订货人</p>
+            </a>
+            <a class="weui-grid " href="javascript:;" data-id="ordercheck" onclick="OrderCheck(this,'{{=ljk.uid}}','{{=ljk.oid}}');">
+                <input type="hidden" id="order_id" value="{{= ljk.oid}}">
+                <div class="weui-grid__icon" style="text-align:center;">
+                    <i class="fa fa-user-secret weui-tabbar__icon" style="color:#FD9914;"></i>
+                </div>
+                <p class="weui-grid__label">订单调整</p>
+            </a>
+        </div>
+    </div>
+    <!--内容-->
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            dianji();
+            var dtype=Number($('#dtype').data('dtype'));
+            var totalPrice=Number($('#totalPrice1').text());
+            var min=Number($('#fre_desc').data('min'));
+            var youfei=0;
+            if(dtype==0){
+                if(totalPrice<min){
+                    youfei=Number($('#fre_desc').data('ltfee'));
+                    $('#fre_desc').show();
+                    $('#youfei').text(youfei.toFixed(2));
+                }else{
+                    $('#youfei').text('免邮费');
+                    $('#fre_desc').hide();
+                }
+            }else{
+                $('#youfei').text('免邮费');
+                $('#fre_desc').hide();
+            }
+            $("#dhxx").on('click',function(){
+                if($(".dinhuo11").css("display")=="none"){
+                    $(".dinhuo11").show();
+                    $('#eye').show();
+                    $('#eye-slash').hide();
+                }else{
+                    $(".dinhuo11").hide();
+                    $('#eye').hide();
+                    $('#eye-slash').show();
+                }
+            });
+        });
+        function deleteOrderItem(obj,order_id,uid,oid) {
+            var msg='确认删除该订单商品吗？';
+            var tip = {
+                type:4,
+                content:msg,
+                btn:1,
+                btns:1,
+                btnm:1,
+                btnsc:'取消',
+                btnmc:'确定'
+            };
+            var template = doT.template($('#tpldialogs').html());
+            var t_html = template(tip);
+            $('.orderdetail').append(t_html);
+
+            var $androidDialog2=$('#androidDialog2');
+            $('.ljk_neirong').css('overflow-y','hidden');
+            $($androidDialog2).find('.weui-dialog__btn_default').on('click',function () {
+                $('.ljk_neirong').css('overflow-y','auto');
+                $('#dialogs').remove();
+                return false;
+            });
+
+            $($androidDialog2).find('.weui-dialog__btn_primary').on('click',function () {
+                $('#dialogs').remove();
+                $('.ljk_neirong').css('overflow-y','auto');
+                $.post("/m/order/deleteorderitem",{id:order_id,uid:uid,oid:oid},function(res){
+                    if( 1 == res['code'] ){
+                        var dtype=Number('{{=ljk.dtype}}');
+                        var totalPrice=Number(res.data.TotalPrice);
+                        var totalNum=Number(res.data.TotalNum);
+                        var min=Number('{{=ljk.freight_config.min}}');
+                        var coerrct=Number($('#coerrct').text());
+                        var youfei=0;
+                        if(dtype==0){
+                            if(totalPrice<min){
+                                youfei=Number('{{=ljk.freight_config.ltfee}}');
+                                $('#fre_desc').show();
+                                $('#youfei').text(youfei.toFixed(2));
+                            }else{
+                                youfei=0;
+                                $('#youfei').text('免邮费');
+                                $('#fre_desc').hide();
+                            }
+                        }else{
+                            youfei=0;
+                            $('#youfei').text('免邮费');
+                            $('#fre_desc').hide();
+                        }
+                        $("#totalPrice1").html(Number(totalPrice).toFixed(2));
+                        $("#orderNum1").html(totalNum);
+                        var total=youfei+totalPrice+coerrct;
+                        if(total <=0){
+                            $("#ordertotal").html(Number(0).toFixed(2));
+                        }else{
+                            $("#ordertotal").html(Number(total).toFixed(2));
+                        }
+                        $("#goods_" + order_id).remove();
+                        if(totalNum <= 0){
+                            $("#order_list").remove();
+                            $("#bbb").show();
+                        }
+                    }else{
+                        var tip = {
+                            type:2,
+                            content:data['msg'],
+                            btn:1,
+                            btnc:'关闭'
+                        };
+                        var template = doT.template($('#tpldialogs').html());
+                        var t_html = template(tip);
+                        $('.orderdetail').append(t_html);
+                        $('#iosDialog2').find('a').on('click',function () {
+                            $('#iosDialog2').fadeOut(100);
+                            $('#dialogs').remove();
+                        });
+                    }
+                });
+            });
+        }
+        function OrderCheck(obj,uid,oid) {
+            var id = $(obj).data('id');
+            window.pageManager.go(id);
+            ShoworderCheckTpllistbyID('ordercheck','ordercheck',uid,oid);
+        }
+        function editStatus(oid){
+            var data = {oid:oid,action:'show'};
+            var tpl = 'order_editstatus';
+            $.ajax({
+                data:data,
+                type:'post',
+                url:'/m/order/editstatus',
+                dataType:'json',
+                success: function (res){
+                    if(res.code === -4){
+                        var tip = {
+                            type:1,
+                            title:'提示信息',
+                            content:res.msg,
+                        };
+                        var template = doT.template($('#tpldialogs').html());
+                        var t_html = template(tip);
+                        t_html = t_html.replace('id="dialogs"','');
+                        if($('.order_editstatus').length){
+                            $('.' + tpl).html(t_html);
+                        }
+                        window.pageManager.go('dingdanzhuangtai');
+                        return false;
+                    }else if(res.data && res.data.nodata){
+                        var tip = {
+                            type:1,
+                            title:'提示消息',
+                            content:res.data.msg,
+                            btn:1,
+                            btnm:1,
+                            btnmc:'关闭'
+                        };
+                        var template = doT.template($('#tpldialogs').html());
+                        var t_html = template(tip);
+                        $('#dialogs').remove();
+                        $('.orderdetail').append(t_html);
+                    }else{
+                        if($('.order_editstatus').length){
+                            var template = doT.template($('#' + tpl).html());
+                            var _html = template(res.data);
+                            $('.' + tpl).html(_html);
+                        }
+                        window.pageManager.go('dingdanzhuangtai');
+                    }
+                }
+            });
+        }
+        function orderOperate(a){
+            var id = $(a).attr('data-id');
+            $("#uploadimgs").remove();
+            if($('.order_addpost').length != 0){
+                showLA('/m/order/addpost/','order_addpost',{action:'show'});
+            }
+            window.pageManager.go(id);
+        }
+        function searchOrder(a,uid){
+            var id = $(a).attr('data-id');
+            var oldOuid = $('#ouid').val();
+            var resetSign = false;
+            $('#ouid').val(uid);
+            if(oldOuid != uid){
+                resetSign = true;
+            }
+            if($('.listorderlists').length !== 0){
+                if(resetSign){
+                    if($('#orderSearchInput').length !==0){
+                        $('#orderSearchInput').val('');
+                    }
+                    if($('#orderSearchInputForm').length !==0){
+                        document.getElementById('orderSearchInputForm').reset();
+                    }
+                }
+                $('.listorderlists').html('<div class="orderlists"></div>');
+                showLL('/m/order/index','orderlists',{limit:5,p:1,uid:uid});
+            }
+            window.pageManager.go(id);
+        }
+</script>
+{include file="home/order/order_check"}
+</script>

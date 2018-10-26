@@ -1,0 +1,66 @@
+<div class="modal-body">
+    <input type="hidden" name="action" value="orderstatusedit">
+    <input type="hidden" name="oid" value="{$orderInfo.oid}">
+    {if condition="$orderInfo.trade eq 0"}
+        <div class="form-group"> 
+            <label class="col-sm-4 control-label">确认状态：</label> 
+            <div class="col-sm-6"> 
+                <select name="confirm" class="form-control m-b" onchange="return orderStatusEditSubmit(this.form,'#orderstatusedit_blo','正在修改确认状态');"> 
+                    <option value="-1">无效订单</option> 
+                    <option value="0" {if $orderInfo.confirm eq 0}selected="selected"{/if}>未确认</option> 
+                    <option value="1" {if $orderInfo.confirm eq 1}selected="selected"{/if}>已确认</option> 
+                </select>      
+            </div> 
+        </div>
+        {if $orderInfo.confirm eq 1}
+        <div class="form-group"> 
+            <label class="col-sm-4 control-label">配送状态：</label> 
+            <div class="col-sm-6"> 
+                <select name="dispatch" class="form-control m-b">
+                    <option value="0">未配送</option> 
+                    <option value="1" {if $orderInfo.dispatch eq 1}selected="selected"{/if}>配送中</option> 
+                    <option value="2" {if $orderInfo.dispatch eq 2}selected="selected"{/if}>配送完成</option> 
+                </select>   
+            </div> 
+        </div>
+        {/if}
+        {if $orderInfo.confirm eq 1}
+        <div class="form-group"> 
+            <label class="col-sm-4 control-label">支付状态：</label> 
+            <div class="col-sm-6"> 
+                <select name="pay" class="form-control m-b" onchangesss="return orderStatusEditSubmit(this.form,'#orderstatusedit_blo','正在修改支付状态');"> 
+                    <option value="0">未付款</option> 
+                    <option value="1" {if $orderInfo.pay eq 1}selected="selected"{/if}>已付款</option> 
+                </select>    
+            </div> 
+        </div> 
+        {/if}
+        {if condition="$orderInfo.confirm eq 1 && $orderInfo.pay eq 1"}
+        <div class="form-group"> 
+            <label class="col-sm-4 control-label">结束状态：</label> 
+            <div class="col-sm-6 trade_nextgrouplists"> 
+                <select name="trade" class="form-control m-b"> 
+                    <option value="0">未结束</option> 
+                    <option value="1" {if $orderInfo.trade eq 1}selected="selected"{/if}>已结束</option> 
+                </select> 
+            </div> 
+        </div>
+        {/if}
+        <div class="modal-footer"> 
+            <input type="submit" value="提交" class="btn btn-sm btn-primary" onclick="return orderStatusEditSubmit(this.form,'#orderstatusedit_blo','正在提交');"> 
+            <button type="button" class="btn btn-sm btn-white" data-dismiss="modal">返回</button> 
+        </div> 
+    {else/}
+        <div class="form-group">
+            <div class="col-sm-12 text-center">
+                <label class="control-label" style="color:red;">订单已经结束！</label> 
+            </div>
+        </div>
+        <div class="modal-footer"> 
+            <button type="button" class="btn btn-sm btn-white" data-dismiss="modal" onclick="window.location.reload();">刷新</button> 
+        </div>
+        <script>
+            setTimeout(function(){window.location.reload();}, 1000);
+        </script>
+    {/if}
+</div>

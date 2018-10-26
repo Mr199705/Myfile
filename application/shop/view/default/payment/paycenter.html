@@ -1,0 +1,85 @@
+    {include file="common/top" /}
+    <title>支付中心</title>
+    <style type="text/css">
+        *{
+            margin:0px;
+            padding: 0px;
+        }
+    </style>
+</head>
+<body>
+    {if isset($pay) && $pay == 1}
+        <script type="text/javascript">
+            showTip({msg:'该订单已支付完成，请勿重复支付！'});
+            setTimeout(function (){
+                window.location.href = '/shop/order/detail/oid/{$oid}';
+            },1000);
+        </script>
+    {else}
+        {if isset($ord)}
+            {if isset($umca) && $umca.useable > 0}
+            <div id="mcardPayModal" style="z-index: 9999;display:flex;flex-direction: row;align-items: center;justify-content: center;position: fixed; width: 100%; height: 100%;background:#fff;">
+                <div style="width:90%;background:#fff;border:1px solid #ccc;">
+                    <p style="background:#fff;display:flex;flex-direction:row;align-items:center;justify-content:center;">
+                        <div style="text-align:left;padding:2px 5px;text-indent: 24px;line-height: 24px;">订单号:<span style="color:red;">{$ord.number}</span>，总额:<span style="color:red;">{$ord.total}</span>,已支付:<span style="color:red;">{$hp|sprintf='%0.2f',###}</span>,未支付:<span style="color:red;">{$np|sprintf='%0.2f',###}</span>,本次支付将扣除会员卡可用额<span style="color:red;">{if $umca.useable >= $np}{$np|sprintf='%0.2f',###}{else}{$umca.useable|sprintf='%0.2f',###}</span>，还需使用微信支付¥<span style="color:red;">{:sprintf('%0.2f',($np - $umca.useable))}</span>以便完成支付{/if}！</div>
+                    </p>
+                    <div style="text-align: center;padding: 2px 0px;">
+                        <a class="btn btn-sm btn-default" href="javascript:void(0);" onclick="cancelPay()">取消</a>
+                        <a class="btn btn-sm btn-success" href="javascript:void(0);" onclick="mcardPay()">确定</a>
+                    </div>
+                </div>
+            </div>
+            <script type="text/javascript">
+                function cancelPay(){
+                    window.location.href = '/shop/order/detail/oid/{$oid}';
+                }
+                function mcardPay(){
+                    $.ajax({
+                        url:'/shop/payment/paycenter',
+                        data:{oid:{$oid}},
+                        type:'post',
+                        dataType:'json',
+                        beforeSend:function (){
+                            showTip({msg:'正在扣除会员卡账户余额，请稍后！'});
+                        },
+                        success:function (res){
+                            if(res.code === -1){
+                                showTip({msg:res.msg});
+                                setTimeout(function (){window.history.back();},1000);
+                            }else if(res.code === 0){
+                                //会员卡扣款完成，跳转到订单详情
+                                showTip({msg:res.msg});
+                                setTimeout(function (){window.location.href = '/shop/order/detail/oid/{$oid}';},1000);
+                            }else if(res.code === 1){
+                                showTip({msg:res.msg});
+                                setTimeout(function (){window.location.href = '/shop/order/detail/oid/{$oid}';},1000);
+                            }else if(res.code === 2){
+                                //会员卡扣款完成，跳转到微信支付
+                                showTip({msg:res.msg});
+                                setTimeout(function (){window.location.href = '/shop/payment/?oid={$ord.oid}';},1000);
+                            }else if(res.code === 3){
+                                //会员卡扣款完成，跳转到微信支付
+                                showTip({msg:res.msg});
+                                setTimeout(function (){window.location.href = '/shop/payment/?oid={$ord.oid}';},1000);
+                            }else if(res.code === 4){
+                                //会员卡扣款完成，跳转到微信支付
+                                showTip({msg:res.msg});
+                                setTimeout(function (){window.location.href = '/shop/payment/?oid={$ord.oid}';},1000);
+                            }
+                        }
+                    });
+                }
+            </script>
+            {else}
+            <script type="text/javascript">
+                window.location.href='/shop/payment/?oid={$ord.oid}';
+            </script>
+            {/if}
+        {else}
+            <script type="text/javascript">
+                showTip({msg:'订单不存在！'});
+            </script>
+        {/if}
+    {/if}
+</body>
+</html>

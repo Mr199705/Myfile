@@ -1,0 +1,369 @@
+<!--我的客户-->
+<script type="text/html" id="tpl_m_user_index">
+<div class="page">
+    <div class="searchuserform" style="display: none;">
+        <div class="ljk_top">
+            <a class="top_left" href="javascript:;" data-id="m_user_index" onclick="$('.searchuserform').hide();$('.searchuserlist').fadeIn(100);">
+                <i class="fa fa-angle-left fa-2x db_xinxi"></i>
+            </a>
+            <p class="weui-flex__item top_center">客户查询</p>
+        </div>
+        <div class="ljk_neirong">
+            <div class="user_search_form"></div>
+        </div>
+    </div>
+    <div class="searchuserlist">
+      <!--顶部--->
+        <div class="weui-flex js_category db_ljkdb" style="display: none;">
+            <a class="my-user-item-refresh" href="javascript:;" data-click="userList({},false);"><i class="fa fa-refresh fa-2x db_xinxi" style="font-size: 1.5em;margin-top: 5px;"></i></a>
+            <p class="weui-flex__item db_ljk" id="userListTitle">
+                {if $m_user_subuser}
+                    {if $queryparam_usersub==1}
+                    下属客户
+                    {else}
+                    我的客户
+                    {/if}
+                {else}
+                    我的客户
+                {/if}
+            </p>
+            <a class="js_item" data-id="tianjiakehu"  href="javascript:;" >
+                <i class="fa fa-plus  db_xinxi" style="font-size: 1.5em;margin-top: 5px;"></i>
+            </a>
+        </div>
+        <!---顶部-->
+        <!--内容-->
+        <div class="ljk_neirong" style="top:0px;height:calc(100% - 53px);">
+            <div class="weui-panel__bd">
+                <div class="weui-form-preview__ft">
+                    <a class="weui-form-preview__btn" id="myusersbtn" href="javascript:;" data-click="userList({type:1,url:'/m/user/index'},false,1);" onclick="isRequest(this);$(this).css('background','#4fb234').siblings('.weui-form-preview__btn').css('background','none');$(this).css('color','#fff').siblings('.weui-form-preview__btn').css('color','#3CC51F');">我的客户</a>
+                    <!--<a class="weui-form-preview__btn" id="cousersbtn" href="javascript:;" data-click="userList({type:2,url:'/m/user/index'},false,1);" onclick="isRequest(this);$(this).css('background','#4fb234').siblings('.weui-form-preview__btn').css('background','none');$(this).css('color','#fff').siblings('.weui-form-preview__btn').css('color','#3CC51F');">公司客户</a>-->
+                    {if $m_user_subuser}
+                    <a class="weui-form-preview__btn" id="subusersbtn" href="javascript:;" data-click="userList({type:3,url:'/m/user/subuser'},false,1);" onclick="isRequest(this);$(this).css('background','#4fb234').siblings('.weui-form-preview__btn').css('background','none');$(this).css('color','#fff').siblings('.weui-form-preview__btn').css('color','#3CC51F');">下属客户</a>
+                    {/if}
+                    <a class="weui-form-preview__btn js_item" data-id="tianjiakehu"  href="javascript:;">新增客户</a>
+                </div>
+                <div class="weui-media-box weui-media-box_small-appmsg">
+                    <div class="weui-cells">
+                        {if $m_user_subuser}
+                        <select class="subgms  weui-search-bar__input" id="selectsubgms" style="display: none;width: 21%;height: 38px;display: inline-block;border: 1px solid #eee;margin-left: 5px;font-size: 14px;border-radius: 3px;">
+                        </select>
+                        {/if}
+                        <div class="weui-search-bar weui-search-bar_focusing" id="userMineSearchBar" style="width: 66%;display: inline-block; background: none;position: initial;">
+                            <form class="weui-search-bar__form">
+                                <div class="weui-search-bar__box" style="padding-right:0px"> <i class="weui-icon-search" style="margin-top:5px;"></i>
+                                    <input type="text" class="weui-search-bar__input" id="userMineSearchInput" placeholder="客户名称或手机或电话,其他项点击更多" required  style="height:30px;" />
+                                    <a href="javascript:" class="weui-icon-clear" id="userMineSearchClear" style=" margin-top:5px;"></a>
+                                </div>
+                            </form>
+                        </div>
+                        <a class="weui-search-bar__cancel-btn user_search_more" href="javascript:;" style="margin: 0px;padding: 0px;width: 9%;display: inline-block;">更多</a>
+                    </div>
+                </div>
+                    <div id="tab">
+                        <div class="page__bd type1" style=" padding-top:0px; width:25%;float: left;">
+                            <dl>
+                                <dd class="type1_dd end_dt exclude" id="allUsers" data-span="alluser" data-go="1" data-exclude="1" style="line-height:44px; display:block;">全部</dd>
+                                {if is_weixin()}
+                                <dd class="type1_dd exclude" data-span="nearby" data-go="1" data-key="nearby" data-val="1" data-exclude="1" style="line-height:44px; display:block;">附近客户</dd>
+                                {/if}
+                                <dd class="type1_dd exclude" data-span="visited" data-go="1" data-key="visited" data-val="1" data-exclude="1" style="line-height:44px; display:block;">今日拜访</dd>
+                                <dd class="type1_dd" data-span="visitids" data-cancelgo="1" data-cclick="showVisitPlan();" data-key="visitids" data-val="" data-exclude="0" style="line-height:44px; display:block;">拜访路线</dd>
+                                <dd class="type1_dd" data-span="tpids" data-cancelgo="1" data-cclick="showUserType();" data-key="tpids" data-val="" data-exclude="0" style="line-height:44px; display:block;">客户类型</dd>
+                                <dd class="type1_dd user_search_more" data-span="tpids" data-cancelgo="1"  data-key="tpids" data-val="" data-exclude="0" style="line-height:44px; display:block;">高级搜索</dd>
+                            </dl>
+                            <form id="quickSearchForm" style="display: none;">
+                                <input type="hidden" id="user_nearby" name="nearby" value="" />
+                                <input type="hidden" id="user_visited" name="visited" value="" />
+                                <input type="hidden" id="user_visitids" name="visitids" value="" />
+                                <input type="hidden" id="user_tpids" name="tpids" value="" />
+                            </form>
+                        </div>
+                        <div style="line-height: 44px;height: 44px;padding-top: 0px;margin-left: 25%; background: #fff;">
+                            <span class="user_alluser span_title" style="margin: 0px 5px 0px 10px; color: #3CC51F;">全部</span>
+                            <span class="user_visited span_title" style="display: none;margin: 0px 5px 0px 10px;color: #3CC51F;">今日拜访</span>
+                            <span class="user_nearby span_title" style="display: none;margin: 0px 5px 0px 10px;color: #3CC51F;">附近客户 <select name="jl" id='jl' onchange="nearby();" style="display: none;width:40%;height: 38px;display: inline-block;border: 1px solid #eee;margin-left: 5px;font-size: 14px;border-radius: 3px;">
+                            <option value="0.1">100米内</option>
+                            <option value="0.2" selected="selected">200米内</option>
+                            <option value="0.5">500米内</option>
+                            <option value="1">1000米内</option>
+                            </select>
+                            </span>
+                            <span class="user_visitids span_title" style="display: none;margin: 0px 5px 0px 10px;color: #3CC51F;">拜访路线</span>
+                            <span class="user_tpids span_title" style="display: none;margin: 0px 5px 0px 10px;color: #3CC51F;">客户类型</span>
+                        </div>
+                        <div class="userlistContents"  style="background: rgba(249, 246, 246, 0); font-size: 14px;position:fixed;width:75%;right:0;padding-top: 0px;min-width: 240px;min-height: 400px; height:75%" ></div>
+                    </div>
+                <div>
+                <!--内容-->
+              </div>
+              </div>
+            <div class="js_dialog" id="searchUserDialog" style="display: none;"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    dianji();
+    $("#m_user_index").addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+    goSys('m_index_home');
+    var $searchBar = $('#userMineSearchBar'),
+        $searchInput = $('#userMineSearchInput'),
+        $searchClear = $('#userMineSearchClear'),
+        st = '';
+    $('.user_search_more').on('click',function (){
+        $('.searchuserform').fadeIn(100);
+        $('.searchuserlist').fadeOut(100);
+    });
+    $('.type1_dd').on('click',function (){
+        var e = $(this).data('exclude');
+        var c = $(this).data('cclick');
+        var k = $(this).data('key');
+        var g = $(this).data('go');
+        var cg = $(this).data('cancelgo');
+        var sp = $(this).data('span');
+        var $fm = $('#quickSearchForm');
+        var t = $('#userMineSearchInput').val();
+		var data = {};
+        if(e === 0){
+            if(typeof c !== 'undefined'){
+                eval(c);
+            }
+            if(typeof k !== 'undefined'){
+                $('#user_' + k).val($(this).data('val'));
+            }
+            $(this).addClass('end_dt');
+            $('.user_' + sp).show();
+            $('.exclude').removeClass('end_dt');
+            $('.exclude').each(function (){
+                var sp = $(this).data('span');
+                var k = $(this).data('key');
+                $('.user_' + sp).hide();
+                $('#user_' + k).val('');
+            });
+        }else if(e === 1){
+            $fm.children('input').val('');
+            if(typeof k !== 'undefined'){
+                $('#user_' + k).val($(this).data('val'));
+				  {if is_weixin()}
+                   if(k=='nearby'){
+					 wx.getLocation({
+                        type: 'wgs84',
+                        success: function (res) {
+							 data['lat']= res.latitude;
+                             data['lng']= res.longitude;
+							 $("#jl").find('option[value="0.2"]').prop('selected',true);
+                           /*  data['speed']= res.speed;
+                             data['accuracy']= res.accuracy;
+							 console.log(data);
+							 $.post("/m/user/index",{type:'lbs',lat:data['lat'],lng:data['lng']},function(result){});
+							 */
+							 userList(data,false);
+                        		},
+                   		cancel: function (res) {
+               				console.log('用户拒绝授权获取地理位置');
+             					 },
+            			fail: function (res) {
+					             console.log('定位失败');
+					           }
+                	});
+				}
+				  {/if}
+            }
+            $('.user_' + sp).show().siblings('.span_title').hide();
+            $(this).addClass('end_dt').siblings('.type1_dd').removeClass('end_dt');
+        }
+        var dataA = $fm.serializeArray();
+
+        var hasData = false;
+        for(var i=0;i < dataA.length;i++){
+            if(dataA[i].value.trim() !== ''){
+                data[dataA[i].name] =  dataA[i].value;
+                hasData = true;
+            }
+        }
+        if(!hasData){
+            $('.span_title').hide();
+            $('#allUsers').addClass('end_dt').siblings('.type1_dd').removeClass('end_dt');
+            $('.user_' + $('#allUsers').data('span')).show();
+        }
+        if(t.trim() !== ''){
+            data.t = t;
+        }
+        if(typeof g !== 'undefined' && data.nearby !=1){
+            userList(data,false);
+        }
+    });
+	function nearby(){
+		 {if is_weixin()}
+		 var data = {};
+					 wx.getLocation({
+                        type: 'wgs84',
+                        success: function (res) {
+							 data['lat']= res.latitude;
+                             data['lng']= res.longitude;
+							 data['nearby']=1;
+							 data['jl']= $('#jl').val();
+                           /*  data['speed']= res.speed;
+                             data['accuracy']= res.accuracy;
+							 console.log(data);
+							 $.post("/m/user/index",{type:'lbs',lat:data['lat'],lng:data['lng']},function(result){});
+							 */
+							 userList(data,false);
+                        		},
+                   		cancel: function (res) {
+               				console.log('用户拒绝授权获取地理位置');
+             					 },
+            			fail: function (res) {
+					             console.log('定位失败');
+					           }
+                	});
+				  {/if}
+	}
+    $('.search_back_btn').on('click',function (){
+        $('.searchuserform').fadeOut(100);
+        $('.searchuserlist').fadeIn(100);
+        isRequest(this);
+    });
+    $('.my-user-item-refresh').on('click',function (){
+        isRequest(this);
+    });
+    {if $m_user_subuser}
+    $('.subgms').on('change',function (){
+        var $fm = $('#quickSearchForm');
+        var dataA = $fm.serializeArray();
+        var data = {};
+        for(var i=0;i < dataA.length;i++){
+            if(dataA[i].value.trim() !== ''){
+                data[dataA[i].name] =  dataA[i].value;
+            }
+        }
+        data.type = 3;
+        userList(data);
+    });
+    {/if}
+    function hideSearchResult(){
+        $searchInput.val('');
+    }
+    function showVisitPlan(){
+        var $v = $('#visitPlanBox');
+        var $d = $('#searchUserDialog');
+        if($d.find('.user_visitids_box').length){
+            $d.css('display','block');
+            $('.user_visitids_box').css('display','block');
+        }else{
+            $d.append($v.html());
+            $d.css('display','block');
+            $('.user_visitids_box').css('display','block');
+        }
+    }
+    function showUserType(){
+        var $v = $('#userTypeBox');
+        var $d = $('#searchUserDialog');
+        if($d.find('.user_tpids_box').length){
+            $d.css('display','block');
+            $('.user_tpids_box').css('display','block');
+        }else{
+            $d.append($v.html());
+            $d.css('display','block');
+            $('.user_tpids_box').css('display','block');
+        }
+    }
+    function cancelSearch(){
+        $searchBar.removeClass('weui-search-bar_focusing');
+    }
+    $(function (){
+        var lock = false;
+        var t = false;
+        $searchInput.off().on('compositionstart',function (){
+            lock = true;
+        }).on('compositionend',function (){
+            lock = false;
+        }).on('input',function (){
+            var that = this;
+            if(t){
+                clearTimeout(t);
+            }
+            t = setTimeout(function (){
+                clearTimeout(t);
+                if(!lock){
+                    var keywords = $(that).val().trim();
+                    if($(that).val().length && !keywords.length){
+                        return;
+                    }
+                    var $fm = $('#quickSearchForm');
+                    var dataA = $fm.serializeArray();
+                    var data = {};
+                    for(var i=0;i < dataA.length;i++){
+                        if(dataA[i].value.trim() !== ''){
+                            data[dataA[i].name] =  dataA[i].value;
+                        }
+                    }
+                    data.t = keywords;
+                    userList(data,false);
+                }
+            },300);
+        });
+    });
+    $searchClear.on('click', function(){
+        hideSearchResult();
+        $searchInput.focus();
+        var $fm = $('#quickSearchForm');
+        var dataA = $fm.serializeArray();
+        var data = {};
+        for(var i=0;i < dataA.length;i++){
+            if(dataA[i].value.trim() !== ''){
+                data[dataA[i].name] =  dataA[i].value;
+            }
+        }
+        userList(data,false);
+    });
+    function setSearchType(){
+        $('#usersearchtype').html('1');
+        return true;
+    }
+    function addStock(s,uid){
+        var id = $(s).data('id');
+        window.pageManager.go(id);
+        $('#uid').html(uid);
+        $("#uploadimgs").remove();
+        showLA('/m/user/addstock/','user_addstock',{action:'show',uid:uid});
+    }
+    function addVisit(s,uid){
+        var id = $(s).data('id');
+        window.pageManager.go(id);
+        $('#uid').html(uid);
+        $("#uploadimgs").remove();
+        showLA('/m/user/addvisit/','user_addvisit',{action:'show',uid:uid});
+    }
+    function createProfile(s,uid){
+        var id = $(s).data('id');
+        window.pageManager.go(id);
+        showLA('/m/user/profile/','user_createprofile',{action:'showcreate',uid:uid});
+    }
+    $(function(){
+        {if $m_user_subuser}
+        showLA('/m/user/subuser','subgms',{action:'getsubgm'});
+        {/if}
+        showLA('/m/user/index','user_search_form',{type:4});
+        userList(false,false);
+    });
+</script>
+</script>
+{if $m_user_subuser}
+<script type="text/template" id="subgms">
+    <option value="">所有下属</option>
+    {{?ljk}}
+    {{?ljk.length}}
+    {{for(var i=0;i<ljk.length;i++){}}
+    <option value="{{=ljk[i].guid}}">{{=ljk[i].realname}}</option>
+    {{}}}
+    {{?}}
+    {{?}}
+</script>
+{/if}
+{include file="home/user/list"}
+<!--我的客户-->
+<!--公司客户-->
+{include file="home/user/user_search_form"}
+<!--客户查询-->
+</script>

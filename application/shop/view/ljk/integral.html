@@ -1,0 +1,125 @@
+{include file="common/top" /}
+<title>我的积分情况</title>
+<link rel="stylesheet" href="__CSS__/m.css" type="text/css">
+<script type="text/javascript" src="__JS__/dot.js"></script>
+<style type="text/css"></style>
+</head>
+<body style="background:#fff;">
+<div class="fanhui_cou">
+  <div class="fanhui_1"></div>
+  <div class="fanhui_ding">顶部</div>
+</div>
+<header class="header">
+  <div class="fix_nav">
+    <div style="max-width:768px;margin:0 auto;background:#FE5400;position: relative;">
+    <a class="nav-left back-icon" href="javascript:history.back();">返回</a>
+      <div class="tit">积分</div>
+    </div>
+  </div>
+</header>
+<div class="container ">
+  <div class="row rowcar" >
+  		<div class="tou" style="">
+        	<span> 积分</span>
+            <p style=" font-size:3rem;">{$points.pay_points }</p>
+        </div>
+        <div id="div1">
+          <ul>
+            <li class="split"></li>
+            <li class="item1">积分明细</li>
+            <li class="split"></li>
+          </ul>
+        </div>
+        <ul class="tou_ul" style="padding: 0px 15px;">
+			<div id="detail_more"></div>
+			<div id="loadDetailBut" onclick="loadDetail();" data-page="1" style="margin-bottom: 5em;text-align: center;">上拉/点击继续加载</div>
+        </ul>
+  </div>
+</div>
+
+{include file="common/footer_nav" /}
+
+<!-- dot 模版 -->
+<script id="templateIntegralDetail" type="text/template">
+{{ for(var item in ljk) { }}
+        		<li>
+	                <div  class="tou_left">
+						{{? ljk[item].frozen_change > 0 }}
+	                		<span>买商品获得积分</span>
+						{{??}}
+							<span>积分兑换</span>
+						{{ } }}
+	                    <p style="margin:0px;">{{=ljk[item].change_time }}</p>
+	                </div>
+	                <div class="tou_right" >
+					{{? ljk[item].frozen_change > 0 }}
+	                	+{{=ljk[item].frozen_change }}
+					{{??}}
+						<div class="blue" >{{=ljk[item].frozen_change }}</div>
+					{{ } }}
+	                </div>
+	            </li>
+{{ } }}
+</script>
+
+</body>
+<script>
+
+//首次加载
+loadDetail();
+
+//	上拉加载更多
+$(window).scroll(function(){
+    var scrollTop = $(this).scrollTop();               //滚动条距离顶部的高度
+    var scrollHeight = $(document).height();           //当前页面的总高度
+    var windowHeight = $(this).height();               //当前可视的页面高度
+    if(scrollTop + windowHeight >= scrollHeight)  {
+    	loadDetail();
+    }
+});
+
+//	加载提现明细
+function loadDetail(){
+	var but = $('#loadDetailBut');
+	var page = but.attr('data-page');
+	if( page == -1 ){
+		but.html('没有更多记录了！');
+		return;
+	}
+	$.ajax({
+		url: 'shop/order/moneyDetail',
+		type: 'post',
+		dataType: 'json',
+		data: {
+			page: page,
+			action: 'integrallist'
+		},
+		beforeSend:function(){
+        	console.log('正在查询资金明细!');
+        	but.html('<img src="__IMGS__/loading.gif" />正在加载中...');
+        },
+		success: function(res){
+			if( res.code == 1 ){
+				console.log('查询积分成明细成功: ' + res.data );
+				if( res.data.length >= 1 ){
+					// dot输出
+					var interText = doT.template( $("#templateIntegralDetail").html() );
+			    	$("#detail_more").append( interText( res.data ) );
+			    	$(but).attr('data-page', ++page );
+					$(but).html('上拉/点击继续加载');
+				}else{
+					console.log('没有更多记录了! ');
+					$(but).html('没有更多记录了！');
+					$(but).attr('data-page', -1 );
+				}
+			}else{
+	        	showTip({msg:'查询积分成明细失败,错误信息: ' + res.msg});
+			}
+		},
+		error: function(){
+        	showTip({msg:'连接服务器失败!'});
+		}
+	});
+}
+</script>
+</html>

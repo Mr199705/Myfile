@@ -1,0 +1,159 @@
+{include file="common/header"}
+</head>
+<body>
+    {include file="common/warning"}
+    {include file="common/tips"}
+    <div id="wrapper">
+        <div class="gray-bg dashbard-1">
+            <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-sm-11">
+                    <h2>拜访路线</h2>
+                    <ol class="breadcrumb">
+                        <li>
+                            <a href="{$Request.module}" title="index.html">首页</a>
+                        </li>
+                        <li>
+                            <a href="{$Request.module}/user/index">客户</a>
+                        </li>
+                        <li>
+                            <strong>拜访路线</strong>
+                        </li>
+                    </ol>
+                </div>
+                <div class="col-sm-1">
+				<br>
+                    <a class="  btn btn-success " href="#" data-toggle="modal" data-target="#myModal1">添加</a>
+                     <!--添加员工类型-->
+                            <div class="modal inmodal" id="myModal1" tabindex="-1" role="dialog"  aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content animated fadeIn">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">
+                                                <span aria-hidden="true">&times;</span>
+                                                <span class="sr-only">Close</span>
+                                            </button>
+                                            <h4 class="modal-title">拜访路线</h4>
+                                        </div>
+                                    <form action="/admin/user/addvisit" method="post" enctype="multipart/form-data" class="form-horizontal" onsubmit="return addType(this);">
+                                    <input type="hidden" name="action" value="add" />
+                                    <div class="modal-body">
+                                    <span>说明：公司统一制定的拜访路线供业务员规划客户拜访计划，如：时间、地区等。<br><br></span>
+                                             <div class="form-group">
+                                                <label class="col-sm-3 control-label">拜访路线: </label>
+                                                 <div class="col-sm-9">
+                                                    <input type="text" class="form-control" value="{$types.title}" name="title" />
+                                                    </div>
+                                             </div>	
+                                           
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+                                        <input type="submit" name="authsubmit" value="提交" class="btn btn-primary" tabindex="3" />
+                                    </div> 
+                                    </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                              <!--添加员工类型-->
+                </div>
+            </div>
+            <div class="wrapper wrapper-content animated fadeInRight">
+               
+               
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="ibox float-e-margins">
+                                <div class="ibox-title">
+                              	<h5>拜访路线<small>说明：公司统一制定的拜访路线供业务员规划客户拜访计划，如：时间、地区等。</small></h5>
+                            </div>
+                            <div class="ibox-content">
+                         
+						
+								
+                                <div class="table-responsive">
+                                    {if $types}<form name="cpform" method="post" action="/admin/user/visit" id="typelist" onsubmit="return typeOrderDel(this);">{/if}
+                                    <table class="table table-striped dindan">
+                                        <thead>
+                                            <tr>
+                                                <th>删除</th>
+                                                <th>显示顺序</th>
+                                                <th>名称</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        {if $types}
+                                        <tbody>
+                                            {foreach name="$types key=gid" item="type}
+                                            <tr>
+                                                <td style="width:20px;">
+                                                    <input class="i-checks" type="checkbox" name="delete[]" value="{$type.id}" >			 					
+                                                </td>
+                                                <td style="width:72px;"><input type="text" class="form-control" name="displayorder[{$type.id}]" value="{$type.displayorder}"></td>
+                                                <td >{$type.title}</td>
+                                                <td><a class="btn btn-sm btn-success" href="javascript:void(0);" data-toggle="modal" data-target="#myModal2" onclick="setEditTypeForm('{$type.id}','{$type.title}');">编辑</a></td>
+                                            </tr>
+                                            {/foreach}
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td><a class="btn btn-sm btn-success" onclick="checkA(this,'typelist','delete[]');" href="javascript:void(0);">√</a></td>
+                                                <td colspan="3"><input type="submit" class="btn btn-sm btn-primary" name="noticesubmit" value="提交" /></td>
+                                            </tr>
+                                        </tfoot>
+                                        {else/}
+                                        <tr>
+                                            <td colspan="4" style="text-align: center;color: #f00;">您还没有添加拜访路线！</td>
+                                        </tr>
+                                        {/if}
+                                    </table>
+                                    {if $types}</form>{/if}
+                                </div>
+
+                            
+                      
+                    </div>
+</div></div>
+                </div>
+            </div>
+      
+                     <!--编辑员工类型-->
+                            <div class="modal inmodal" id="myModal2" tabindex="-1" role="dialog"  aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content animated fadeIn">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">
+                                                <span aria-hidden="true">&times;</span>
+                                                <span class="sr-only">Close</span>
+                                            </button>
+                                            <h4 class="modal-title">编辑拜访路线</h4>
+                                        </div>
+                                        <form action="/admin/user/editvisit" class="form-horizontal" method="post" enctype="multipart/form-data" onsubmit="return editTyte(this);">
+                                            <input type="hidden" name="id" id="memberTypeId" value="" />
+                                            <input type="hidden" name="action" value="edit" />
+                                            <div class="modal-body">
+                                                 <div class="form-group">
+                                                    <label class="col-sm-3 control-label">拜访路线: </label>
+                                                     <div class="col-sm-9">
+                                                         <input type="text" class="form-control" name="title" id="memberTypeTitle" value="" />
+                                                    </div>
+                                                 </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+                                            <input type="submit" name="authsubmit" value="提交" class="btn btn-primary" />
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                              <!--编辑员工类型-->
+
+        </div>
+    </div>
+
+    {include file="common/footerjs"}
+</body>
+
+</html>

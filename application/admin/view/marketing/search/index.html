@@ -1,0 +1,28 @@
+<input type="hidden" data-sign="{$initData.sign}" value="" id="initDataSign" />
+<div class="row">
+    <div class="col-sm-2" style="width: auto;">
+        <span style="display: inline-block;">活动状态：</span>
+        <div style="display: inline-block;">
+            <select name="isclose" class="form-control" onchange="getList({sign:'marketingIndex'},1);">
+                <option value="">所有</option>
+                <option value="1">启用</option>
+                <option value="2">锁定</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-3" style="width: auto;">
+        <span style="display: inline-block;">关键词类型：</span>
+        <div style="display: inline-block;">
+            <select name="keytype" class="form-control" onchange="getList({sign:'marketingIndex'},1);">
+                <option value="1">活动名称</option>
+                <option value="2">商品名称</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <input type="text" value="" class="form-control" oninput="getList({sign:'marketingIndex'},1);" name="keywords" placeholder="请输入关键词">
+    </div>
+    <div class="col-sm-1">
+        <input type="submit" value="确定" class="btn btn-sm btn-success" onclick="getList({sign:'marketingIndex'},1);">
+    </div>
+</div>
